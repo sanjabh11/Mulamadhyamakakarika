@@ -1,12 +1,5 @@
-/Ch1
-/Ch1.pre
-/Ch1.prev
-/Ch16 copy
-/Ch1_final
-/Ch2
-/Ch3
-/Ch5
-/Ch5_updated
-/Ch2-direct
-node_modules
-node_modules
+/node_modules
+".next/"
+"*.log"
+ ".DS_Store"
+node_modules/
