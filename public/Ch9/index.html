@@ -1,0 +1,65 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 9 - Investigation of the Presence of Something Prior</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/"
+      }
+    }
+    </script>
+    <!-- Ensure THREE is loaded before our script -->
+    <script async src="https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.min.js"></script>
+</head>
+<body>
+    <div id="container">
+        <div id="scene-container"></div>
+        
+        <div id="content-panel">
+            <div class="header">
+                <h1>Chapter 9: Investigation of the Presence of Something Prior</h1>
+                <div class="nav-controls">
+                    <button id="prev-btn">Previous</button>
+                    <span id="verse-counter">Verse 1/12</span>
+                    <button id="next-btn">Next</button>
+                </div>
+            </div>
+            
+            <div id="verse-content">
+                <!-- Verse content will be dynamically loaded here -->
+            </div>
+            
+            <div class="controls-wrapper">
+                <button id="toggle-controls" class="toggle-btn">Show Controls</button>
+                <div id="controls-panel" class="hidden">
+                    <div class="control-group">
+                        <h3>Animation Controls</h3>
+                        <div class="controls">
+                            <!-- Dynamically populated based on verse -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="explanation-wrapper">
+                <button id="toggle-explanation" class="toggle-btn">Show Explanation</button>
+                <div id="explanation-panel" class="hidden">
+                    <!-- Explanation content will be dynamically loaded here -->
+                </div>
+            </div>
+            
+            <div class="back-link">
+                <a href="/chapter-9">← Back to Chapter Overview</a>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="animations.js"></script>
+    <script type="module" src="config.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>

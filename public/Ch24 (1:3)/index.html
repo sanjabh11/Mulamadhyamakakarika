@@ -1,0 +1,99 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investigation of Nirvana</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.152.2/examples/jsm/",
+                "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.11.5/index.js",
+                "p5": "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js",
+                "d3": "https://cdn.jsdelivr.net/npm/d3@7.8.4/dist/d3.min.js"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="app">
+        <button id="panel-toggle">≡</button>
+        <button id="help-button" aria-label="Help and Accessibility Information">?</button>
+        
+        <div id="main-content">
+            <div id="text-panel">
+                <div id="verse-number">Verse 1</div>
+                <div id="verse-text"></div>
+                <div id="explanation"></div>
+                <div id="accessibility-explanation"></div>
+            </div>
+            <div id="scene-container"></div>
+        </div>
+        
+        <div id="controls">
+            <button id="prev-btn" disabled>Previous</button>
+            <div id="verse-indicator">
+                <span class="verse-dot active" data-verse="1"></span>
+                <span class="verse-dot" data-verse="2"></span>
+                <span class="verse-dot" data-verse="3"></span>
+                <span class="verse-dot" data-verse="4"></span>
+                <span class="verse-dot" data-verse="5"></span>
+                <span class="verse-dot" data-verse="6"></span>
+                <span class="verse-dot" data-verse="7"></span>
+                <span class="verse-dot" data-verse="8"></span>
+                <span class="verse-dot" data-verse="9"></span>
+                <span class="verse-dot" data-verse="10"></span>
+                <span class="verse-dot" data-verse="11"></span>
+                <span class="verse-dot" data-verse="12"></span>
+                <span class="verse-dot" data-verse="13"></span>
+                <span class="verse-dot" data-verse="14"></span>
+            </div>
+            <button id="next-btn">Next</button>
+        </div>
+        
+        <div id="interaction-controls"></div>
+        
+        <div id="help-modal">
+            <div id="help-content">
+                <h2>Help & Accessibility Information</h2>
+                <p>This interactive experience explores the concept of emptiness in Buddhist philosophy through the lens of quantum physics.</p>
+                
+                <h3>Navigation Controls:</h3>
+                <ul>
+                    <li><strong>Previous/Next Buttons:</strong> Navigate between verses</li>
+                    <li><strong>Verse Dots:</strong> Jump directly to a specific verse</li>
+                    <li><strong>Panel Toggle (≡):</strong> On mobile, show/hide the text panel</li>
+                </ul>
+                
+                <h3>Interaction Controls:</h3>
+                <p>Each verse has unique interactive elements that demonstrate concepts through quantum physics analogies:</p>
+                <ul>
+                    <li><strong>Buttons:</strong> Trigger specific actions or changes</li>
+                    <li><strong>Toggles:</strong> Switch between different states</li>
+                    <li><strong>Sliders:</strong> Adjust values continuously</li>
+                </ul>
+                
+                <h3>Accessibility Features:</h3>
+                <ul>
+                    <li>Text descriptions of each visualization</li>
+                    <li>High contrast colors</li>
+                    <li>Responsive design for all devices</li>
+                    <li>Keyboard navigable controls</li>
+                </ul>
+                
+                <h3>Touch Controls:</h3>
+                <ul>
+                    <li><strong>Swipe:</strong> Navigate between verses</li>
+                    <li><strong>Pinch/Spread:</strong> Zoom in/out of 3D scenes</li>
+                    <li><strong>Tap and Drag:</strong> Rotate 3D objects</li>
+                </ul>
+                
+                <button id="close-help">Close</button>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="config.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>

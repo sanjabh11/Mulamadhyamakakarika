@@ -1,0 +1,56 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nagarjuna's Madhyamaka - Chapter 24 (Part 2/3)</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/",
+            "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.2/index.js"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div id="container">
+        <canvas id="canvas"></canvas>
+        
+        <div id="contentWrapper">
+            <div id="textOverlay">
+                <h1>Nagarjuna's Madhyamaka</h1>
+                <h2>Chapter 24: Investigation of the Ennobling Truths (Part 2/3)</h2>
+                <div id="verseInfo">
+                    <div class="verse-text"></div>
+                    <div class="concept-container">
+                        <div class="concept madhyamaka"></div>
+                        <div class="concept quantum"></div>
+                        <div class="concept explanation"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="controls">
+                <div class="verse-selector">
+                    <button class="prev-verse">Previous Verse</button>
+                    <span id="verse-number">Verse 15</span>
+                    <button class="next-verse">Next Verse</button>
+                </div>
+                <div class="content-controls">
+                    <button id="toggleText">Hide Text</button>
+                    <button id="toggleFullscreen">Fullscreen</button>
+                </div>
+                <div class="interaction-info">
+                    <span>Interact with the animation to explore the verse's meaning</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="config.js"></script>
+    <script type="module" src="animations.js"></script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>

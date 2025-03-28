@@ -1,0 +1,53 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 17 - Investigation of Actions and Fruits</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/",
+            "p5": "https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js",
+            "d3": "https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div class="controls">
+        <button id="prevVerse" class="nav-btn">Previous</button>
+        <select id="verseSelector"></select>
+        <button id="nextVerse" class="nav-btn">Next</button>
+        <button id="toggleText" class="toggle-btn">Toggle Text</button>
+    </div>
+
+    <div id="container">
+        <div id="animation-container"></div>
+        <div id="text-container" class="show">
+            <div class="text-content">
+                <h2 id="verse-title"></h2>
+                <p id="verse-text"></p>
+                <div class="concept-container">
+                    <div class="concept">
+                        <h3>Madhyamaka Concept</h3>
+                        <p id="madhyamaka-concept"></p>
+                    </div>
+                    <div class="concept">
+                        <h3>Quantum Physics Parallel</h3>
+                        <p id="quantum-physics"></p>
+                    </div>
+                    <div class="concept">
+                        <h3>Accessible Explanation</h3>
+                        <p id="explanation"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="config.js"></script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>

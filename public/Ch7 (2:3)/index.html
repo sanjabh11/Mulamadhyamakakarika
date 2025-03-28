@@ -1,0 +1,53 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investigation of Birth, Abiding and Perishing</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.132.2/examples/jsm/",
+                "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.9.1/index.js",
+                "p5": "https://cdn.jsdelivr.net/npm/p5@1.4.0/lib/p5.js",
+                "d3": "https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js"
+            }
+        }
+    </script>
+    <script type="module" src="main.js"></script>
+</head>
+<body>
+    <div id="scene-container"></div>
+    <div id="content">
+        <div id="title">
+            <h1>Chapter 7</h1>
+            <h2>Investigation of Birth, Abiding and Perishing</h2>
+            <div id="top-navigation">
+                <button id="prev-btn">Previous</button>
+                <div id="pagination"></div>
+                <button id="next-btn">Next</button>
+            </div>
+        </div>
+        <div id="verse-display">
+            <div id="verse-number"></div>
+            <div id="verse-text"></div>
+            <div id="verse-concepts">
+                <div class="concept-section">
+                    <h3>Madhyamaka Concept</h3>
+                    <p id="madhyamaka-concept"></p>
+                </div>
+                <div class="concept-section">
+                    <h3>Quantum Physics Parallel</h3>
+                    <p id="quantum-parallel"></p>
+                </div>
+                <div class="concept-section">
+                    <h3>Accessible Explanation</h3>
+                    <p id="accessible-explanation"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="current-verse-indicator">Verse <span id="indicator-number">13</span></div>
+</body>
+</html>

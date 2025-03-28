@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 6: Investigation of Desire and the Desirous One - Nāgārjuna's Quantum Reflections</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    /* Chapter-specific styles */
+    :root {
+      --primary-color: #8844ff;
+      --secondary-color: #ff44aa;
+      --accent-color: #44ddff;
+      --background-gradient: linear-gradient(135deg, #000033, #110022);
+    }
+    
+    .tooltip {
+      position: absolute;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 14px;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      z-index: 1000;
+      max-width: 200px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Navigation -->
+    <nav class="top-nav">
+      <a href="/" class="home-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        Home
+      </a>
+      <div class="chapter-title">Chapter 6: Investigation of Desire and the Desirous One</div>
+      <button id="toggle-info" class="info-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+      </button>
+    </nav>
+    
+    <!-- Animation Container -->
+    <div id="animation-container"></div>
+    
+    <!-- Verse Navigation -->
+    <div class="verse-navigation">
+      <button id="prev-verse" class="nav-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Previous
+      </button>
+      <div id="verse-indicator">1/10</div>
+      <button id="next-verse" class="nav-button">
+        Next
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </button>
+    </div>
+    
+    <!-- Info Panel -->
+    <div id="info-panel" class="info-panel">
+      <div class="info-content">
+        <h2 id="verse-number">6.1</h2>
+        <div class="verse-content">
+          <p id="verse-text">If a desirous one without desire exists before desire, desire would exist dependent on that [desirous one]. [When] a desirous one exists, desire exists.</p>
+        </div>
+        
+        <div class="explanation-section">
+          <h3>Madhyamaka Concept</h3>
+          <p id="madhyamaka-concept">This verse examines the logical relationship between desire and the desirous one, showing that they cannot exist independently. If a desirous one existed before desire, then desire would depend on them, but this creates a contradiction because one cannot be 'desirous' without desire.</p>
+          
+          <h3>Quantum Physics Connection</h3>
+          <p id="quantum-physics">In relational quantum mechanics, a system's state is defined only in relation to an observer. Similarly, desire and the desirous one can only be defined in relation to each other, not as independent entities.</p>
+          
+          <h3>Accessible Explanation</h3>
+          <p id="accessible-explanation">Think of a magnet and its magnetic field. Can a magnet exist without creating a magnetic field? Can a magnetic field exist without a magnet? Similarly, can someone be 'desirous' without experiencing desire? These entities define each other and cannot exist independently.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Help Panel -->
+    <div id="help-panel" class="help-panel hidden">
+      <div class="help-content">
+        <h2>Interaction Guide</h2>
+        <p>This interactive visualization demonstrates the relationship between desire and the desirous one, and how this relates to quantum physics concepts.</p>
+        
+        <h3>Controls</h3>
+        <ul>
+          <li><strong>Orbit:</strong> Click and drag to rotate the view</li>
+          <li><strong>Zoom:</strong> Use the scroll wheel to zoom in and out</li>
+          <li><strong>Navigate Verses:</strong> Use the Previous/Next buttons to explore different verses</li>
+          <li><strong>Interact:</strong> Click on highlighted objects to see their descriptions</li>
+        </ul>
+        
+        <h3>Key Concepts</h3>
+        <ul>
+          <li><strong>Mutual Dependence:</strong> Desire and the desirous one cannot exist independently</li>
+          <li><strong>Quantum Entanglement:</strong> Particles that are connected regardless of distance</li>
+          <li><strong>Complementarity:</strong> Wave-particle duality and mutually exclusive properties</li>
+          <li><strong>Superposition:</strong> Existing in multiple states simultaneously</li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Help Button -->
+    <button id="toggle-help" class="help-button">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+    </button>
+  </div>
+  
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.151.3/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.151.3/examples/jsm/",
+        "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.11.5/+esm"
+      }
+    }
+  </script>
+  <script type="module" src="script.js"></script>
+</body>
+</html>

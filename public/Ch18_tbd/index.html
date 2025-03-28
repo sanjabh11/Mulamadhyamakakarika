@@ -1,0 +1,557 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 18 - Investigation of Self and Things</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.152.2/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="header">
+        <h1>Chapter 18 - Investigation of Self and Things</h1>
+        <div class="controls">
+            <button id="prev-verse">Previous Verse</button>
+            <select id="verse-selector">
+                <option value="1">Verse 1</option>
+                <option value="2">Verse 2</option>
+                <option value="3">Verse 3</option>
+                <option value="4">Verse 4</option>
+                <option value="5">Verse 5</option>
+                <option value="6">Verse 6</option>
+                <option value="7">Verse 7</option>
+                <option value="8">Verse 8</option>
+                <option value="9">Verse 9</option>
+                <option value="10">Verse 10</option>
+                <option value="11">Verse 11</option>
+                <option value="12">Verse 12</option>
+            </select>
+            <button id="next-verse">Next Verse</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="verse-content" id="verse1">
+            <div class="animation-container" id="animation1"></div>
+            <div class="text-container">
+                <div class="text-section">
+                    <div class="verse-text">
+                        <h2>Verse 1</h2>
+                        <p>"If the aggregates were self, it would be possessed of arising and decaying. If it were other than the aggregates, it would not have the characteristics of the aggregates."</p>
+                    </div>
+                    <div class="toggle-controls">
+                        <button class="hide-text">Hide Text</button>
+                        <button class="show-text hidden">Show Text</button>
+                    </div>
+                    <div class="explanation">
+                        <div class="concept">
+                            <h3>Madhyamaka Concept</h3>
+                            <p>This verse addresses the impossibility of identifying self with the five aggregates. If self is the aggregates, it would be impermanent, contradicting notions of a permanent self. If separate, it lacks aggregate characteristics, reinforcing emptiness as per Madhyamaka.</p>
+                        </div>
+                        <div class="physics">
+                            <h3>Quantum Physics Parallel</h3>
+                            <p>Wave-particle duality aligns, as electrons exhibit both wave and particle properties depending on observation, paralleling the self's ambiguous relationship with aggregates. This duality challenges fixed identities, resonating with emptiness.</p>
+                        </div>
+                        <div class="accessible">
+                            <h3>Accessible Explanation</h3>
+                            <p>Imagine thinking your car defines you, but if it breaks, you're still you. Yet, you're not entirely separate from it, as you use it daily. This mirrors how self relates to body and mind—neither identical nor distinct, highlighting interdependence.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-panel">
+                    <h3>Double Slit Experiment</h3>
+                    <div class="controls">
+                        <button id="toggle-observation">Toggle Observation</button>
+                        <div class="slider-container">
+                            <label for="electron-rate">Electron Rate:</label>
+                            <input type="range" id="electron-rate" min="1" max="100" value="50">
+                        </div>
+                    </div>
+                    <div class="panel-toggle">
+                        <button class="hide-panel">Hide Panel</button>
+                        <button class="show-panel hidden">Show Panel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="verse-content hidden" id="verse2">
+            <div class="animation-container" id="animation2"></div>
+            <div class="text-container">
+                <div class="text-section">
+                    <div class="verse-text">
+                        <h2>Verse 2</h2>
+                        <p>"If the self did not exist, where could what is mine exist? In order to pacify self and what is mine, grasping I and grasping mine can exist no more."</p>
+                    </div>
+                    <div class="toggle-controls">
+                        <button class="hide-text">Hide Text</button>
+                        <button class="show-text hidden">Show Text</button>
+                    </div>
+                    <div class="explanation">
+                        <div class="concept">
+                            <h3>Madhyamaka Concept</h3>
+                            <p>This verse connects self to possessions ("mine"), asserting that without self, ownership lacks basis. Understanding emptiness ceases grasping at self and mine, aligning with Madhyamaka's path to freedom from suffering through non-attachment.</p>
+                        </div>
+                        <div class="physics">
+                            <h3>Quantum Physics Parallel</h3>
+                            <p>Superposition, where particles exist in multiple states until measured, mirrors the non-fixed nature of self and mine. Before measurement, reality remains potential, paralleling the cessation of grasping.</p>
+                        </div>
+                        <div class="accessible">
+                            <h3>Accessible Explanation</h3>
+                            <p>It's like watching a beautiful sunset; if you try to own it with a photo, you might miss its essence. Letting go of "mine" allows you to experience it fully, bringing peace, much like releasing attachment in Buddhism.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-panel">
+                    <h3>Quantum Superposition</h3>
+                    <div class="controls">
+                        <button id="measure-particle">Measure Particle</button>
+                        <button id="reset-superposition">Reset to Superposition</button>
+                    </div>
+                    <div class="panel-toggle">
+                        <button class="hide-panel">Hide Panel</button>
+                        <button class="show-panel hidden">Show Panel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="verse-content hidden" id="verse3">
+            <div class="animation-container" id="animation3"></div>
+            <div class="text-container">
+                <div class="text-section">
+                    <div class="verse-text">
+                        <h2>Verse 3</h2>
+                        <p>"The one who does not grasp at me and mine likewise does not exist. Whoever sees the one who does not grasp at me and mine does not see."</p>
+                    </div>
+                    <div class="toggle-controls">
+                        <button class="hide-text">Hide Text</button>
+                        <button class="show-text hidden">Show Text</button>
+                    </div>
+                    <div class="explanation">
+                        <div class="concept">
+                            <h3>Madhyamaka Concept</h3>
+                            <p>This verse suggests that one who transcends self-grasping does not exist conventionally, as they are beyond ordinary perception. This aligns with emptiness, where personhood lacks inherent existence, challenging fixed identities.</p>
+                        </div>
+                        <div class="physics">
+                            <h3>Quantum Physics Parallel</h3>
+                            <p>The wave function, describing a quantum state before measurement, is not directly observable, only inferred through effects. This parallels the person free from self-grasping, whose nature is beyond conventional sight.</p>
+                        </div>
+                        <div class="accessible">
+                            <h3>Accessible Explanation</h3>
+                            <p>Imagine trying to catch your shadow—it's always there but can't be grasped. Similarly, someone who doesn't hold onto "me" and "mine" is elusive to our usual ways of seeing, like a shadow beyond reach.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-panel">
+                    <h3>Wave Function Collapse</h3>
+                    <div class="controls">
+                        <button id="toggle-measurement">Toggle Measurement</button>
+                        <div class="slider-container">
+                            <label for="wave-spread">Wave Spread:</label>
+                            <input type="range" id="wave-spread" min="1" max="100" value="70">
+                        </div>
+                    </div>
+                    <div class="panel-toggle">
+                        <button class="hide-panel">Hide Panel</button>
+                        <button class="show-panel hidden">Show Panel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="verse-content hidden" id="verse4">
+            <div class="animation-container" id="animation4"></div>
+            <div class="text-container">
+                <div class="text-section">
+                    <div class="verse-text">
+                        <h2>Verse 4</h2>
+                        <p>"When one ceases thinking of inner and outer things as self and mine, clinging will come to a stop. Through that ceasing, birth will cease."</p>
+                    </div>
+                    <div class="toggle-controls">
+                        <button class="hide-text">Hide Text</button>
+                        <button class="show-text hidden">Show Text</button>
+                    </div>
+                    <div class="explanation">
+                        <div class="concept">
+                            <h3>Madhyamaka Concept</h3>
+                            <p>By stopping identification with self and possessions, clinging ceases, halting the cycle of rebirth (samsara). This reflects Madhyamaka's view that understanding emptiness liberates from suffering through dependent origination.</p>
+                        </div>
+                        <div class="physics">
+                            <h3>Quantum Physics Parallel</h3>
+                            <p>Quantum erasure, where erasing which-path information revives interference patterns, parallels ceasing self-identification. Removing fixed views allows for a liberated state, akin to breaking rebirth cycles.</p>
+                        </div>
+                        <div class="accessible">
+                            <h3>Accessible Explanation</h3>
+                            <p>It's like breaking a bad habit, like nail-biting. If you stop thinking of things as "mine," the craving to hold on stops, and you're free from the cycle of wanting more, leading to peace.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-panel">
+                    <h3>Quantum Erasure Experiment</h3>
+                    <div class="controls">
+                        <button id="toggle-path-info">Toggle Path Information</button>
+                        <button id="reset-experiment">Reset Experiment</button>
+                    </div>
+                    <div class="panel-toggle">
+                        <button class="hide-panel">Hide Panel</button>
+                        <button class="show-panel hidden">Show Panel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="verse-content hidden" id="verse5">
+            <div class="animation-container" id="animation5"></div>
+            <div class="text-container">
+                <div class="text-section">
+                    <div class="verse-text">
+                        <h2>Verse 5</h2>
+                        <p>"Through the ceasing of action and affliction, there is freedom. Action and affliction come from thoughts and they from fixations. Fixations are stopped by emptiness."</p>
+                    </div>
+                    <div class="toggle-controls">
+                        <button class="hide-text">Hide Text</button>
+                        <button class="show-text hidden">Show Text</button>
+                    </div>
+                    <div class="explanation">
+                        <div class="concept">
+                            <h3>Madhyamaka Concept</h3>
+                            <p>This verse outlines a chain: fixations lead to thoughts, actions, and afflictions, causing suffering. Emptiness, understanding phenomena lack inherent existence, breaks this chain, leading to liberation.</p>
+                        </div>
+                        <div class="physics">
+                            <h3>Quantum Physics Parallel</h3>
+                            <p>The measurement problem, where particles lack definite properties until measured, parallels emptiness. Understanding this stops fixations on fixed realities, akin to Madhyamaka's insight.</p>
+                        </div>
+                        <div class="accessible">
+                            <h3>Accessible Explanation</h3>
+                            <p>It's like realizing your anger at someone is based on your own assumptions. Once you see those assumptions might be wrong, your anger fades. Emptiness helps us see our fixations are mistaken, bringing freedom.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-panel">
+                    <h3>Quantum Superposition</h3>
+                    <div class="controls">
+                        <button id="toggle-fixation">Toggle Fixation</button>
+                        <div class="slider-container">
+                            <label for="probability-density">Probability Density:</label>
+                            <input type="range" id="probability-density" min="1" max="100" value="50">
+                        </div>
+                    </div>
+                    <div class="panel-toggle">
+                        <button class="hide-panel">Hide Panel</button>
+                        <button class="show-panel hidden">Show Panel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="verse-content hidden" id="verse6">
+            <div class="animation-container" id="animation6"></div>
+            <div class="text-container">
+                <div class="text-section">
+                    <div class="verse-text">
+                        <h2>Verse 6</h2>
+                        <p>"It is said that 'there is a self,' but 'non-self' too is taught. The buddhas also teach there is nothing which is 'neither self nor non-self.'"</p>
+                    </div>
+                    <div class="toggle-controls">
+                        <button class="hide-text">Hide Text</button>
+                        <button class="show-text hidden">Show Text</button>
+                    </div>
+                    <div class="explanation">
+                        <div class="concept">
+                            <h3>Madhyamaka Concept</h3>
+                            <p>Buddhas teach self conventionally for practical purposes and non-self ultimately to counter eternalism. There's no third category; everything is either self or non-self depending on context, reflecting two truths.</p>
+                        </div>
+                        <div class="physics">
+                            <h3>Quantum Physics Parallel</h3>
+                            <p>Quantum measurement, where particles are in definite states (spin up/down) upon measurement, parallels conventional categorization as self or non-self. Before measurement, superposition reflects ultimate emptiness.</p>
+                        </div>
+                        <div class="accessible">
+                            <h3>Accessible Explanation</h3>
+                            <p>It's like looking at water. From far away, it looks like one thing (self), but up close, it's made of many molecules (non-self). There's no third way; it's either viewed as a whole or parts, depending on perspective.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-panel">
+                    <h3>Quantum Spin Measurement</h3>
+                    <div class="controls">
+                        <button id="measure-spin">Measure Spin</button>
+                        <button id="reset-spin">Reset to Superposition</button>
+                    </div>
+                    <div class="panel-toggle">
+                        <button class="hide-panel">Hide Panel</button>
+                        <button class="show-panel hidden">Show Panel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="verse-content hidden" id="verse7">
+            <div class="animation-container" id="animation7"></div>
+            <div class="text-container">
+                <div class="text-section">
+                    <div class="verse-text">
+                        <h2>Verse 7</h2>
+                        <p>"That to which language refers is denied, because an object experienced by the mind is denied. The unborn and unceasing nature of reality is comparable to nirvana."</p>
+                    </div>
+                    <div class="toggle-controls">
+                        <button class="hide-text">Hide Text</button>
+                        <button class="show-text hidden">Show Text</button>
+                    </div>
+                    <div class="explanation">
+                        <div class="concept">
+                            <h3>Madhyamaka Concept</h3>
+                            <p>All phenomena described by language and experienced by mind lack inherent existence, being empty. Reality's true nature, unborn and unceasing, mirrors nirvana, the unconditioned state beyond birth and death.</p>
+                        </div>
+                        <div class="physics">
+                            <h3>Quantum Physics Parallel</h3>
+                            <p>The quantum vacuum, the ground state from which particles arise and return, remains stable and unchanging, paralleling nirvana as the unconditioned backdrop of reality.</p>
+                        </div>
+                        <div class="accessible">
+                            <h3>Accessible Explanation</h3>
+                            <p>Think of the ocean. Waves (birth, death) come and go, but the ocean itself doesn't change. Reality is like that—always present, unchanged by appearances, like nirvana.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-panel">
+                    <h3>Quantum Vacuum Fluctuations</h3>
+                    <div class="controls">
+                        <button id="toggle-fluctuations">Toggle Fluctuations</button>
+                        <div class="slider-container">
+                            <label for="fluctuation-rate">Fluctuation Rate:</label>
+                            <input type="range" id="fluctuation-rate" min="1" max="100" value="50">
+                        </div>
+                    </div>
+                    <div class="panel-toggle">
+                        <button class="hide-panel">Hide Panel</button>
+                        <button class="show-panel hidden">Show Panel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="verse-content hidden" id="verse8">
+            <div class="animation-container" id="animation8"></div>
+            <div class="text-container">
+                <div class="text-section">
+                    <div class="verse-text">
+                        <h2>Verse 8</h2>
+                        <p>"Everything is real, not real; both real and not real; neither not real nor real: this is the teaching of the Buddha."</p>
+                    </div>
+                    <div class="toggle-controls">
+                        <button class="hide-text">Hide Text</button>
+                        <button class="show-text hidden">Show Text</button>
+                    </div>
+                    <div class="explanation">
+                        <div class="concept">
+                            <h3>Madhyamaka Concept</h3>
+                            <p>This verse employs the tetralemma (real, not real, both, neither) to express that phenomena cannot be definitively categorized, illustrating their emptiness and challenging fixed views.</p>
+                        </div>
+                        <div class="physics">
+                            <h3>Quantum Physics Parallel</h3>
+                            <p>Quantum contextuality, where measurement outcomes depend on context, mirrors the tetralemma. Reality can be seen as real or not real depending on perspective, paralleling Madhyamaka's insight.</p>
+                        </div>
+                        <div class="accessible">
+                            <h3>Accessible Explanation</h3>
+                            <p>It's like looking at a coin. From one side, it's heads; from the other, tails. But it's both heads and tails at once when considering both sides. Reality is complex, not fitting one simple view.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-panel">
+                    <h3>Quantum Contextuality</h3>
+                    <div class="controls">
+                        <button id="change-context">Change Measurement Context</button>
+                        <div class="context-label">Current Context: A</div>
+                    </div>
+                    <div class="panel-toggle">
+                        <button class="hide-panel">Hide Panel</button>
+                        <button class="show-panel hidden">Show Panel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="verse-content hidden" id="verse9">
+            <div class="animation-container" id="animation9"></div>
+            <div class="text-container">
+                <div class="text-section">
+                    <div class="verse-text">
+                        <h2>Verse 9</h2>
+                        <p>"Not known through others, peaceful, not fixed by fixations, without conceptual thought, without differentiation: these are the characteristics of suchness."</p>
+                    </div>
+                    <div class="toggle-controls">
+                        <button class="hide-text">Hide Text</button>
+                        <button class="show-text hidden">Show Text</button>
+                    </div>
+                    <div class="explanation">
+                        <div class="concept">
+                            <h3>Madhyamaka Concept</h3>
+                            <p>Suchness (tathata) is reality's true nature, beyond conceptualization and dualities. It's peaceful, not constrained by fixations, and without differentiation, reflecting emptiness.</p>
+                        </div>
+                        <div class="physics">
+                            <h3>Quantum Physics Parallel</h3>
+                            <p>The wave function before collapse contains all possibilities without definite properties, paralleling suchness as reality without conceptual thought or differentiation.</p>
+                        </div>
+                        <div class="accessible">
+                            <h3>Accessible Explanation</h3>
+                            <p>It's like looking at the sky on a clear day. It's just blue and vast; no need to think about what it is or isn't. That's suchness—reality without our labels, peaceful and simple.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-panel">
+                    <h3>Wave Function</h3>
+                    <div class="controls">
+                        <button id="toggle-differentiation">Toggle Differentiation</button>
+                        <div class="slider-container">
+                            <label for="wave-smoothness">Wave Smoothness:</label>
+                            <input type="range" id="wave-smoothness" min="1" max="100" value="80">
+                        </div>
+                    </div>
+                    <div class="panel-toggle">
+                        <button class="hide-panel">Hide Panel</button>
+                        <button class="show-panel hidden">Show Panel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="verse-content hidden" id="verse10">
+            <div class="animation-container" id="animation10"></div>
+            <div class="text-container">
+                <div class="text-section">
+                    <div class="verse-text">
+                        <h2>Verse 10</h2>
+                        <p>"Whatever arises dependent on something else is at that time neither that very thing nor other than it. Hence it is neither severed nor permanent."</p>
+                    </div>
+                    <div class="toggle-controls">
+                        <button class="hide-text">Hide Text</button>
+                        <button class="show-text hidden">Show Text</button>
+                    </div>
+                    <div class="explanation">
+                        <div class="concept">
+                            <h3>Madhyamaka Concept</h3>
+                            <p>This verse emphasizes dependent origination: phenomena arise from causes and conditions, neither identical to nor separate from them. Thus, they are neither permanent nor severed, reflecting emptiness.</p>
+                        </div>
+                        <div class="physics">
+                            <h3>Quantum Physics Parallel</h3>
+                            <p>Entanglement, where particles are correlated such that measuring one affects the other instantly, parallels dependent origination. They are neither identical nor separate, their states interdependent.</p>
+                        </div>
+                        <div class="accessible">
+                            <h3>Accessible Explanation</h3>
+                            <p>It's like two dancers moving in sync. They're not the same person, but their movements are connected. So, everything is linked, affecting and affected by others, neither fixed nor isolated.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-panel">
+                    <h3>Quantum Entanglement</h3>
+                    <div class="controls">
+                        <button id="measure-entangled">Measure Particle</button>
+                        <button id="reset-entanglement">Reset Entanglement</button>
+                    </div>
+                    <div class="panel-toggle">
+                        <button class="hide-panel">Hide Panel</button>
+                        <button class="show-panel hidden">Show Panel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="verse-content hidden" id="verse11">
+            <div class="animation-container" id="animation11"></div>
+            <div class="text-container">
+                <div class="text-section">
+                    <div class="verse-text">
+                        <h2>Verse 11</h2>
+                        <p>"That ambrosial teaching of the buddhas, those guardians of the world, is neither the same nor different, neither severed nor permanent."</p>
+                    </div>
+                    <div class="toggle-controls">
+                        <button class="hide-text">Hide Text</button>
+                        <button class="show-text hidden">Show Text</button>
+                    </div>
+                    <div class="explanation">
+                        <div class="concept">
+                            <h3>Madhyamaka Concept</h3>
+                            <p>The buddhas' teaching embodies the middle way, neither eternalism (permanent) nor annihilationism (severed), and neither identical to nor different from other teachings in certain contexts, reflecting emptiness.</p>
+                        </div>
+                        <div class="physics">
+                            <h3>Quantum Physics Parallel</h3>
+                            <p>Quantum non-locality, where entangled particles influence each other instantly, is neither local nor non-local in classical terms, paralleling the teaching's balanced nature.</p>
+                        </div>
+                        <div class="accessible">
+                            <h3>Accessible Explanation</h3>
+                            <p>It's like light, which can be both a wave and a particle. It doesn't fit one category; it's both. Similarly, the buddhas' teaching avoids extremes, embracing multiple perspectives, balanced and inclusive.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-panel">
+                    <h3>Quantum Non-Locality</h3>
+                    <div class="controls">
+                        <button id="toggle-locality">Toggle Locality</button>
+                        <div class="slider-container">
+                            <label for="distance">Distance:</label>
+                            <input type="range" id="distance" min="1" max="100" value="50">
+                        </div>
+                    </div>
+                    <div class="panel-toggle">
+                        <button class="hide-panel">Hide Panel</button>
+                        <button class="show-panel hidden">Show Panel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="verse-content hidden" id="verse12">
+            <div class="animation-container" id="animation12"></div>
+            <div class="text-container">
+                <div class="text-section">
+                    <div class="verse-text">
+                        <h2>Verse 12</h2>
+                        <p>"When perfect buddhas do not appear, and when their disciples have died out, the wisdom of the self-awakened ones will vividly arise without reliance."</p>
+                    </div>
+                    <div class="toggle-controls">
+                        <button class="hide-text">Hide Text</button>
+                        <button class="show-text hidden">Show Text</button>
+                    </div>
+                    <div class="explanation">
+                        <div class="concept">
+                            <h3>Madhyamaka Concept</h3>
+                            <p>This verse suggests that even without buddhas or disciples, individuals can achieve enlightenment as pratyekabuddhas through their own wisdom, highlighting the potential for self-awakening without reliance.</p>
+                        </div>
+                        <div class="physics">
+                            <h3>Quantum Physics Parallel</h3>
+                            <p>Quantum tunneling, where particles pass through barriers without sufficient energy, parallels wisdom arising spontaneously without external assistance, reflecting self-reliance.</p>
+                        </div>
+                        <div class="accessible">
+                            <h3>Accessible Explanation</h3>
+                            <p>It's like figuring out how to solve a puzzle on your own when no one's around to help. You might have a sudden insight, like particles passing through walls unexpectedly, showing wisdom can arise without teachers.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-panel">
+                    <h3>Quantum Tunneling</h3>
+                    <div class="controls">
+                        <button id="toggle-barrier">Toggle Barrier</button>
+                        <div class="slider-container">
+                            <label for="barrier-height">Barrier Height:</label>
+                            <input type="range" id="barrier-height" min="1" max="100" value="70">
+                        </div>
+                    </div>
+                    <div class="panel-toggle">
+                        <button class="hide-panel">Hide Panel</button>
+                        <button class="show-panel hidden">Show Panel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="config.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>

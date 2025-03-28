@@ -1,0 +1,322 @@
+:root {
+    --primary-color: #3a7bd5;
+    --secondary-color: #00d2ff;
+    --background-color: #121212;
+    --surface-color: #1e1e1e;
+    --text-color: #ffffff;
+    --accent-color: #ff7675;
+    --panel-background: rgba(30, 30, 30, 0.8);
+    --panel-border: rgba(255, 255, 255, 0.1);
+    --sidebar-width: 300px;
+    --controls-width: 300px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+#app {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    padding: 1rem;
+    background-color: var(--surface-color);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    font-size: 1.8rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+nav {
+    width: 100%;
+    max-width: 600px;
+}
+
+#verse-selector {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    background-color: var(--surface-color);
+    border: 1px solid var(--panel-border);
+    color: var(--text-color);
+    font-size: 1rem;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1.5rem;
+}
+
+main {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+#content-wrapper {
+    display: flex;
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+#animation-container {
+    flex: 1;
+    position: relative;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+    min-height: 60vh;
+}
+
+#text-panel-side {
+    position: relative;
+    width: var(--sidebar-width);
+    background-color: var(--panel-background);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid var(--panel-border);
+    z-index: 2;
+    transition: transform 0.3s ease-in-out;
+    overflow-y: auto;
+    max-height: 100%;
+}
+
+#verse-content {
+    padding: 1.5rem;
+}
+
+.verse-details {
+    margin: 0 auto;
+}
+
+#verse-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--secondary-color);
+}
+
+.verse-text, .concept, .quantum-parallel, .explanation {
+    margin-bottom: 1.5rem;
+}
+
+h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent-color);
+}
+
+#toggle-panel, #toggle-controls {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    background-color: var(--panel-background);
+    border: 1px solid var(--panel-border);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+}
+
+#toggle-panel {
+    top: 50%;
+    right: -16px;
+    transform: translateY(-50%);
+    border-radius: 0 4px 4px 0;
+}
+
+#toggle-controls {
+    top: -32px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 4px 4px 0 0;
+    border-bottom: none;
+}
+
+#toggle-panel svg, #toggle-controls svg {
+    transition: transform 0.3s ease;
+}
+
+#control-panel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--panel-background);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--panel-border);
+    z-index: 2;
+    height: 250px;
+    transform: translateY(100%);
+    transition: transform 0.3s ease-in-out;
+}
+
+#controls-content {
+    padding: 1.5rem;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.text-panel-hidden #text-panel-side {
+    transform: translateX(-100%);
+}
+
+.text-panel-hidden #toggle-panel svg {
+    transform: rotate(180deg);
+}
+
+.control-panel-visible #control-panel {
+    transform: translateY(0);
+}
+
+.control-panel-visible #toggle-controls svg {
+    transform: rotate(180deg);
+}
+
+.control-panel-visible #animation-container {
+    height: calc(100% - 250px);
+}
+
+.slider-container {
+    margin-bottom: 1.5rem;
+}
+
+.slider-container label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+input[type="range"] {
+    width: 100%;
+    background-color: var(--panel-background);
+}
+
+.checkbox-container {
+    margin-bottom: 1rem;
+}
+
+button.control-button {
+    padding: 0.5rem 1rem;
+    margin: 0.5rem 0;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border: none;
+    border-radius: 4px;
+    color: var(--text-color);
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s ease;
+}
+
+button.control-button:hover {
+    opacity: 0.9;
+}
+
+button.control-button:active {
+    transform: scale(0.98);
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    #content-wrapper {
+        flex-direction: column;
+    }
+    
+    #text-panel-side {
+        width: 100%;
+        height: 40vh;
+        min-height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--panel-border);
+    }
+    
+    #toggle-panel {
+        top: auto;
+        right: 50%;
+        bottom: -16px;
+        transform: translateX(50%) rotate(90deg);
+        border-radius: 0 0 4px 4px;
+    }
+    
+    .text-panel-hidden #text-panel-side {
+        transform: translateY(-100%);
+    }
+    
+    #animation-container {
+        height: 60vh;
+    }
+    
+    .control-panel-visible #animation-container {
+        height: calc(60vh - 250px);
+    }
+    
+    #verse-selector {
+        font-size: 0.9rem;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Canvas styling */
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Make sure Three.js canvas doesn't get clipped */
+#animation-container canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Style for electron labels in verse2 */
+.electron-label {
+    background-color: rgba(0,0,0,0.7);
+    color: white;
+    padding: 3px 6px;
+    border-radius: 4px;
+    pointer-events: none;
+    font-size: 12px;
+}
+
+/* State labels for verse7 */
+.state-label {
+    font-weight: bold;
+    padding: 3px 6px;
+    border-radius: 4px;
+    pointer-events: none;
+}

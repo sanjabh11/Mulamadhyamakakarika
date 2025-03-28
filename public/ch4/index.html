@@ -1,0 +1,55 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emptiness and Quantum Physics</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="overlay">
+        <div class="overlay-content">
+            <h1>Emptiness and Quantum Physics</h1>
+            <button id="startExperience">Begin Experience</button>
+        </div>
+    </div>
+    
+    <div id="scene-container"></div>
+    
+    <div id="ui-container">
+        <div class="content-panel" id="contentPanel">
+            <div id="verseContainer" class="content-section"></div>
+            <div id="madhyamakaContainer" class="content-section"></div>
+            <div id="quantumContainer" class="content-section"></div>
+            <div id="explanationContainer" class="content-section"></div>
+        </div>
+        
+        <div class="controls-panel">
+            <div class="navigation">
+                <button id="prevVerse">Previous</button>
+                <span id="verseCounter">1/9</span>
+                <button id="nextVerse">Next</button>
+            </div>
+            <div class="animation-controls">
+                <button id="restartAnimation">Restart</button>
+                <button id="toggleInteraction">Interact</button>
+                <button id="togglePanel">Hide Panel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import map for ES modules -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.156.1/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.156.1/examples/jsm/",
+            "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.2/index.js",
+            "d3": "https://cdn.jsdelivr.net/npm/d3@7/+esm"
+        }
+    }
+    </script>
+    <script src="config.js" type="module"></script>
+    <script src="animations.js" type="module"></script>
+    <script src="main.js" type="module"></script>
+</body>
+</html>

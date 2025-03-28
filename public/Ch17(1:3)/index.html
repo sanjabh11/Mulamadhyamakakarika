@@ -1,0 +1,55 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investigation of Actions and Fruits</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+            "d3": "https://cdn.jsdelivr.net/npm/d3@7/+esm",
+            "p5": "https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.esm.js"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div class="animation-container">
+        <div id="animation-canvas"></div>
+        
+        <div class="controls-container">
+            <div class="explanation-bar">
+                <div class="verse-text"></div>
+                <div class="madhyamaka-concept"></div>
+                <div class="quantum-parallel"></div>
+                <div class="accessible-explanation"></div>
+            </div>
+            
+            <div class="control-panel">
+                <div class="verse-navigation">
+                    <button id="prev-verse" disabled>Previous Verse</button>
+                    <span id="verse-indicator">Verse 1/11</span>
+                    <button id="next-verse">Next Verse</button>
+                </div>
+                <div class="interaction-controls"></div>
+                <button id="toggle-text" class="toggle-btn">Hide Text</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="animations/verse1.js"></script>
+    <script type="module" src="animations/verse2.js"></script>
+    <script type="module" src="animations/verse3.js"></script>
+    <script type="module" src="animations/verse4.js"></script>
+    <script type="module" src="animations/verse5.js"></script>
+    <script type="module" src="animations/verse6.js"></script>
+    <script type="module" src="animations/verse7.js"></script>
+    <script type="module" src="animations/verse8.js"></script>
+    <script type="module" src="animations/verse9.js"></script>
+    <script type="module" src="animations/verse10.js"></script>
+    <script type="module" src="animations/verse11.js"></script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>

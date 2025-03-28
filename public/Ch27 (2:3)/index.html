@@ -1,0 +1,60 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Madhyamaka Quantum Visualizations</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/",
+            "d3": "https://cdn.jsdelivr.net/npm/d3@7/+esm",
+            "p5": "https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div id="animation-container"></div>
+    
+    <div id="info-panel">
+        <div id="verse-container">
+            <h3 id="verse-number"></h3>
+            <p id="verse-text"></p>
+        </div>
+        <div id="explanation-toggle">
+            <button id="toggle-button">Show Explanation</button>
+        </div>
+        <div id="explanation-container" class="hidden">
+            <div class="tab-container">
+                <button class="tab-button active" data-tab="concept">Madhyamaka Concept</button>
+                <button class="tab-button" data-tab="quantum">Quantum Physics</button>
+                <button class="tab-button" data-tab="simple">Simple Explanation</button>
+            </div>
+            <div id="tab-content">
+                <div class="tab-panel active" id="concept-panel">
+                    <p id="concept-text"></p>
+                </div>
+                <div class="tab-panel" id="quantum-panel">
+                    <p id="quantum-text"></p>
+                </div>
+                <div class="tab-panel" id="simple-panel">
+                    <p id="simple-text"></p>
+                </div>
+            </div>
+        </div>
+        <div id="navigation">
+            <button id="prev-button">Previous</button>
+            <button id="next-button">Next</button>
+        </div>
+        <div id="interaction-panel">
+            <button id="interact-button">Interact with Animation</button>
+            <div id="interaction-controls"></div>
+        </div>
+    </div>
+
+    <script type="module" src="config.js"></script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>

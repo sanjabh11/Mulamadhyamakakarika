@@ -1,0 +1,66 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Madhyamaka & Quantum Physics</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.155.0/examples/jsm/",
+            "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.2/index.js"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div id="container">
+        <div id="sceneContainer"></div>
+        
+        <div id="infoPanel">
+            <div class="header">
+                <h1>Chapter 20 - Investigation of Combination (Part 2/2)</h1>
+                <button id="toggleInfo" class="toggle-btn">Hide Info</button>
+            </div>
+            
+            <div id="infoPanelContent">
+                <div class="verse-info">
+                    <h2>Verse <span id="verseNumber">13</span></h2>
+                    <p id="verseText"></p>
+                    
+                    <div class="concept-container">
+                        <div class="concept">
+                            <h3>Madhyamaka Concept</h3>
+                            <p id="madhyamakaConcept"></p>
+                        </div>
+                        
+                        <div class="concept">
+                            <h3>Quantum Physics Parallel</h3>
+                            <p id="quantumPhysics"></p>
+                        </div>
+                        
+                        <div class="concept">
+                            <h3>Accessible Explanation</h3>
+                            <p id="accessibleExplanation"></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <h3>Interaction Controls</h3>
+                    <div id="controlPanel"></div>
+                </div>
+                
+                <div class="navigation">
+                    <button id="prevVerse" class="nav-btn">Previous Verse</button>
+                    <button id="nextVerse" class="nav-btn">Next Verse</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="config.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>

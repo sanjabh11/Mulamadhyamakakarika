@@ -1,0 +1,327 @@
+:root {
+    --primary-color: #3a0ca3;
+    --secondary-color: #f72585;
+    --background-color: #10002b;
+    --text-color: #f8f9fa;
+    --panel-bg: rgba(16, 0, 43, 0.85);
+    --panel-border: #7209b7;
+    --accent-color: #4cc9f0;
+    --button-hover: #f72585;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    overflow: hidden;
+}
+
+#app {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#animation-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.panel {
+    position: absolute;
+    background-color: var(--panel-bg);
+    border: 2px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 15px;
+    backdrop-filter: blur(10px);
+    transition: all 0.5s ease;
+    z-index: 10;
+    overflow-y: auto;
+    max-height: 80vh;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+#controls-panel {
+    top: 20px;
+    right: 20px;
+    width: 300px;
+}
+
+#text-panel {
+    bottom: 20px;
+    left: 20px;
+    width: calc(100% - 40px);
+    max-width: 800px;
+}
+
+.hidden {
+    display: none;
+}
+
+#show-panels {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+    padding: 10px 15px;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+#show-panels:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-2px);
+}
+
+button {
+    padding: 8px 15px;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 5px;
+    margin: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+    background-color: var(--button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.fancy-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-weight: bold;
+}
+
+.button-icon {
+    font-size: 1.2em;
+}
+
+.control-group {
+    margin: 15px 0;
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 15px 0;
+}
+
+h2, h3 {
+    color: var(--secondary-color);
+    margin-bottom: 15px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.text-content, .controls-content {
+    margin-top: 15px;
+}
+
+#verse-text {
+    font-size: 1.2em;
+    font-style: italic;
+    margin-bottom: 20px;
+    border-left: 3px solid var(--secondary-color);
+    padding-left: 15px;
+    line-height: 1.6;
+}
+
+#madhyamaka-concept, #quantum-parallel, #accessible-explanation {
+    margin-bottom: 20px;
+    line-height: 1.5;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+#madhyamaka-concept::before, #quantum-parallel::before, #accessible-explanation::before {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+#madhyamaka-concept::before {
+    content: "Madhyamaka Concept:";
+    color: #4cc9f0;
+}
+
+#quantum-parallel::before {
+    content: "Quantum Physics Parallel:";
+    color: #4361ee;
+}
+
+#accessible-explanation::before {
+    content: "Accessible Explanation:";
+    color: #7209b7;
+}
+
+.navigation-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.back-link, .forward-link {
+    color: var(--accent-color);
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.back-link:hover, .forward-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Slider styling */
+.slider-control {
+    width: 100%;
+    margin: 15px 0;
+}
+
+.slider-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+
+input[type="range"] {
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(to right, var(--accent-color), var(--secondary-color));
+    outline: none;
+    -webkit-appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--text-color);
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Checkbox styling */
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 1em;
+    user-select: none;
+}
+
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.checkbox-container input:checked ~ .checkmark {
+    background-color: var(--accent-color);
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.checkbox-container .checkmark:after {
+    left: 7px;
+    top: 3px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    #controls-panel {
+        width: calc(100% - 40px);
+        top: 10px;
+        right: 10px;
+        max-height: 50vh;
+    }
+    
+    #text-panel {
+        bottom: 10px;
+        left: 10px;
+        max-height: 50vh;
+    }
+    
+    .fancy-button {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+}
+
+/* Animation transitions */
+.panel {
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                opacity 0.5s ease;
+}
+
+.panel.hidden {
+    transform: translateY(20px);
+    opacity: 0;
+}

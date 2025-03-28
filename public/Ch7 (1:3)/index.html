@@ -1,0 +1,86 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Madhyamaka & Quantum Physics</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.155.0/examples/jsm/",
+        "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.2/index.js",
+        "d3": "https://cdn.jsdelivr.net/npm/d3@7/+esm"
+      }
+    }
+  </script>
+  <script type="module" src="main.js"></script>
+</head>
+<body>
+  <div id="container">
+    <canvas id="animation-canvas"></canvas>
+    
+    <div id="controls-panel">
+      <button id="toggle-content" aria-label="Toggle Content">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <path fill="currentColor" d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
+        </svg>
+      </button>
+      <button id="fullscreen-btn" aria-label="Fullscreen">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <path fill="currentColor" d="M5,5H10V7H7V10H5V5M19,5V10H17V7H14V5H19M5,19V14H7V17H10V19H5M19,19H14V17H17V14H19V19Z" />
+        </svg>
+      </button>
+      <button id="animation-control" aria-label="Play/Pause">
+        <svg viewBox="0 0 24 24" width="24" height="24" class="play-icon">
+          <path fill="currentColor" d="M8,5.14V19.14L19,12.14L8,5.14Z" />
+        </svg>
+        <svg viewBox="0 0 24 24" width="24" height="24" class="pause-icon" style="display:none">
+          <path fill="currentColor" d="M14,19H18V5H14M6,19H10V5H6V19Z" />
+        </svg>
+      </button>
+    </div>
+    
+    <div id="content" class="side-panel">
+      <div id="chapter-title">
+        <h1>Chapter 7 - Investigation of Birth, Abiding and Perishing</h1>
+      </div>
+      
+      <div id="verse-container">
+        <div id="verse-number"></div>
+        <div id="verse-text"></div>
+        
+        <div id="concept-container">
+          <div class="concept-box">
+            <h3>Madhyamaka Concept</h3>
+            <p id="madhyamaka-concept"></p>
+          </div>
+          
+          <div class="concept-box">
+            <h3>Quantum Physics Parallel</h3>
+            <p id="quantum-parallel"></p>
+          </div>
+          
+          <div class="concept-box">
+            <h3>Accessible Explanation</h3>
+            <p id="accessible-explanation"></p>
+          </div>
+        </div>
+      </div>
+      
+      <div id="navigation">
+        <button id="prev-btn">Previous Verse</button>
+        <div id="verse-indicator">Verse 1 of 12</div>
+        <button id="next-btn">Next Verse</button>
+      </div>
+    </div>
+    
+    <div id="scrollable-guide">
+      <div class="scroll-indicator">
+        <div class="scroll-arrow"></div>
+        <div class="scroll-text">Scroll to explore</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

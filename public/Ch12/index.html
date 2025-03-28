@@ -1,0 +1,71 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investigation of Anguish - Interactive 3D Visualization</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/",
+            "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.2/index.js"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div id="loading">
+        <div class="spinner"></div>
+        <p>Loading Visualization...</p>
+    </div>
+
+    <div id="container">
+        <canvas id="canvas"></canvas>
+        
+        <div id="overlay">
+            <div id="title">
+                <h1>Chapter 12: Investigation of Anguish</h1>
+                <p>Interactive 3D Visualization of Madhyamaka Concepts & Quantum Physics</p>
+            </div>
+            
+            <div id="verse-container">
+                <div id="verse-content"></div>
+            </div>
+            
+            <div id="controls">
+                <button id="prev-btn" disabled>Previous Verse</button>
+                <span id="verse-number">Verse 1/10</span>
+                <button id="next-btn">Next Verse</button>
+                <button id="toggle-info" class="toggle-btn">Hide Info</button>
+                <button id="toggle-controls" class="toggle-btn">Hide Controls</button>
+                <button id="take-screenshot" class="toggle-btn"> Screenshot</button>
+            </div>
+            
+            <div id="interaction-panel">
+                <h3>Interaction Controls</h3>
+                <div id="specific-controls"></div>
+            </div>
+            
+            <div id="explanation">
+                <div class="explanation-section">
+                    <h3>Madhyamaka Concept</h3>
+                    <p id="madhyamaka-text"></p>
+                </div>
+                <div class="explanation-section">
+                    <h3>Quantum Physics Parallel</h3>
+                    <p id="quantum-text"></p>
+                </div>
+                <div class="explanation-section">
+                    <h3>Accessible Explanation</h3>
+                    <p id="accessible-text"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="config.js"></script>
+    <script type="module" src="animations.js"></script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>

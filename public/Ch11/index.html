@@ -1,0 +1,46 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investigation of Extremes of Before and After</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.152.2/examples/jsm/",
+                "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.2/index.js"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="scene-container"></div>
+
+    <div id="ui-container">
+        <div id="verse-content">
+            <h1>Chapter 11 - Investigation of Extremes of Before and After</h1>
+            <div id="verse-display"></div>
+        </div>
+
+        <div id="control-panel">
+            <h3>Controls</h3>
+            <div id="scene-controls"></div>
+            <button id="prev-verse" disabled>Previous Verse</button>
+            <button id="next-verse">Next Verse</button>
+            <a href="/" class="home-link">Back to Home</a>
+        </div>
+
+        <div id="explanation-bar">
+            <div id="explanation-header">
+                <h3>Explanation</h3>
+                <button id="toggle-explanation">Hide</button>
+            </div>
+            <div id="explanation-content"></div>
+        </div>
+    </div>
+
+    <script type="module" src="config.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>

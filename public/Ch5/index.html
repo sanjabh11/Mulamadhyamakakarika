@@ -1,0 +1,55 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mulamadhyamakakarika: Ancient Wisdom Meets Quantum Reality</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.151.3/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.151.3/examples/jsm/",
+                "p5": "https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/p5.js",
+                "d3": "https://cdn.jsdelivr.net/npm/d3@7.8.4/dist/d3.min.js"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="loading">
+        <div class="spinner"></div>
+        <p>Loading Ancient Wisdom...</p>
+    </div>
+
+    <div id="container">
+        <div id="canvas-container"></div>
+        <div id="ui-container">
+            <div id="content">
+                <h1>Chapter 5: Ancient Wisdom Meets Quantum Reality</h1>
+                <div id="verse-container"></div>
+            </div>
+            <div id="controls"></div>
+            <div id="navigation">
+                <button id="prev-btn" disabled>Previous</button>
+                <div id="progress-indicator"></div>
+                <button id="next-btn">Next</button>
+            </div>
+        </div>
+        <div id="intro-overlay" class="active">
+            <div class="intro-content">
+                <h1>Mulamadhyamakakarika</h1>
+                <h2>Chapter 5: Ancient Wisdom Meets Quantum Reality</h2>
+                <p>Click the globe to begin your journey through Nagarjuna's philosophy and quantum physics.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="sound-toggle">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+            <path id="sound-icon" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+        </svg>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>

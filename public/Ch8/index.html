@@ -1,0 +1,54 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 8 - Investigation of Act and Actor Verse Madhyamaka</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+                "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.4/index.js"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="scene-container"></div>
+    
+    <div id="content-panel">
+        <div id="verse-content">
+            <h1>Chapter 8 - Investigation of Act and Actor Verse Madhyamaka</h1>
+            <div id="verse-text"></div>
+        </div>
+        
+        <div id="explanation-panel">
+            <div class="explanation-header">
+                <h3>Explanation</h3>
+                <button id="toggle-explanation">Hide</button>
+            </div>
+            <div id="explanation-content"></div>
+        </div>
+        
+        <div id="control-panel">
+            <div class="control-header">
+                <h3>Interactive Controls</h3>
+                <button id="toggle-controls">Hide</button>
+            </div>
+            <div id="controls-content"></div>
+            <div id="verse-navigation">
+                <button id="prev-verse" disabled>Previous</button>
+                <span id="verse-indicator">Verse 1/13</span>
+                <button id="next-verse">Next</button>
+            </div>
+            <div class="back-link">
+                <a href="/chapter-8">← Back to Chapter Overview</a>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="config.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>

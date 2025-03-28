@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nagarjuna's Motion & Quantum Physics</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.151.3/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.151.3/examples/jsm/",
+            "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.1/index.js"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Chapter 2: Examination of Motion</h1>
+            <p>Explore the parallels between Madhyamaka Buddhist philosophy and quantum mechanics</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="chapter-index">
+                <h2>Chapter 2</h2>
+                <div class="verse-list">
+                    <div class="verse-item" data-verse="1">
+                        <span>Verse 2.1</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="2">
+                        <span>Verse 2.2</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="3">
+                        <span>Verse 2.3</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="4">
+                        <span>Verse 2.4</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="5">
+                        <span>Verse 2.5</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="6">
+                        <span>Verse 2.6</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="7">
+                        <span>Verse 2.7</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="8">
+                        <span>Verse 2.8</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="9">
+                        <span>Verse 2.9</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="10">
+                        <span>Verse 2.10</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="11">
+                        <span>Verse 2.11</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="12">
+                        <span>Verse 2.12</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="13">
+                        <span>Verse 2.13</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="14">
+                        <span>Verse 2.14</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="15">
+                        <span>Verse 2.15</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="16">
+                        <span>Verse 2.16</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="17">
+                        <span>Verse 2.17</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="18">
+                        <span>Verse 2.18</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="19">
+                        <span>Verse 2.19</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="20">
+                        <span>Verse 2.20</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="21">
+                        <span>Verse 2.21</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="22">
+                        <span>Verse 2.22</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="23">
+                        <span>Verse 2.23</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="24">
+                        <span>Verse 2.24</span>
+                        <span class="status available">Available</span>
+                    </div>
+                    <div class="verse-item" data-verse="25">
+                        <span>Verse 2.25</span>
+                        <span class="status available">Available</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visualization-container">
+                <div id="animation-container"></div>
+                <div class="controls">
+                    <div class="control-panel">
+                        <div class="verse-selector">
+                            <label for="verse-select">Select Verse:</label>
+                            <select id="verse-select"></select>
+                        </div>
+                        <div class="animation-controls">
+                            <button id="reset-btn">Reset</button>
+                            <button id="pause-btn">Pause</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-panel">
+                <div class="verse-text">
+                    <h3>Verse <span id="verse-number">2.1</span></h3>
+                    <p id="verse-content"></p>
+                </div>
+                
+                <div class="analysis">
+                    <div class="madhyamaka">
+                        <h4>Madhyamaka Concept</h4>
+                        <p id="madhyamaka-concept"></p>
+                    </div>
+                    
+                    <div class="quantum">
+                        <h4>Quantum Physics Parallel</h4>
+                        <p id="quantum-parallel"></p>
+                    </div>
+                    
+                    <div class="explanation">
+                        <h4>Analysis</h4>
+                        <p id="analysis-text"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Exploring the intersection of ancient Eastern philosophy and modern quantum physics</p>
+        </footer>
+    </div>
+    
+    <script type="module" src="config.js"></script>
+    <script type="module" src="app.js"></script>
+    <script type="module">
+        // Add click handlers for verse items
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up verse item click handlers
+            const verseItems = document.querySelectorAll('.verse-item');
+            verseItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const verseId = parseInt(this.getAttribute('data-verse'));
+                    // Get the app instance
+                    if (window.quantumApp) {
+                        window.quantumApp.loadVerse(verseId);
+                        // Update URL hash without causing page refresh
+                        window.history.pushState(null, null, `#verse-${verseId}`);
+                    }
+                });
+            });
+
+            // Check for hash in URL to load specific verse
+            if (window.location.hash) {
+                const hash = window.location.hash.substring(1); // Remove the '#' symbol
+                const match = hash.match(/verse-(\d+)/);
+                if (match && match[1]) {
+                    const verseId = parseInt(match[1]);
+                    // Wait a bit for the app to initialize
+                    setTimeout(() => {
+                        if (window.quantumApp) {
+                            window.quantumApp.loadVerse(verseId);
+                        }
+                    }, 300);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

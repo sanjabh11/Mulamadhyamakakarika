@@ -1,0 +1,100 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Madhyamaka Chapter 7</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js",
+            "OrbitControls": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/controls/OrbitControls.js",
+            "lil-gui": "https://cdn.jsdelivr.net/npm/lil-gui@0.19.1/dist/lil-gui.esm.js",
+            "p5": "https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js",
+            "d3": "https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div id="animation-container"></div>
+    
+    <div id="content-container">
+        <h1>Chapter 7 - Investigation of Birth, Abiding and Perishing</h1>
+        
+        <div id="verse-container">
+            <div class="verse-navigation">
+                <button id="prev-btn">Previous Verse</button>
+                <span id="verse-number">Verse 25</span>
+                <button id="next-btn">Next Verse</button>
+            </div>
+            
+            <div class="verse-content">
+                <div class="verse-text" id="verse-text"></div>
+                
+                <div class="concept-container">
+                    <div class="concept">
+                        <h3>Madhyamaka Concept</h3>
+                        <p id="madhyamaka-concept"></p>
+                    </div>
+                    
+                    <div class="concept">
+                        <h3>Quantum Physics Parallel</h3>
+                        <p id="quantum-parallel"></p>
+                    </div>
+                    
+                    <div class="concept">
+                        <h3>Accessible Explanation</h3>
+                        <p id="accessible-explanation"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="fixed-navigation">
+        <button id="fixed-prev-btn">← Previous</button>
+        <span id="fixed-verse-number">Verse 25</span>
+        <button id="fixed-next-btn">Next →</button>
+    </div>
+    
+    <div id="controls-panel">
+        <div class="control-group">
+            <h3>Animation Controls</h3>
+            <div class="slider-container">
+                <label for="speed-slider">Speed</label>
+                <input type="range" id="speed-slider" min="0.1" max="2" step="0.1" value="0.5">
+            </div>
+            <div class="slider-container">
+                <label for="intensity-slider">Intensity</label>
+                <input type="range" id="intensity-slider" min="0.1" max="2" step="0.1" value="1.0">
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <h3>Colors</h3>
+            <div class="color-picker">
+                <label for="primary-color">Primary</label>
+                <input type="color" id="primary-color" value="#6fcbf7">
+            </div>
+            <div class="color-picker">
+                <label for="secondary-color">Secondary</label>
+                <input type="color" id="secondary-color" value="#ff00ff">
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <h3>Camera</h3>
+            <div class="buttons-container">
+                <button class="toggle-button" id="reset-camera">Reset View</button>
+                <button class="toggle-button" id="auto-rotate">Auto Rotate</button>
+            </div>
+        </div>
+    </div>
+    
+    <button id="toggle-controls">≡</button>
+    <button id="toggle-info">↑</button>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>

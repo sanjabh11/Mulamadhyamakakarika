@@ -1,0 +1,47 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 14 - Investigation of Connections</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.150.1/examples/jsm/",
+            "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.11.5/index.js",
+            "p5": "https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/p5.js",
+            "d3": "https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div class="loading-screen">
+        <div class="loading-spinner"></div>
+    </div>
+    
+    <main>
+        <div id="text-side">
+            <div id="verse-container"></div>
+            <div id="explanation"></div>
+            <div id="verse-navigation">
+                <button id="prev-verse" disabled>Previous Verse</button>
+                <span id="verse-indicator">Verse 1/8</span>
+                <button id="next-verse">Next Verse</button>
+            </div>
+        </div>
+        
+        <div id="scene-container"></div>
+        
+        <div id="controls-panel">
+            <div id="interaction-controls"></div>
+            <button id="toggle-panel">Hide Controls</button>
+        </div>
+    </main>
+    
+    <script type="module" src="config.js"></script>
+    <script type="module" src="animations.js"></script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>

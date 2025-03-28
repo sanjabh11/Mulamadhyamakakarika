@@ -1,0 +1,219 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+:root {
+    --primary-color: #3a1c71;
+    --secondary-color: #d76d77;
+    --tertiary-color: #ffaf7b;
+    --text-color: #333;
+    --background-color: #f5f5f5;
+    --panel-background: rgba(255, 255, 255, 0.85);
+    --panel-border: rgba(255, 255, 255, 0.2);
+    --button-hover: rgba(255, 255, 255, 0.1);
+}
+
+body {
+    overflow: hidden;
+    color: var(--text-color);
+    background: linear-gradient(135deg, #87CEEB, #1E90FF, #00BFFF);
+}
+
+#container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#animation-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+#controls-panel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: 60vh;
+    overflow-y: auto;
+    background-color: var(--panel-background);
+    backdrop-filter: blur(10px);
+    z-index: 10;
+    transition: transform 0.3s ease;
+    border-top: 1px solid var(--panel-border);
+    padding: 15px;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+}
+
+#controls-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.verse-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#verse-indicator {
+    font-weight: bold;
+    text-align: center;
+    flex: 1;
+}
+
+.control-group {
+    margin-bottom: 15px;
+}
+
+.control-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.control-button, .nav-button {
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-color);
+}
+
+.control-button:hover, .nav-button:hover {
+    background: var(--button-hover);
+    transform: translateY(-2px);
+}
+
+.control-slider {
+    width: 100%;
+    margin: 5px 0;
+}
+
+#explanation-panel {
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 10px;
+}
+
+.tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+
+.tab-button {
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px 5px 0 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-color);
+    white-space: nowrap;
+}
+
+.tab-button.active {
+    background: rgba(255, 255, 255, 0.7);
+    font-weight: bold;
+}
+
+.tab-panel {
+    display: none;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 0 5px 5px 5px;
+    line-height: 1.5;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+#hide-controls, #show-controls {
+    position: absolute;
+    top: -40px;
+    right: 20px;
+    background: var(--panel-background);
+    z-index: 11;
+    border-radius: 5px 5px 0 0;
+}
+
+/* Show controls button when panel is hidden */
+.controls-hidden #show-controls {
+    display: block !important;
+    bottom: 0;
+    top: auto;
+    border-radius: 5px 5px 0 0;
+}
+
+.controls-hidden #controls-content {
+    display: none;
+}
+
+/* Animation Overlay Text */
+.overlay-text {
+    position: absolute;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    font-size: 1.5rem;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    opacity: 0.8;
+}
+
+/* Navigation Links */
+.navigation-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.nav-link {
+    display: inline-block;
+    padding: 8px 15px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    background: var(--button-hover);
+    transform: translateY(-2px);
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    #controls-panel {
+        max-height: 75vh;
+    }
+    
+    .tabs {
+        flex-wrap: wrap;
+    }
+    
+    .control-row {
+        justify-content: center;
+    }
+}

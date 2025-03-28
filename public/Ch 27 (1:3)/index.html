@@ -1,0 +1,64 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Madhyamaka Quantum Parallels</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+            "lil-gui": "https://cdn.jsdelivr.net/npm/lil-gui@0.19.0/dist/lil-gui.esm.js"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    
+    <div id="content-panel">
+        <div class="panel-header">
+            <h1>Chapter 27 - Investigation of Views</h1>
+            <div class="controls">
+                <button id="prev-verse" disabled>Previous</button>
+                <span id="verse-counter">Verse 1/10</span>
+                <button id="next-verse">Next</button>
+                <button id="toggle-panel" class="toggle-btn">Hide Panel</button>
+            </div>
+        </div>
+        
+        <div class="panel-content">
+            <div class="verse-content">
+                <h2 id="verse-number">Verse 1</h2>
+                <p id="verse-text" class="text-section"></p>
+                
+                <div class="concept-section">
+                    <h3>Madhyamaka Concept</h3>
+                    <p id="madhyamaka-concept"></p>
+                </div>
+                
+                <div class="concept-section">
+                    <h3>Quantum Physics Parallel</h3>
+                    <p id="quantum-parallel"></p>
+                </div>
+                
+                <div class="concept-section">
+                    <h3>Accessible Explanation</h3>
+                    <p id="accessible-explanation"></p>
+                </div>
+                
+                <div class="interaction-controls">
+                    <h3>Interactive Controls</h3>
+                    <div id="animation-buttons" class="button-container">
+                        <!-- Buttons will be generated dynamically based on animation type -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="config.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>

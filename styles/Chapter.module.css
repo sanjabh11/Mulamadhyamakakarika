@@ -1,0 +1,238 @@
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.verseCount {
+  font-size: 1.2rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.summary {
+  background-color: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.summaryContent {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.summaryContent h2 {
+  color: #1e293b;
+  font-size: 1.8rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.summaryContent p {
+  color: #475569;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.chapterAction {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0 1rem;
+}
+
+.chapterActions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin: 2rem 0 1rem;
+}
+
+.visualizeButton {
+  display: inline-block;
+  padding: 0.85rem 1.75rem;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.visualizeButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+}
+
+.verseList {
+  margin-top: 2rem;
+}
+
+.verseList h2 {
+  text-align: center;
+  color: #1e293b;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.verses {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.verseCard {
+  display: flex;
+  text-decoration: none;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+  height: 100%;
+}
+
+.verseCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.verseNumber {
+  width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.verseContent {
+  flex: 1;
+  padding: 1.25rem;
+}
+
+.verseContent h3 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  color: #1e293b;
+  font-size: 1.2rem;
+}
+
+.verseSummaries p {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.expandableContent {
+  margin-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 0.75rem;
+}
+
+.expandableContent details {
+  margin-bottom: 0.75rem;
+}
+
+.expandableContent summary {
+  cursor: pointer;
+  color: #3b82f6;
+  font-weight: 500;
+  font-size: 0.9rem;
+  padding: 0.25rem 0;
+}
+
+.expandableContent summary:hover {
+  color: #2563eb;
+}
+
+.expandableContent p {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background-color: #f8fafc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.navigation {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  margin-bottom: 2rem;
+}
+
+.navLink {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: #1e293b;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.navLink:hover {
+  background-color: #0f172a;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: 2.25rem;
+  }
+
+  .verses {
+    grid-template-columns: 1fr;
+  }
+
+  .summary {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .verseCard {
+    flex-direction: column;
+  }
+
+  .verseNumber {
+    width: 100%;
+    padding: 0.5rem;
+  }
+} 

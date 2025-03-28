@@ -1,0 +1,71 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investigation of Fire and Firewood</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.151.3/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.151.3/examples/jsm/",
+                "p5": "https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/p5.js"
+            }
+        }
+    </script>
+    <!-- Load p5 globally as a traditional script to ensure its constructor is available -->
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/p5.min.js"></script>
+    <script src="config.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+</head>
+<body>
+    <div id="container">
+        <div id="animation-container"></div>
+        
+        <div id="controls-panel">
+            <button id="hide-controls" class="control-button">Hide Controls</button>
+            <button id="show-controls" class="control-button" style="display: none;">Show Controls</button>
+            
+            <div id="controls-content">
+                <div class="verse-navigation">
+                    <button id="prev-verse" class="nav-button">◀ Previous</button>
+                    <span id="verse-indicator">Verse 9</span>
+                    <button id="next-verse" class="nav-button">Next ▶</button>
+                </div>
+
+                <div class="control-group">
+                    <h3>Animation Controls</h3>
+                    <div class="control-row">
+                        <button id="play-pause" class="control-button">Pause</button>
+                        <button id="reset" class="control-button">Reset</button>
+                    </div>
+                    <div id="animation-specific-controls" class="control-row">
+                        <!-- Dynamic controls will be inserted here -->
+                    </div>
+                </div>
+
+                <div id="explanation-panel">
+                    <h3>Explanation</h3>
+                    <div class="tabs">
+                        <button class="tab-button active" data-tab="verse">Verse</button>
+                        <button class="tab-button" data-tab="madhyamaka">Madhyamaka</button>
+                        <button class="tab-button" data-tab="quantum">Quantum Physics</button>
+                        <button class="tab-button" data-tab="accessible">Accessible</button>
+                    </div>
+                    <div id="tab-content">
+                        <div id="verse-content" class="tab-panel active"></div>
+                        <div id="madhyamaka-content" class="tab-panel"></div>
+                        <div id="quantum-content" class="tab-panel"></div>
+                        <div id="accessible-content" class="tab-panel"></div>
+                    </div>
+                </div>
+                
+                <div class="navigation-links">
+                    <a href="/chapter-10" class="nav-link">Back to Chapter Overview</a>
+                    <a href="/Ch10 (1:2)/index.html" class="nav-link">Back to Part 1</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

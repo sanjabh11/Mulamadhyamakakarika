@@ -1,0 +1,260 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #3a506b;
+    --secondary-color: #5bc0be;
+    --background-color: #0b132b;
+    --text-color: #f0f0f0;
+    --accent-color: #6fffe9;
+    --panel-bg: rgba(58, 80, 107, 0.85);
+    --control-bg: rgba(11, 19, 43, 0.9);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+header {
+    text-align: center;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--secondary-color);
+}
+
+header h1 {
+    color: var(--accent-color);
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+.visualization-container {
+    flex: 1;
+    min-height: 50vh;
+    position: relative;
+    background-color: var(--panel-bg);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#animation-container {
+    width: 100%;
+    height: 100%;
+    min-height: 40vh;
+}
+
+.controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+}
+
+.control-panel {
+    background-color: var(--control-bg);
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.verse-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.verse-selector label {
+    font-weight: bold;
+}
+
+.verse-selector select {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    padding: 0.5rem;
+    border: 1px solid var(--secondary-color);
+    border-radius: 4px;
+    min-width: 100px;
+}
+
+.animation-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.animation-controls button {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.animation-controls button:hover {
+    background-color: var(--secondary-color);
+}
+
+.info-panel {
+    padding: 1.5rem;
+    background-color: var(--panel-bg);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.verse-text {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--secondary-color);
+}
+
+.verse-text h3 {
+    color: var(--accent-color);
+    margin-bottom: 0.5rem;
+}
+
+.analysis {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+.madhyamaka, .quantum, .explanation {
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+.madhyamaka h4, .quantum h4, .explanation h4 {
+    color: var(--accent-color);
+    margin-bottom: 0.5rem;
+}
+
+footer {
+    text-align: center;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--secondary-color);
+    margin-top: 2rem;
+}
+
+.chapter-index {
+    background-color: var(--panel-bg);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.chapter-index h2 {
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+}
+
+.verse-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.verse-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.verse-item:hover {
+    background-color: rgba(91, 192, 190, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.status {
+    font-size: 0.9rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.status.available {
+    background-color: rgba(111, 255, 233, 0.2);
+    color: var(--accent-color);
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+    header h1 {
+        font-size: 2.5rem;
+    }
+    
+    .main-content {
+        flex-direction: row;
+    }
+    
+    .visualization-container {
+        flex: 3;
+    }
+    
+    .info-panel {
+        flex: 2;
+    }
+    
+    .analysis {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .explanation {
+        grid-column: span 2;
+    }
+    
+    .verse-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .analysis {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .explanation {
+        grid-column: span 1;
+    }
+    
+    .verse-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
