@@ -1,0 +1,58 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 25 - Investigation of Nirvana</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+            "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.2/index.js",
+            "p5": "https://cdn.jsdelivr.net/npm/p5@1.8.0/lib/p5.js"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div id="container">
+        <canvas id="canvas"></canvas>
+        
+        <!-- Sidebar for explanations -->
+        <div id="sidebar">
+            <h2>Chapter 25 - Investigation of Nirvana</h2>
+            <h3 id="verse-title">Verse 1</h3>
+            <p id="verse-text">"If everything were empty, there would be no arising and perishing. From the letting go of and ceasing of what could one assert nirvana(-ing)?"</p>
+            
+            <div id="explanation">
+                <h4>Madhyamaka Concept:</h4>
+                <p>This verse introduces a paradox: if all phenomena are empty—lacking inherent existence—there is no ultimate arising or perishing. Thus, nirvana cannot be the cessation of something inherently real. Instead, nirvana is the realization of emptiness itself.</p>
+                
+                <h4>Quantum Physics Parallel:</h4>
+                <p>In quantum field theory, particles are not standalone entities but temporary excitations of underlying fields, dependent on the field's state. This parallels the Madhyamaka idea that phenomena lack inherent existence and arise dependently.</p>
+                
+                <h4>Accessible Explanation:</h4>
+                <p>Think of a pond—throw a stone, and ripples form. The ripples (particles) aren't separate from the water (field); they're just its movement. Similarly, suffering isn't a solid thing to remove; it's like a ripple. Nirvana is seeing this truth, not erasing something real.</p>
+            </div>
+            
+            <div class="nav-dots"></div>
+        </div>
+        
+        <button id="toggle-sidebar">
+            <span class="toggle-icon">≡</span>
+        </button>
+        
+        <div id="verse-container">
+            <div id="controls">
+                <button id="prev-verse" disabled>Previous Verse</button>
+                <button id="next-verse">Next Verse</button>
+            </div>
+            <div id="verse-specific-controls"></div>
+        </div>
+    </div>
+    
+    <script type="module" src="config.js"></script>
+    <script type="module" src="script.js"></script>
+</body>
+</html>

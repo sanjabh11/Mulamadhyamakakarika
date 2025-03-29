@@ -232,8 +232,6 @@ class QuantumMadhyamakaApp {
                     p2 *= norm.z;
                     p3 *= norm.w;
 
-                    vec4 m = max(0.6 - vec4(dot(x0, x0), dot(x1, x1), dot(x2, x2), dot(x3, x3)), 0.0);
-                    m = m * m;
                     return 42.0 * dot(m * m, vec4(dot(p0, x0), dot(p1, x1), dot(p2, x2), dot(p3, x3)));
                 }
 
@@ -1720,14 +1718,14 @@ class QuantumMadhyamakaApp {
                 const particle1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                 particle1.setAttribute("cx", x - 5);
                 particle1.setAttribute("cy", y);
-                particle1.setAttribute("r", 3 / zoomLevel);
+                particle1.setAttribute("r", "3");
                 particle1.setAttribute("fill", "#64b5f6");
                 particle1.setAttribute("filter", "url(#particleBlur)");
 
                 const particle2 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                 particle2.setAttribute("cx", x + 5);
                 particle2.setAttribute("cy", y);
-                particle2.setAttribute("r", 3 / zoomLevel);
+                particle2.setAttribute("r", "3");
                 particle2.setAttribute("fill", "#81c784");
                 particle2.setAttribute("filter", "url(#particleBlur)");
 
@@ -1737,7 +1735,7 @@ class QuantumMadhyamakaApp {
                 connectionLine.setAttribute("x2", x + 5);
                 connectionLine.setAttribute("y2", y);
                 connectionLine.setAttribute("stroke", "#ffb74d");
-                connectionLine.setAttribute("stroke-width", 1 / zoomLevel);
+                connectionLine.setAttribute("stroke-width", "1");
                 connectionLine.setAttribute("stroke-dasharray", "1,1");
 
                 particlePair.appendChild(connectionLine);
@@ -1776,14 +1774,14 @@ class QuantumMadhyamakaApp {
                 const particle1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                 particle1.setAttribute("cx", x - 5);
                 particle1.setAttribute("cy", y);
-                particle1.setAttribute("r", 3 / zoomLevel);
+                particle1.setAttribute("r", "3");
                 particle1.setAttribute("fill", "#64b5f6");
                 particle1.setAttribute("filter", "url(#particleBlur)");
 
                 const particle2 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                 particle2.setAttribute("cx", x + 5);
                 particle2.setAttribute("cy", y);
-                particle2.setAttribute("r", 3 / zoomLevel);
+                particle2.setAttribute("r", "3");
                 particle2.setAttribute("fill", "#81c784");
                 particle2.setAttribute("filter", "url(#particleBlur)");
 
@@ -1793,7 +1791,7 @@ class QuantumMadhyamakaApp {
                 connectionLine.setAttribute("x2", x + 5);
                 connectionLine.setAttribute("y2", y);
                 connectionLine.setAttribute("stroke", "#ffb74d");
-                connectionLine.setAttribute("stroke-width", 1 / zoomLevel);
+                connectionLine.setAttribute("stroke-width", "1");
                 connectionLine.setAttribute("stroke-dasharray", "1,1");
 
                 particlePair.appendChild(connectionLine);
@@ -2488,7 +2486,7 @@ class QuantumMadhyamakaApp {
                         </radialGradient>
                         <filter id="blurFilter">
                             <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
-                            <feComposite in="blur" in2="SourceGraphic" operator="over"/>
+                            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
                         </filter>
                     </defs>
 

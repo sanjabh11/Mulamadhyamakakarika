@@ -1,0 +1,60 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investigation of Nirvana</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/",
+            "p5": "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js",
+            "d3": "https://cdn.jsdelivr.net/npm/d3@7/+esm"
+        }
+    }
+    </script>
+    <!-- Preload p5.js library to ensure it's available -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div id="animation-container"></div>
+        
+        <div id="text-overlay" class="overlay">
+            <div id="verse-title"></div>
+            <div id="verse-content"></div>
+            <div id="verse-explanation"></div>
+        </div>
+        
+        <div id="controls" class="overlay">
+            <div class="nav-buttons">
+                <button id="prev-btn">Previous</button>
+                <span id="verse-number">Verse 13/24</span>
+                <button id="next-btn">Next</button>
+            </div>
+            <div class="toggle-buttons">
+                <button id="toggle-text">Hide Text</button>
+                <button id="toggle-explanation">Hide Explanation</button>
+            </div>
+            <div class="nav-timeline" id="verses-timeline"></div>
+        </div>
+    </div>
+    
+    <script type="module" src="config.js"></script>
+    <script type="module" src="animations/verse13.js"></script>
+    <script type="module" src="animations/verse14.js"></script>
+    <script type="module" src="animations/verse15.js"></script>
+    <script type="module" src="animations/verse16.js"></script>
+    <script type="module" src="animations/verse17.js"></script>
+    <script type="module" src="animations/verse18.js"></script>
+    <script type="module" src="animations/verse19.js"></script>
+    <script type="module" src="animations/verse20.js"></script>
+    <script type="module" src="animations/verse21.js"></script>
+    <script type="module" src="animations/verse22.js"></script>
+    <script type="module" src="animations/verse23.js"></script>
+    <script type="module" src="animations/verse24.js"></script>
+    <script type="module" src="ui-effects.js"></script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>

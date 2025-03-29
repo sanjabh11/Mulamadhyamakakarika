@@ -1,0 +1,256 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000;
+    color: #fff;
+}
+
+#container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 350px;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 3;
+    padding: 20px;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+    transform: translateX(0);
+    display: flex;
+    flex-direction: column;
+}
+
+#sidebar.hidden {
+    transform: translateX(-350px);
+}
+
+#verse-title {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+    color: #9fa8da;
+}
+
+#verse-text {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    font-style: italic;
+}
+
+#explanation {
+    padding: 15px;
+    background-color: rgba(41, 53, 86, 0.6);
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+#explanation h4 {
+    color: #80deea;
+    margin: 10px 0 5px;
+}
+
+#explanation p {
+    margin-bottom: 15px;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+#toggle-sidebar {
+    position: fixed;
+    top: 20px;
+    left: 350px;
+    z-index: 4;
+    background-color: #3f51b5;
+    border: none;
+    color: white;
+    border-radius: 0 5px 5px 0;
+    padding: 10px;
+    cursor: pointer;
+    transition: left 0.3s ease;
+}
+
+#toggle-sidebar.hidden {
+    left: 0;
+}
+
+#verse-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    z-index: 2;
+    transition: all 0.5s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+#verse-specific-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+button {
+    background-color: #5c6bc0;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #3f51b5;
+}
+
+button:disabled {
+    background-color: #9e9e9e;
+    cursor: not-allowed;
+}
+
+.nav-dots {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.dot.active {
+    background-color: #5c6bc0;
+    transform: scale(1.2);
+}
+
+/* Animation for verse transitions */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Slider controls styling */
+.slider-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.slider-container label {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: #b3e5fc;
+}
+
+input[type="range"] {
+    width: 100%;
+    max-width: 200px;
+}
+
+/* Button styling for verse-specific actions */
+.action-button {
+    background-color: #26a69a;
+    margin: 5px;
+}
+
+.action-button:hover {
+    background-color: #00897b;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #sidebar {
+        width: 280px;
+    }
+    
+    #toggle-sidebar {
+        left: 280px;
+    }
+    
+    #toggle-sidebar.hidden {
+        left: 0;
+    }
+    
+    #verse-title {
+        font-size: 1.2rem;
+    }
+    
+    #verse-text {
+        font-size: 1rem;
+    }
+    
+    #explanation p {
+        font-size: 0.9rem;
+    }
+    
+    button {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #sidebar {
+        width: 100%;
+    }
+    
+    #toggle-sidebar {
+        left: 100%;
+    }
+    
+    #verse-container {
+        padding: 10px;
+    }
+}

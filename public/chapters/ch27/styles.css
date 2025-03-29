@@ -1,0 +1,29 @@
+/* 
+ * Chapter 27 specific styles
+ * Only override styles that differ from common
+ */
+
+/* Custom gradient for this chapter */
+h2, #explanation-title {
+  background: linear-gradient(90deg, #64dfdf, #80ffdb);
+}
+
+.explanation-column h4 {
+  color: #64dfdf;
+}
+
+/* Custom button styling for this chapter */
+button {
+  background-color: rgba(100, 223, 223, 0.2);
+  color: #80ffdb;
+  border: 1px solid #64dfdf;
+}
+
+button:hover {
+  background-color: rgba(100, 223, 223, 0.4);
+}
+
+.verse-button.active {
+  background-color: rgba(100, 223, 223, 0.6);
+  box-shadow: 0 0 10px rgba(100, 223, 223, 0.4);
+} 
