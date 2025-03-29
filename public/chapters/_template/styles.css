@@ -1,0 +1,29 @@
+/* 
+ * Chapter-specific styles
+ * Only override styles that differ from common
+ */
+
+/* Custom gradient for this chapter */
+h2, #explanation-title {
+  background: linear-gradient(90deg, var(--primary-color, #5e60ce), var(--secondary-color, #64dfdf));
+}
+
+.explanation-column h4 {
+  color: var(--primary-color, #5e60ce);
+}
+
+/* Custom button styling for this chapter */
+button {
+  background-color: rgba(94, 96, 206, 0.2);
+  color: var(--secondary-color, #64dfdf);
+  border: 1px solid var(--primary-color, #5e60ce);
+}
+
+button:hover {
+  background-color: rgba(94, 96, 206, 0.4);
+}
+
+.verse-button.active {
+  background-color: rgba(94, 96, 206, 0.6);
+  box-shadow: 0 0 10px rgba(94, 96, 206, 0.4);
+} 

@@ -1,0 +1,54 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Madhyamaka & Quantum Physics</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Corrected import map to use three/addons/ prefix and include gsap -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+            "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.4/index.js"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div id="app">
+        <div id="animation-container"></div>
+        
+        <div id="control-panel">
+            <div id="verse-nav">
+                <button id="prev-btn">Previous</button>
+                <div id="verse-indicator"></div>
+                <button id="next-btn">Next</button>
+            </div>
+            
+            <div id="verse-content">
+                <h2 id="verse-title"></h2>
+                <div id="verse-text"></div>
+                
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="madhyamaka">Madhyamaka</button>
+                    <button class="tab-btn" data-tab="quantum">Quantum Physics</button>
+                    <button class="tab-btn" data-tab="explanation">Explanation</button>
+                </div>
+                
+                <div class="tab-content active" id="madhyamaka-content"></div>
+                <div class="tab-content" id="quantum-content"></div>
+                <div class="tab-content" id="explanation-content"></div>
+            </div>
+            
+            <div id="controls">
+                <button id="toggle-panel">Hide Panel</button>
+                <div id="verse-specific-controls"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="config.js"></script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>

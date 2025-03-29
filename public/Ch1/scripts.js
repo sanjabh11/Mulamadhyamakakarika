@@ -232,7 +232,8 @@ class QuantumMadhyamakaApp {
                     p2 *= norm.z;
                     p3 *= norm.w;
 
-                    return 42.0 * dot(m * m, vec4(dot(p0, x0), dot(p1, x1), dot(p2, x2), dot(p3, x3)));
+                    vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+                    return 42.0 * dot(m*m*m*m, vec4(dot(p0, x0), dot(p1, x1), dot(p2, x2), dot(p3, x3)));
                 }
 
                 void main() {
@@ -336,6 +337,15 @@ class QuantumMadhyamakaApp {
     setupInteraction() {
         const chapter = config.chapters[this.currentChapter];
         const interactionType = chapter.interactionType;
+
+        // Add interaction prompt text
+        const promptText = document.createElement('p');
+        promptText.textContent = "Pls click to interact with animation";
+        promptText.style.textAlign = 'center';
+        promptText.style.marginBottom = '10px';
+        promptText.style.fontSize = '0.9rem';
+        promptText.style.color = 'rgba(255, 255, 255, 0.7)';
+        this.interactionContainer.appendChild(promptText);
 
         this.interactionContainer.style.pointerEvents = 'auto';
 

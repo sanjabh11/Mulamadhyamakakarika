@@ -38,6 +38,7 @@ export default function Home() {
     22: 16,
     23: 24,
     24: 40,
+    25: 24, // Added Chapter 25 verse count
     26: 12,
     27: 30
   };
@@ -208,6 +209,11 @@ export default function Home() {
               <p>Explore Nāgārjuna's analysis of views about the self and the world, showing that all fixed views about reality are ultimately incoherent, with quantum parallels like complementarity and uncertainty principle</p>
             </Link>
             
+            {/* Added Chapter 25 Featured Card */}
+            <Link href="/chapter-25" className={styles.featuredCard}>
+              <h2>Chapter 25 - Investigation of Nirvana</h2>
+              <p>Explore Nāgārjuna's analysis of Nirvāṇa, demonstrating its transcendence of conventional categories, with quantum parallels like complementarity and observer effect</p>
+            </Link>
             
           </div>
           
@@ -248,6 +254,7 @@ export default function Home() {
                       {chapter === 22 && " - Investigation of the Tathāgata"}
                       {chapter === 23 && " - Investigation of Errors"}
                       {chapter === 24 && " - Investigation of the Four Noble Truths"}
+                      {chapter === 25 && " - Investigation of Nirvana"} {/* Added Chapter 25 Title */}
                       {chapter === 26 && " - Investigation of the Twelve Links"}
                       {chapter === 27 && " - Investigation of Views"}
                     </span>
@@ -258,7 +265,8 @@ export default function Home() {
                   
                   {expandedChapters[chapter] && (
                     <div className={styles.verseList}>
-                      {(chapter === 1 || chapter === 2 || chapter === 3 || chapter === 4 || chapter === 5 || chapter === 6 || chapter === 7 || chapter === 8 || chapter === 9 || chapter === 10 || chapter === 11 || chapter === 12 || chapter === 13 || chapter === 14 || chapter === 15 || chapter === 16 || chapter === 17 || chapter === 18 || chapter === 19 || chapter === 20 || chapter === 21 || chapter === 22 || chapter === 23 || chapter === 24 || chapter === 26 || chapter === 27) && (
+                      {/* Added Chapter 25 to Overview Link condition */}
+                      {(chapter === 1 || chapter === 2 || chapter === 3 || chapter === 4 || chapter === 5 || chapter === 6 || chapter === 7 || chapter === 8 || chapter === 9 || chapter === 10 || chapter === 11 || chapter === 12 || chapter === 13 || chapter === 14 || chapter === 15 || chapter === 16 || chapter === 17 || chapter === 18 || chapter === 19 || chapter === 20 || chapter === 21 || chapter === 22 || chapter === 23 || chapter === 24 || chapter === 25 || chapter === 26 || chapter === 27) && (
                         <Link 
                           href={`/chapter-${chapter}`} 
                           className={`${styles.verseLink} ${styles.chapterLink}`}
@@ -298,6 +306,7 @@ export default function Home() {
                             (chapter === 22 && verse >= 1 && verse <= 16) ||
                             (chapter === 23 && verse >= 1 && verse <= 24) ||
                             (chapter === 24 && verse >= 1 && verse <= 40) ||
+                            (chapter === 25 && verse >= 1 && verse <= 24) || // Added Chapter 25 Available Badge condition
                             (chapter === 26 && verse >= 1 && verse <= 12) ||
                             (chapter === 27 && verse >= 1 && verse <= 30)) && (
                             <span className={styles.availableBadge}>Available</span>
