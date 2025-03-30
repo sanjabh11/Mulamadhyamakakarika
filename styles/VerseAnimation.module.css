@@ -1,0 +1,142 @@
+/* Basic container for the full-page animation */
+.verseContainer {
+  position: relative; /* Needed for absolute positioning of children */
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* Prevent scrollbars from the container itself */
+  background-color: #111; /* Dark background for the scene */
+  color: #eee;
+  font-family: sans-serif;
+}
+
+/* Ensure canvas takes full space */
+.verseContainer > div:first-child { /* Target the R3F Canvas container */
+  position: absolute !important; /* Override default canvas styling if needed */
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+
+/* Panel for controls and text */
+.controlsPanel {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 15px;
+  border-radius: 8px;
+  max-width: 350px; /* Limit width on larger screens */
+  z-index: 10; /* Ensure it's above the canvas */
+  max-height: calc(100vh - 40px); /* Limit height */
+  overflow-y: auto; /* Allow scrolling if content exceeds height */
+}
+
+.controlsPanel h3 {
+  margin-top: 0;
+  color: #00aaff;
+}
+
+.controlsPanel p {
+  font-size: 0.9em;
+  line-height: 1.4;
+}
+
+.controlsPanel em { /* Style the verse text */
+  color: #ccc;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.controlsPanel button {
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 15px;
+  transition: background-color 0.2s ease;
+}
+
+.controlsPanel button:hover {
+  background-color: #005fa3;
+}
+
+.explanationBox {
+  border-top: 1px solid #444;
+  padding-top: 10px;
+  margin-top: 15px;
+}
+
+.explanationBox h4 {
+  margin-top: 0;
+  margin-bottom: 5px;
+  color: #aaa;
+}
+
+.explanationBox strong {
+    color: #ddd;
+}
+
+/* Basic Mobile Responsiveness Placeholder */
+/* TODO: Add proper hide/unhide logic and button styling */
+@media (max-width: 600px) {
+  .controlsPanel {
+    max-width: calc(100vw - 40px); /* Take more width */
+    top: 10px;
+    left: 10px;
+    right: 10px; /* Center slightly */
+    max-height: 50vh; /* Limit height more strictly */
+  }
+}
+
+/* Styles for Hide/Show Buttons and Panel Visibility */
+.hideButton {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: #555;
+  color: #eee;
+  border: none;
+  border-radius: 3px;
+  padding: 2px 5px;
+  font-size: 0.8em;
+  cursor: pointer;
+  z-index: 11; /* Above panel content */
+}
+.hideButton:hover {
+  background: #777;
+}
+
+.showButton {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #eee;
+  border: 1px solid #555;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 10;
+  transition: background-color 0.2s ease;
+}
+.showButton:hover {
+  background-color: rgba(50, 50, 50, 0.8);
+}
+
+.controlsPanel.hidden {
+  display: none; /* Simple hide */
+  /* Or use opacity/transform for transitions */
+  /* opacity: 0; */
+  /* transform: translateX(-100%); */
+  /* transition: opacity 0.3s ease, transform 0.3s ease; */
+}
+
+.controlsPanel.visible {
+ display: block; /* Ensure it's visible */
+ /* opacity: 1; */
+ /* transform: translateX(0); */
+}

@@ -418,28 +418,28 @@ class QuantumMadhyamakaApp {
 
             <!-- Source -->
             <rect x="20" y="130" width="40" height="40" rx="5" fill="#64b5f6" class="interactive-element" id="source" />
-            <text x="40" y="120" text-anchor="middle" fill="white" font-size="12">Source</text>
+            <text x="40" y="120" text-anchor="middle" fill="white" font-size="14">Source</text>
 
             <!-- Slits -->
             <rect x="200" y="50" width="10" height="200" fill="#444" />
             <rect x="200" y="50" width="10" height="70" fill="#222" />
             <rect x="200" y="180" width="10" height="70" fill="#222" />
-            <text x="205" y="40" text-anchor="middle" fill="white" font-size="12">Slits</text>
+            <text x="205" y="40" text-anchor="middle" fill="white" font-size="14">Slits</text>
 
             <!-- Detector screen -->
             <rect x="400" y="50" width="10" height="200" fill="#81c784" class="interactive-element" id="detector" />
-            <text x="405" y="40" text-anchor="middle" fill="white" font-size="12">Detector</text>
+            <text x="405" y="40" text-anchor="middle" fill="white" font-size="14">Detector</text>
 
             <!-- Mode switch -->
             <rect x="20" y="20" width="100" height="30" rx="15" fill="#333" class="interactive-element" id="mode-switch" />
-            <text x="40" y="40" text-anchor="middle" fill="white" font-size="12">Particle</text>
-            <text x="100" y="40" text-anchor="middle" fill="white" font-size="12">Wave</text>
+            <text x="40" y="40" text-anchor="middle" fill="white" font-size="14">Particle</text>
+            <text x="100" y="40" text-anchor="middle" fill="white" font-size="14">Wave</text>
             <circle id="mode-indicator" cx="40" cy="35" r="10" fill="#ffb74d" />
 
             <!-- Observer -->
             <g id="observer-group" opacity="0.3">
                 <circle cx="250" cy="150" r="15" fill="#ff5252" class="interactive-element" id="observer" />
-                <text x="250" y="185" text-anchor="middle" fill="white" font-size="12">Observer</text>
+                <text x="250" y="185" text-anchor="middle" fill="white" font-size="14">Observer</text>
             </g>
 
             <!-- Particle path and interference pattern (initially hidden) -->
@@ -623,7 +623,7 @@ class QuantumMadhyamakaApp {
 
             <!-- Time axis -->
             <line x1="50" y1="250" x2="450" y2="250" stroke="white" stroke-width="2"/>
-            <text x="250" y="280" text-anchor="middle" fill="white" font-size="14">Time →</text>
+            <text x="250" y="280" text-anchor="middle" fill="white" font-size="16">Time →</text>
 
             <!-- Base diagram - always visible -->
             <g id="base-diagram">
@@ -636,21 +636,21 @@ class QuantumMadhyamakaApp {
                 <circle cx="400" cy="200" r="10" fill="#64b5f6" />
 
                 <!-- Particle labels -->
-                <text x="80" y="100" text-anchor="end" fill="white" font-size="12">Electron</text>
-                <text x="80" y="200" text-anchor="end" fill="white" font-size="12">Positron</text>
-                <text x="420" y="100" text-anchor="start" fill="white" font-size="12">Positron</text>
-                <text x="420" y="200" text-anchor="start" fill="white" font-size="12">Electron</text>
+                <text x="80" y="100" text-anchor="end" fill="white" font-size="14">Electron</text>
+                <text x="80" y="200" text-anchor="end" fill="white" font-size="14">Positron</text>
+                <text x="420" y="100" text-anchor="start" fill="white" font-size="14">Positron</text>
+                <text x="420" y="200" text-anchor="start" fill="white" font-size="14">Electron</text>
 
                 <!-- Path selector control -->
                 <g id="path-selector">
                     <rect x="50" y="20" width="150" height="30" rx="15" fill="#333" class="interactive-element" />
-                    <text x="125" y="40" text-anchor="middle" fill="white" font-size="12">Select Path</text>
+                    <text x="125" y="40" text-anchor="middle" fill="white" font-size="14">Select Path</text>
                 </g>
 
                 <!-- Madhyamaka conditions -->
                 <g id="conditions-toggle">
                     <rect x="300" y="20" width="150" height="30" rx="15" fill="#333" class="interactive-element" />
-                    <text x="375" y="40" text-anchor="middle" fill="white" font-size="12">Show Conditions</text>
+                    <text x="375" y="40" text-anchor="middle" fill="white" font-size="14">Show Conditions</text>
                 </g>
             </g>
 
@@ -659,7 +659,7 @@ class QuantumMadhyamakaApp {
                 <line x1="100" y1="100" x2="400" y2="200" stroke="#64b5f6" stroke-width="3" marker-end="url(#arrow)" />
                 <line x1="100" y1="200" x2="400" y2="100" stroke="#81c784" stroke-width="3" marker-end="url(#arrow)" />
                 <circle cx="250" cy="150" r="10" fill="#ffb74d" />
-                <text x="250" y="130" text-anchor="middle" fill="#ffb74d" font-size="12">Interaction</text>
+                <text x="250" y="130" text-anchor="middle" fill="#ffb74d" font-size="14">Interaction</text>
             </g>
 
             <!-- Path 2 - Through virtual pair -->
@@ -669,7 +669,7 @@ class QuantumMadhyamakaApp {
                 <line x1="250" y1="100" x2="250" y2="200" stroke="#ffb74d" stroke-width="3" marker-end="url(#arrow)" />
                 <line x1="250" y1="100" x2="400" y2="100" stroke="#81c784" stroke-width="3" marker-end="url(#arrow)" />
                 <line x1="250" y1="200" x2="400" y2="200" stroke="#64b5f6" stroke-width="3" marker-end="url(#arrow)" />
-                <text x="250" y="160" text-anchor="middle" fill="#ffb74d" font-size="12">Photon</text>
+                <text x="250" y="160" text-anchor="middle" fill="#ffb74d" font-size="14">Photon</text>
             </g>
 
             <!-- Path 3 - Complex interaction -->
@@ -688,19 +688,19 @@ class QuantumMadhyamakaApp {
             <!-- Madhyamaka conditions panel (initially hidden) -->
             <g id="conditions-panel" display="none">
                 <rect x="50" y="50" width="400" height="180" rx="10" fill="rgba(0,0,0,0.7)" stroke="#ffb74d" stroke-width="2" />
-                <text x="250" y="80" text-anchor="middle" fill="white" font-size="16">Four Types of Conditions</text>
+                <text x="250" y="80" text-anchor="middle" fill="white" font-size="18">Four Types of Conditions</text>
 
-                <text x="80" y="110" fill="#64b5f6" font-size="14">1. Causal Condition</text>
-                <text x="100" y="130" fill="white" font-size="12">The immediate cause for the effect</text>
+                <text x="80" y="110" fill="#64b5f6" font-size="16">1. Causal Condition</text>
+                <text x="100" y="130" fill="white" font-size="14">The immediate cause for the effect</text>
 
-                <text x="80" y="160" fill="#81c784" font-size="14">2. Objective Support Condition</text>
-                <text x="100" y="180" fill="white" font-size="12">The object that supports the arising</text>
+                <text x="80" y="160" fill="#81c784" font-size="16">2. Objective Support Condition</text>
+                <text x="100" y="180" fill="white" font-size="14">The object that supports the arising</text>
 
-                <text x="80" y="210" fill="#ffb74d" font-size="14">3. Predominant Condition</text>
-                <text x="100" y="230" fill="white" font-size="12">The main influence on the result</text>
+                <text x="80" y="210" fill="#ffb74d" font-size="16">3. Predominant Condition</text>
+                <text x="100" y="230" fill="white" font-size="14">The main influence on the result</text>
 
                 <rect x="410" y="60" width="30" height="30" rx="15" fill="#333" stroke="white" class="interactive-element" id="close-conditions" />
-                <text x="425" y="80" text-anchor="middle" fill="white" font-size="16">×</text>
+                <text x="425" y="80" text-anchor="middle" fill="white" font-size="18">×</text>
             </g>
         `;
         svg.innerHTML = diagram;
@@ -809,25 +809,25 @@ class QuantumMadhyamakaApp {
 
                     <!-- Quantum device -->
                     <rect x="200" y="100" width="100" height="100" rx="10" fill="#333" stroke="#64b5f6" stroke-width="2" />
-                    <text x="250" y="150" text-anchor="middle" fill="white" font-size="14">Quantum</text>
-                    <text x="250" y="170" text-anchor="middle" fill="white" font-size="14">Device</text>
+                    <text x="250" y="150" text-anchor="middle" fill="white" font-size="16">Quantum</text>
+                    <text x="250" y="170" text-anchor="middle" fill="white" font-size="16">Device</text>
 
                     <!-- Input beam -->
                     <line x1="100" y1="150" x2="200" y2="150" stroke="#64b5f6" stroke-width="2" stroke-dasharray="5,5" />
                     <circle cx="100" cy="150" r="10" fill="#64b5f6" class="interactive-element" id="input-source" />
-                    <text x="100" y="180" text-anchor="middle" fill="white" font-size="12">Source</text>
+                    <text x="100" y="180" text-anchor="middle" fill="white" font-size="14">Source</text>
 
                     <!-- Output paths -->
                     <line x1="300" y1="150" x2="350" y2="100" stroke="#64b5f6" stroke-width="2" stroke-dasharray="5,5" />
                     <line x1="300" y1="150" x2="350" y2="200" stroke="#64b5f6" stroke-width="2" stroke-dasharray="5,5" />
                     <circle cx="350" cy="100" r="10" fill="#81c784" />
                     <circle cx="350" cy="200" r="10" fill="#81c784" />
-                    <text x="380" y="100" text-anchor="start" fill="white" font-size="12">State |0⟩</text>
-                    <text x="380" y="200" text-anchor="start" fill="white" font-size="12">State |1⟩</text>
+                    <text x="380" y="100" text-anchor="start" fill="white" font-size="14">State |0⟩</text>
+                    <text x="380" y="200" text-anchor="start" fill="white" font-size="14">State |1⟩</text>
 
                     <!-- Detection counter -->
                     <rect x="400" y="130" width="80" height="40" rx="5" fill="#333" stroke="#81c784" stroke-width="2" />
-                    <text x="440" y="155" text-anchor="middle" fill="white" font-size="14" id="outcome-text">?</text>
+                    <text x="440" y="155" text-anchor="middle" fill="white" font-size="16" id="outcome-text">?</text>
 
                     <!-- Particles group -->
                     <g id="particles"></g>
@@ -1046,7 +1046,7 @@ class QuantumMadhyamakaApp {
 
                     <!-- Source -->
                     <circle cx="300" cy="150" r="20" fill="#ffb74d" class="interactive-element" id="source"/>
-                    <text x="300" y="190" text-anchor="middle" fill="white" font-size="14">Entangled Source</text>
+                    <text x="300" y="190" text-anchor="middle" fill="white" font-size="16">Entangled Source</text>
 
                     <!-- Entanglement line -->
                     <line x1="120" y1="150" x2="480" y2="150" stroke="url(#entanglementLine)" stroke-width="3" stroke-dasharray="5,5" id="entanglement-line"/>
@@ -1054,21 +1054,21 @@ class QuantumMadhyamakaApp {
                     <!-- Detectors -->
                     <g id="detector-left" transform="translate(100, 150)">
                         <rect x="-25" y="-25" width="50" height="50" rx="5" fill="#333" class="interactive-element"/>
-                        <text x="0" y="0" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="20" id="left-state">?</text>
-                        <text x="0" y="-40" text-anchor="middle" fill="white" font-size="14">Detector A</text>
+                        <text x="0" y="0" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="22">?</text>
+                        <text x="0" y="-40" text-anchor="middle" fill="white" font-size="16">Detector A</text>
                     </g>
 
                     <g id="detector-right" transform="translate(500, 150)">
                         <rect x="-25" y="-25" width="50" height="50" rx="5" fill="#333" class="interactive-element"/>
-                        <text x="0" y="0" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="20" id="right-state">?</text>
-                        <text x="0" y="-40" text-anchor="middle" fill="white" font-size="14">Detector B</text>
+                        <text x="0" y="0" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="22">?</text>
+                        <text x="0" y="-40" text-anchor="middle" fill="white" font-size="16">Detector B</text>
                     </g>
 
                     <!-- Distance indicator -->
                     <line x1="200" y1="220" x2="400" y2="220" stroke="white" stroke-width="1" stroke-dasharray="5,5"/>
                     <line x1="200" y1="215" x2="200" y2="225" stroke="white" stroke-width="1"/>
                     <line x1="400" y1="215" x2="400" y2="225" stroke="white" stroke-width="1"/>
-                    <text x="300" y="240" text-anchor="middle" fill="white" font-size="12">Arbitrary Distance</text>
+                    <text x="300" y="240" text-anchor="middle" fill="white" font-size="14">Arbitrary Distance</text>
 
                     <!-- Particles group -->
                     <g id="particles"></g>
@@ -1344,23 +1344,23 @@ class QuantumMadhyamakaApp {
 
                     <!-- Timeline -->
                     <line x1="50" y1="250" x2="450" y2="250" stroke="white" stroke-width="2"/>
-                    <text x="250" y="280" text-anchor="middle" fill="white" font-size="14">Time →</text>
+                    <text x="250" y="280" text-anchor="middle" fill="white" font-size="16">Time →</text>
 
                     <!-- Timeline markers -->
                     <line x1="100" y1="245" x2="100" y2="255" stroke="white" stroke-width="2"/>
-                    <text x="100" y="270" text-anchor="middle" fill="white" font-size="12">t₁</text>
+                    <text x="100" y="270" text-anchor="middle" fill="white" font-size="14">t₁</text>
 
                     <line x1="250" y1="245" x2="250" y2="255" stroke="white" stroke-width="2"/>
-                    <text x="250" y="270" text-anchor="middle" fill="white" font-size="12">t₂</text>
+                    <text x="250" y="270" text-anchor="middle" fill="white" font-size="14">t₂</text>
 
                     <line x1="400" y1="245" x2="400" y2="255" stroke="white" stroke-width="2"/>
-                    <text x="400" y="270" text-anchor="middle" fill="white" font-size="12">t₃</text>
+                    <text x="400" y="270" text-anchor="middle" fill="white" font-size="14">t₃</text>
 
                     <!-- Wave function container -->
                     <g id="wave-container">
                         <!-- Initial state - superposition wave -->
                         <g id="superposition-state">
-                            <text x="100" y="40" text-anchor="middle" fill="white" font-size="14">Superposition</text>
+                            <text x="100" y="40" text-anchor="middle" fill="white" font-size="16">Superposition</text>
 
                             <!-- Probability waves -->
                             <path id="wave1" d="M 60 100 Q 100 60, 140 100" stroke="#64b5f6" stroke-width="2" fill="none" filter="url(#glow)"/>
@@ -1371,19 +1371,19 @@ class QuantumMadhyamakaApp {
                             <circle cx="100" cy="120" r="5" fill="#81c784"/>
 
                             <!-- State label -->
-                            <text x="100" y="170" text-anchor="middle" fill="white" font-size="16">|ψ⟩ = α|0⟩ + β|1⟩</text>
+                            <text x="100" y="170" text-anchor="middle" fill="white" font-size="18">|ψ⟩ = α|0⟩ + β|1⟩</text>
                         </g>
 
                         <!-- Measurement event -->
                         <g id="measurement-event">
                             <circle cx="250" cy="100" r="20" fill="#ffb74d" class="interactive-element" id="measure-button"/>
-                            <text x="250" y="40" text-anchor="middle" fill="white" font-size="14">Measurement</text>
-                            <text x="250" y="105" text-anchor="middle" fill="white" font-size="14">👁️</text>
+                            <text x="250" y="40" text-anchor="middle" fill="white" font-size="16">Measurement</text>
+                            <text x="250" y="105" text-anchor="middle" fill="white" font-size="16">👁️</text>
                         </g>
 
                         <!-- Post-measurement state -->
                         <g id="collapsed-state" opacity="0.3">
-                            <text x="400" y="40" text-anchor="middle" fill="white" font-size="14">Definite State</text>
+                            <text x="400" y="40" text-anchor="middle" fill="white" font-size="16">Definite State</text>
 
                             <!-- Definite state wave (will be updated based on measurement) -->
                             <path id="definite-wave" d="M 360 100 Q 400 60, 440 100" stroke="#64b5f6" stroke-width="2" fill="none" filter="url(#glow)"/>
@@ -1392,7 +1392,7 @@ class QuantumMadhyamakaApp {
                             <circle id="definite-particle" cx="400" cy="80" r="5" fill="#64b5f6"/>
 
                             <!-- State label (will be updated based on measurement) -->
-                            <text id="definite-state-label" x="400" y="170" text-anchor="middle" fill="white" font-size="16">|ψ⟩ = |0⟩</text>
+                            <text id="definite-state-label" x="400" y="170" text-anchor="middle" fill="white" font-size="18">|ψ⟩ = |0⟩</text>
                         </g>
                     </g>
 
@@ -1581,7 +1581,7 @@ class QuantumMadhyamakaApp {
                     <!-- Zoom controls -->
                     <g id="zoom-controls">
                         <rect x="380" y="60" width="60" height="30" rx="5" fill="#333" class="interactive-element" id="zoom-in"/>
-                        <text x="410" y="80" text-anchor="middle" fill="white" font-size="14">Zoom +</text>
+                        <text x="410" y="80" text-anchor="middle" fill="white" font-size="16">Zoom +</text>
 
                         <rect x="380" y="100" width="60" height="30" rx="5" fill="#333" class="interactive-element" id="zoom-out"/>
                         <text x="410" y="120" text-anchor="middle" fill="white" font-size="14">Zoom -</text>
