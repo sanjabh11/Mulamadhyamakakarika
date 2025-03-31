@@ -238,13 +238,13 @@ export default function Chapter17() {
             <p>{chapterInfo.quantumSummary}</p>
             
             <div className={styles.chapterAction}>
-              <a href="/Ch17(1:3)/index.html" className={styles.visualizeButton}>
+              <a href="/Ch17 (1:3)/index.html" className={styles.visualizeButton}>
                 View Interactive Animations (Part 1)
               </a>
               <a href="/Ch17 (2:3)/index.html" className={styles.visualizeButton}>
                 View Interactive Animations (Part 2)
               </a>
-              <a href="/Ch17(3:3) tbd/index.html" className={styles.visualizeButton}>
+              <a href="/Ch17 (3:3)/index.html" className={styles.visualizeButton}>
                 View Interactive Animations (Part 3)
               </a>
             </div>
@@ -268,7 +268,7 @@ export default function Chapter17() {
                   </div>
                   <div className={styles.verseLinks}>
                     {verse.number <= 11 && (
-                      <Link href={`/Ch17(1:3)/index.html#verse-${verse.number}`}>
+                      <Link href={`/Ch17 (1:3)/index.html#verse-${verse.number}`}>
                         View in Part 1
                       </Link>
                     )}
@@ -278,7 +278,7 @@ export default function Chapter17() {
                       </Link>
                     )}
                     {verse.number > 22 && verse.number <= 33 && (
-                      <Link href={`/Ch17(3:3) tbd/index.html#verse-${verse.number}`}>
+                      <Link href={`/Ch17 (3:3)/index.html#verse-${verse.number}`}>
                         View in Part 3
                       </Link>
                     )}

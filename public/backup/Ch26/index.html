@@ -1,0 +1,57 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Madhyamaka & Quantum Physics</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/",
+                "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.3/index.js"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="container">
+        <div id="scene-container"></div>
+        
+        <div id="text-overlay">
+            <h1 id="verse-number"></h1>
+            <div id="verse-text"></div>
+            
+            <div id="content-details">
+                <div class="detail-section">
+                    <h3>Madhyamaka Concept</h3>
+                    <p id="madhyamaka-concept"></p>
+                </div>
+                
+                <div class="detail-section">
+                    <h3>Quantum Physics Parallel</h3>
+                    <p id="quantum-parallel"></p>
+                </div>
+                
+                <div class="detail-section">
+                    <h3>Accessible Explanation</h3>
+                    <p id="accessible-explanation"></p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="controls">
+            <button id="prev-verse" disabled>&lt; Previous</button>
+            <span id="verse-indicator">1/12</span>
+            <button id="next-verse">Next &gt;</button>
+            <button id="toggle-details">Hide Details</button>
+            <button id="reset-animation">Reset Animation</button>
+        </div>
+        
+        <div id="animation-specific-controls"></div>
+    </div>
+    
+    <script type="module" src="config.js"></script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>

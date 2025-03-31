@@ -1,219 +1,86 @@
-// Configuration values for animations and scenes
-
-export const config = {
-  // General settings
-  rotationSpeed: 0.001,
-  backgroundColor: 0x111133,
-  cameraPosition: { x: 0, y: 0, z: 10 },
-  bloomStrength: 1.5,
-  bloomRadius: 0.75,
-  bloomThreshold: 0.2,
-  
-  // Animation-specific settings
-  verse1: {
-    sphereColor1: 0x6495ED, // Eye
-    sphereColor2: 0xFF69B4, // Form
-    connectionColor: 0xFFFFFF,
-    sphereSize: 0.8,
-    distance: 3,
-    particleCount: 50,
-    particleSpeed: 0.02,
-    lineWidth: 2
-  },
-  
-  verse2: {
-    eyeColor: 0x6b88ff,
-    objectColor: 0xff9933,
-    eyeSize: 1.2,
-    cubeSize: 0.8,
-    interactionThreshold: 2.0,
-    pulseSpeed: 2.5,
-    gridColor: 0x444444,
-    gridSize: 10,
-    gridDivisions: 10,
-    particleColor: 0x88CCFF,
-    particleCount: 100
-  },
-  
-  verse3: {
-    lightColor: 0x44AAFF,
-    screenColor: 0x222266,
-    particleColor: 0xFFFFFF,
-    waveColor: 0x44AAFF,
-    particleCount: 30,
-    transitionDuration: 1
-  },
-  
-  verse4: {
-    eyeColor: 0x8866ff,
-    prismColor: 0x44ddff,
-    prismHighlight: 0xffff66,
-    eyeSize: 1.2,
-    interactionDistance: 2.0,
-    glowIntensity: 0.4,
-    particle1Color: 0x44AAFF, // Blue
-    particle2Color: 0xFF44AA, // Magenta
-    connectionColor: 0xFFFFFF,
-    particleCount: 20
-  },
-  
-  verse5: {
-    sphereColor: 0xaa66ff,
-    cubeColor: 0x44ffdd,
-    sphereSize: 1.0,
-    pulseSpeed: 2.0,
-    particleCount: 25,
-    collapseSpeed: 0.4,
-    observerColor: 0x6495ED,
-    lineColor: 0xFFFFFF,
-    formColor: 0xaa66ff,
-    wireframeColor: 0xffffff,
-    innerParticleColor: 0x44ffdd,
-    outerParticleColor: 0x88aaff
-  },
-  
-  verse6: {
-    sphereColor1: 0x66bbff, // Seer
-    sphereColor2: 0xff66bb, // Seeing
-    connectionColor: 0xffff44,
-    sphereSize: 0.7,
-    connectionParticles: 8,
-    measurementSpeed: 0.003,
-    stateAColor: 0x44AAFF,
-    stateBColor: 0xFF44AA,
-    superpositionColor: 0xFFFFFF
-  },
-  
-  verse7: {
-    eyeColor: 0x6699ff,
-    formColor: 0xff9944,
-    consciousnessColor: 0xaa22ff,
-    sphereSize: 0.8,
-    particleCount: 35,
-    collapseDelay: 0.8,
-    nodeColors: [0x44AAFF, 0xFF44AA, 0x44FFAA, 0xFFAA44],
-    edgeColor: 0xFFFFFF
-  },
-  
-  verse8: {
-    sensesColors: [
-      0xff6666, // Seeing
-      0x66ff66, // Hearing
-      0x6666ff, // Smelling
-      0xffff66, // Tasting
-      0xff66ff, // Touching
-      0x66ffff  // Mind
-    ],
-    objectColor: 0xffffff,
-    sphereSize: 0.6,
-    interactionDuration: 2.5,
-    pulseFactor: 0.08,
-    extremeColor1: 0xFF44AA,
-    extremeColor2: 0x44AAFF,
-    middleColor: 0xFFFFFF
-  },
-  
-  verse9: {
-    sensesColors: [
-      0xff5555, // Seeing
-      0x55ff55, // Hearing
-      0x5555ff, // Smelling
-      0xffff55, // Tasting
-      0xff55ff  // Touching
-    ],
-    consciousnessColor: 0x55ffff,
-    objectColors: [
-      0xff9999, // Visible
-      0x99ff99, // Sound
-      0x9999ff, // Smell
-      0xffff99, // Taste
-      0xff99ff  // Touchable
-    ],
-    sphereSize: 0.5,
-    lineColor: 0xaaaaff,
-    measureSpeed: 0.002,
-    lineOpacity: 0.7,
-    particleColor: 0x44AAFF,
-    uncertaintyColor: 0xFFFFFF,
-    gridColor: 0x444444
-  },
-
-  camera: {
-    fov: 60,
-    near: 0.1,
-    far: 1000,
-    position: { x: 0, y: 0, z: 10 }
-  },
-  
-  rendering: {
-    bloomStrength: 1.0,
-    bloomRadius: 0.8,
-    bloomThreshold: 0.3
-  },
-  
-  verses: [
+// Configuration for verse content
+export const verses = [
     {
-        id: 1,
-        text: "The eye does not see itself. How could the eye, which sees all else, see itself?",
-        madhyamakaConcept: "Non-inherent existence of vision and perception",
-        quantumParallel: "Observer effect - observation changes the system being observed",
-        analysis: "Nāgārjuna introduces a fundamental principle: perception cannot perceive itself. The eye that sees cannot see itself. This parallels the quantum observation problem - the act of measurement affects what is measured."
+        number: 1,
+        text: "Seeing, hearing, smelling, Tasting, touching, and mind Are the six sense faculties. Their spheres are the visible objects, etc. . . .",
+        madhyamaka: "Nagarjuna introduces the six sense faculties (eye, ear, nose, tongue, body, mind) and their corresponding objects (sights, sounds, smells, etc.), setting the stage for deconstructing their nature. In Madhyamaka, these are not inherently real but exist interdependently—lacking independent essence, they embody emptiness (shunyata). Perception arises only through the relationship between faculty and object, not as a fixed, standalone process.",
+        quantum: "Quantum entanglement links two particles such that their states are interdependent—measuring one instantly defines the other, regardless of distance. This mirrors the sense faculties and their objects, where neither exists independently but only through mutual reliance, challenging notions of inherent existence.",
+        accessible: "Picture a Wi-Fi router and your phone: the router (sense faculty) sends a signal (object), and your phone picks it up. Without both, there's no connection. In quantum physics, entangled particles are like that—linked so one can't \"be\" without the other, just like seeing needs something to see.",
+        instructions: "Click on any of the six glowing spheres to see its connection to its corresponding object. When you click on a tether between a sense and its object, both will vibrate in unison, demonstrating their interdependence."
     },
     {
-        id: 2,
-        text: "If the eye cannot see itself, how can it see other things? The nature of seeing is emptiness.",
-        madhyamakaConcept: "Emptiness (śūnyatā) of perception",
-        quantumParallel: "Quantum indeterminacy and measurement problem",
-        analysis: "This verse extends the first - if the eye lacks inherent self-nature, its perception of objects is also empty of inherent nature. This relates to quantum indeterminacy, where properties are not fixed until observation."
+        number: 2,
+        text: "That very seeing does not see Itself at all. How can something​ that cannot see itself See another?",
+        madhyamaka: "Nagarjuna questions whether seeing can perceive itself, arguing that if it cannot, its ability to perceive external objects is also dubious. This reveals the emptiness of seeing—it lacks inherent self-existence or self-awareness and exists only relationally with the seen, not as an autonomous entity.",
+        quantum: "In quantum mechanics, the act of measurement collapses a wave function, but the observer cannot measure their own observation process—it requires an external system. This aligns with the verse's logic: seeing cannot \"see\" itself, undermining its independent reality.",
+        accessible: "Try looking at your own eyes without a mirror—you can't. Seeing needs something outside itself to work. In quantum physics, it's like an observer needing a particle to measure—they can't observe their own observing, showing everything's connected, not separate.",
+        instructions: "Direct the eye's gaze using your mouse/touch to move around. Try to make the eye look at itself by dragging toward the eye—notice how the screen blurs, illustrating the impossibility of self-seeing."
     },
     {
-        id: 3,
-        text: "The property of light is not in darkness, nor is it in light itself. Light and darkness are opposed - how can light illuminate?",
-        madhyamakaConcept: "Dependent co-arising of opposites",
-        quantumParallel: "Wave-particle duality and complementarity principle",
-        analysis: "Light and darkness define each other through mutual exclusion. Similarly, in quantum mechanics, wave and particle aspects cannot be observed simultaneously but are complementary ways of understanding the same phenomenon."
+        number: 3,
+        text: "The example of fire Cannot elucidate seeing. Along with the moved and not-moved and motion That has been answered.",
+        madhyamaka: "Nagarjuna rejects the analogy of fire (which seems to illuminate itself and others) as a model for seeing, arguing it fails to capture perception's relational emptiness. Unlike fire, seeing lacks inherent self-illumination and depends entirely on external conditions, reinforcing its lack of independent essence.",
+        quantum: "Wave-particle duality in quantum mechanics shows light behaving as a wave or particle based on observation, not as an inherently self-defining entity. This parallels the rejection of fire as a fixed analogy, highlighting perception's dependence on context rather than intrinsic nature.",
+        accessible: "Think of a lamp: it lights a room but doesn't light itself—it's not self-contained. In quantum physics, light changes how it acts depending on how you look at it, not because it's set one way. Seeing's the same—it's not like fire; it needs something else to happen.",
+        instructions: "Direct the lamp's light beam using your mouse/touch. Illuminate the objects in the scene, but notice what happens when you try to direct the beam back toward the lamp itself—the light fractures into wave patterns, demonstrating context-dependence."
     },
     {
-        id: 4,
-        text: "That which is being seen cannot be in the process of being seen, yet what is not being seen cannot be in the process of being seen either.",
-        madhyamakaConcept: "Critique of motion and process",
-        quantumParallel: "Quantum entanglement and non-locality",
-        analysis: "Nāgārjuna explores the paradox of perception in process. In quantum mechanics, entangled particles instantaneously affect each other, challenging our notions of causality, space and time."
+        number: 4,
+        text: "When there is not even the slightest Nonseeing seer, How could it makes sense to say That seeing sees?",
+        madhyamaka: "If no independent seer exists apart from the act of seeing (no \"nonseeing seer\"), then seeing cannot be an inherent, self-existent process. This emphasizes the emptiness of both seer and seeing—they arise only through mutual dependence, not as separate realities.",
+        quantum: "Quantum contextuality reveals that a system's properties (e.g., position) depend on how it's measured, not on any fixed essence. This echoes the verse: seeing lacks inherent reality and depends on the context of seer and seen, not a standalone \"seer.\"",
+        accessible: "Imagine a shadow—it only appears with light and an object; there's no shadow by itself. In quantum physics, a particle's state depends on how you check it, like seeing needing a seer and something seen—none stand alone.",
+        instructions: "Use the controls to toggle the light source and object. Notice how the shadow only exists when both elements are present—remove either one, and the shadow vanishes, illustrating the interdependence of seeing, seer, and seen."
     },
     {
-        id: 5,
-        text: "Without something being seen, there is no seeing. Without seeing, the seer does not exist either.",
-        madhyamakaConcept: "Dependent origination of subject and object",
-        quantumParallel: "Observer-dependent reality and measurement",
-        analysis: "Subject and object arise dependently - neither exists independently. Similarly, in quantum theory, the observer and observed system cannot be separated; there is no quantum reality independent of measurement."
+        number: 5,
+        text: "Seeing itself does not see. Nonseeing itself does not see. Through seeing itself The clear analysis of the seer is understood.",
+        madhyamaka: "Neither seeing nor non-seeing has inherent perception, dismantling the notion of an independent seer. This analysis reveals perception's relational emptiness—seeing exists only through interdependence, not as a self-sufficient entity.",
+        quantum: "Quantum superposition allows particles to exist in multiple states (e.g., seeing and non-seeing) simultaneously until observed, challenging fixed identities. This mirrors the verse's rejection of inherent seeing or non-seeing, emphasizing relational emergence.",
+        accessible: "Picture a coin spinning in the air—it's not heads or tails until it lands. In quantum physics, particles are in a mix of states until measured, like seeing and non-seeing blurred together until something defines them.",
+        instructions: "Click on the spinning coin to 'observe' it. Notice how it exists in a state of superposition between 'seeing' (bright face) and 'non-seeing' (dim face) until you interact with it, illustrating how perception is not fixed but emerges through relation."
     },
     {
-        id: 6,
-        text: "If the seer does not exist without seeing, how can there be seeing without a seer?",
-        madhyamakaConcept: "Mutual dependence of perceiver and perception",
-        quantumParallel: "Quantum superposition and collapse",
-        analysis: "Perceiver and perception mutually define each other. This mirrors quantum superposition, where systems exist in multiple states simultaneously until observation causes state collapse."
+        number: 6,
+        text: "Without detachment from vision there is no seer. Nor is there a seer detached from it. If there is no seer How can there be seeing or the seen?",
+        madhyamaka: "The seer cannot exist apart from seeing, nor be defined within it independently—both are inseparably linked. This mutual dependence underscores the emptiness of seer, seeing, and seen, as none possesses inherent existence alone.",
+        quantum: "Quantum entanglement binds particles so their states are inseparable—one cannot be described without the other. This parallels the verse's view of seer and seeing as an indivisible pair, lacking standalone reality.",
+        accessible: "Think of a kite and its string—cut the string, and the kite's gone; no string, no kite flying. In quantum physics, entangled particles are tied like that—one's state depends on the other, just like seeing needs a seer.",
+        instructions: "Interact with the kite and string in the scene. Try cutting the string (click the scissors) to see how both the kite (seer) and string (seeing) fade away together, demonstrating their inseparable nature and mutual dependence."
     },
     {
-        id: 7,
-        text: "The seeing, the seen, and the seer arise together in mutual dependence, without any having priority.",
-        madhyamakaConcept: "Interdependent origination with no first cause",
-        quantumParallel: "Quantum entanglement and non-separability",
-        analysis: "The triad of perception arises interdependently, with no component having causal priority. In quantum mechanics, entangled particles form a single system regardless of spatial separation."
+        number: 7,
+        text: "Just as the birth of a son is said to occur In dependence on the mother and father, So consciousness is said to arise In dependence on the eye and material form.",
+        madhyamaka: "Consciousness emerges from conditions (eye and form), not as an independent entity, exemplifying dependent origination. Like a child needing parents, perception lacks inherent existence and arises relationally, a core tenet of emptiness.",
+        quantum: "Quantum measurement generates an outcome (e.g., consciousness) only through interaction between a system and a device—neither alone suffices. This reflects consciousness as a product of interdependent elements, not a fixed essence.",
+        accessible: "Imagine a cake—you need flour and eggs; neither makes a cake alone. In quantum physics, consciousness is like that—it comes from the eye and what's seen mixing together, not from one by itself.",
+        instructions: "Use the mixer controls to combine the ingredients (eye/flour and form/eggs). Watch how consciousness (the cake) forms only when both elements come together, illustrating dependent origination and how perception arises through interconnection."
     },
     {
-        id: 8,
-        text: "Whether 'seeing sees' or 'seeing does not see' - both positions are extreme. The Middle Way rejects both extremes.",
-        madhyamakaConcept: "Middle Way between existence and non-existence",
-        quantumParallel: "Complementarity principle and non-classical logic",
-        analysis: "Nāgārjuna rejects fixed positions about perception's nature. Quantum physics similarly rejects classical either/or logic, embracing complementary descriptions that appear contradictory."
+        number: 8,
+        text: "From the nonexistence of seeing and the seen it follows that The other four faculties of knowledge do not exist. And all the aggregates, etc., Are the same way.",
+        madhyamaka: "If seeing and the seen lack inherent existence, so do the other senses (hearing, etc.) and all phenomena (aggregates like form, feeling). This extends emptiness universally—nothing exists independently, all arise through interdependence.",
+        quantum: "Quantum field theory sees particles as excitations in fields, not standalone entities—everything emerges from an interconnected substratum. This aligns with the verse's view of senses and aggregates as relational, not inherently real.",
+        accessible: "Think of ripples on a pond—take away the water, and there are no ripples. In quantum physics, particles are ripples in fields; senses are like that too—nothing's there without the bigger picture.",
+        instructions: "Interact with the pond by clicking to create ripples (representing senses). Use the drain control to remove the water and observe how all ripples vanish, showing that without the underlying medium (interdependence), isolated phenomena cannot exist."
     },
     {
-        id: 9,
-        text: "The seer, seeing, and the seen - none can be established as having a fixed nature or definite relationship.",
-        madhyamakaConcept: "Ultimate emptiness of all phenomena",
-        quantumParallel: "Heisenberg uncertainty principle",
-        analysis: "No aspect of perception has a fixed, definable nature. This corresponds to the uncertainty principle, where precise values of complementary variables cannot be simultaneously determined."
+        number: 9,
+        text: "Like the seen, the heard, the smelled, The tasted, and the touched, - The hearer, sound, etc., And consciousness should be understood.",
+        madhyamaka: "All senses, their objects, and consciousness are empty and interdependent, lacking inherent existence. This verse concludes the chapter by applying the analysis of seeing to all perception, reinforcing the relational web of existence.",
+        quantum: "Quantum holism posits the universe as an interconnected whole, with no truly separate parts—senses, objects, and consciousness form a unified, dependent system, mirroring this interconnectedness.",
+        accessible: "Imagine a net—pull one knot, and the whole thing shifts. In quantum physics, everything's part of one big web, like senses and consciousness tied together, not floating alone.",
+        instructions: "Click and drag any of the glowing knots in the interconnected web. Notice how tugging on one point affects the entire network, illustrating how all senses, their objects, and consciousness form a unified, interdependent system where nothing stands alone."
     }
-  ]
+];
+
+// Animation settings
+export const settings = {
+    cameraDistance: 10,
+    rotationSpeed: 0.001,
+    backgroundColor: 0x000011,
+    glowColor: 0x3a1c71,
+    accentColor: 0xd76d77,
+    highlightColor: 0xffaf7b
 };
+

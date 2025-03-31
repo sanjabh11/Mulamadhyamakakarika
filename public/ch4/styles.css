@@ -1,6 +1,16 @@
-/* Styles for the Emptiness and Quantum Physics chapter */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Nunito:wght@300;400;600&display=swap');
 
-/* Base styles */
+:root {
+    --primary-color: #8a5cf5;
+    --secondary-color: #5cc9f5;
+    --tertiary-color: #f55c9c;
+    --background-color: #050510;
+    --panel-background: rgba(20, 20, 35, 0.85);
+    --text-color: #e0e0ff;
+    --header-font: 'Cormorant Garamond', serif;
+    --body-font: 'Nunito', sans-serif;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -8,62 +18,60 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #0a0a14;
-    color: #e0e0e0;
-    line-height: 1.6;
-    overflow-x: hidden;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: var(--body-font);
+    overflow: hidden;
+    position: relative;
 }
 
-/* Overlay styles */
-#overlay {
+#loader {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: var(--background-color);
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    transition: opacity 1s ease;
+    transition: opacity 0.5s ease-out;
 }
 
-.overlay-content {
-    text-align: center;
-    max-width: 800px;
-    padding: 2rem;
+.spinner {
+    width: 80px;
+    height: 80px;
+    border: 5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    border-left-color: var(--secondary-color);
+    animation: spin 1s ease-in-out infinite;
 }
 
-.overlay-content h1 {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-    color: #8a7fff;
-    text-shadow: 0 0 10px rgba(138, 127, 255, 0.5);
+.loading-text {
+    margin-top: 20px;
+    font-family: var(--header-font);
+    font-size: 24px;
+    letter-spacing: 1px;
+    color: var(--text-color);
 }
 
-#startExperience {
-    background-color: #6c63ff;
-    color: white;
-    border: none;
-    padding: 1rem 2rem;
-    font-size: 1.2rem;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 15px rgba(108, 99, 255, 0.5);
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
-#startExperience:hover {
-    background-color: #8a7fff;
-    transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(138, 127, 255, 0.7);
+#container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
 }
 
-/* Scene container */
-#scene-container {
-    position: fixed;
+canvas {
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -71,173 +79,182 @@ body {
     z-index: 1;
 }
 
-/* UI container */
-#ui-container {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    pointer-events: none;
-}
-
-/* Content panel */
-.content-panel {
-    background-color: rgba(10, 10, 20, 0.8);
+#verse-panel {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    width: calc(100% - 40px);
+    max-width: 600px;
+    background: var(--panel-background);
     backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(138, 127, 255, 0.3);
-    padding: 1.5rem;
-    transition: transform 0.5s ease;
-    max-height: 60vh;
-    overflow-y: auto;
-    pointer-events: auto;
+    border-radius: 12px;
+    padding: 20px;
+    z-index: 10;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.content-panel.hidden {
-    transform: translateY(100%);
-}
-
-.content-section {
-    margin-bottom: 1.5rem;
-}
-
-.content-section h2 {
-    color: #8a7fff;
-    margin-bottom: 0.5rem;
-    font-size: 1.3rem;
-}
-
-.content-section p {
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-    line-height: 1.6;
-}
-
-/* Controls panel */
-.controls-panel {
+.verse-header {
     display: flex;
     justify-content: space-between;
-    padding: 1rem;
-    background-color: rgba(10, 10, 20, 0.9);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(138, 127, 255, 0.3);
-    pointer-events: auto;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
 }
 
-.navigation {
+.verse-number {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+h2 {
+    font-family: var(--header-font);
+    font-weight: 500;
+    font-size: 1.5rem;
+}
+
+.verse-content {
+    margin-bottom: 20px;
+}
+
+.verse-text {
+    font-family: var(--header-font);
+    font-size: 1.3rem;
+    line-height: 1.6;
+    font-weight: 300;
+    margin-bottom: 20px;
+    font-style: italic;
+    letter-spacing: 0.5px;
+}
+
+.explanation-container {
+    margin-top: 15px;
+}
+
+.toggle-button {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-color);
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--body-font);
+    font-size: 14px;
     display: flex;
     align-items: center;
-    gap: 1rem;
-}
-
-.animation-controls {
-    display: flex;
-    gap: 0.5rem;
-}
-
-button {
-    background-color: #2d2d3a;
-    color: #e0e0e0;
-    border: 1px solid #444;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
     transition: all 0.2s ease;
 }
 
-button:hover {
-    background-color: #3d3d4a;
+.toggle-button:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
-button:disabled {
-    opacity: 0.5;
+.toggle-icon {
+    margin-right: 8px;
+    font-weight: bold;
+    transition: transform 0.3s ease;
+}
+
+.hidden {
+    display: none;
+}
+
+.expanded .toggle-icon {
+    transform: rotate(45deg);
+}
+
+.explanation-section {
+    margin-top: 20px;
+}
+
+.explanation-section h3 {
+    font-size: 1rem;
+    margin-bottom: 8px;
+    color: var(--secondary-color);
+    font-family: var(--header-font);
+    font-weight: 500;
+}
+
+.explanation-section p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+.verse-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.nav-button {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-color);
+    padding: 8px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--body-font);
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.nav-button:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-button:disabled {
+    opacity: 0.3;
     cursor: not-allowed;
 }
 
-#verseCounter {
-    padding: 0.5rem;
-    color: #8a7fff;
+#interaction-hint {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--panel-background);
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    opacity: 0.7;
+    z-index: 10;
+    transition: opacity 0.3s ease;
 }
 
-/* 3D scene labels */
-.label {
-    color: white;
-    font-family: sans-serif;
-    padding: 2px;
-    background: rgba(0, 0, 0, 0.6);
-    border-radius: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: opacity 0.5s;
+#interaction-hint.hidden {
     opacity: 0;
-    pointer-events: none;
-    font-size: 12px;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
-    .controls-panel {
+    #verse-panel {
+        max-width: 100%;
+        bottom: 10px;
+        left: 10px;
+        width: calc(100% - 20px);
+        padding: 15px;
+    }
+    
+    .verse-header {
         flex-direction: column;
-        gap: 1rem;
+        align-items: flex-start;
     }
     
-    .navigation, .animation-controls {
-        width: 100%;
-        justify-content: center;
+    .verse-number {
+        margin-top: 8px;
     }
     
-    .overlay-content h1 {
-        font-size: 1.8rem;
-    }
-    
-    #startExperience {
-        padding: 0.8rem 1.5rem;
-        font-size: 1rem;
-    }
-    
-    .content-section h2 {
+    .verse-text {
         font-size: 1.1rem;
     }
     
-    .content-section p {
-        font-size: 0.9rem;
+    .explanation-section p {
+        font-size: 0.85rem;
     }
 }
 
-/* Highlight animation for key terms */
-.highlight {
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.6;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
-/* Scrollbar styling */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: rgba(30, 30, 40, 0.5);
-}
-
-::-webkit-scrollbar-thumb {
-    background: rgba(138, 127, 255, 0.5);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(138, 127, 255, 0.7);
-}

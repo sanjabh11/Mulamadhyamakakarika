@@ -100,7 +100,7 @@ export default function Chapter6() {
             <p>{chapterInfo.quantumSummary}</p>
             
             <div className={styles.chapterAction}>
-              <a href="/ch_6/index.html" className={styles.visualizeButton}>
+              <a href="/Ch6/index.html" className={styles.visualizeButton}>
                 View Interactive Animations
               </a>
             </div>
@@ -112,8 +112,8 @@ export default function Chapter6() {
           
           <div className={styles.verses}>
             {verses.map(verse => (
-              <Link 
-                href={`/ch_6/index.html#verse-${verse.number}`}
+              <Link
+                href={`/Ch6/index.html#verse-${verse.number}`}
                 key={verse.number}
                 className={styles.verseCard}
               >

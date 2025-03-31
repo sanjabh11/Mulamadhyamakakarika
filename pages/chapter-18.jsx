@@ -112,7 +112,7 @@ export default function Chapter18() {
             <p>{chapterInfo.quantumSummary}</p>
             
             <div className={styles.chapterAction}>
-              <a href="/Ch18_tbd/index.html" className={styles.visualizeButton}>
+              <a href="/Ch18/index.html" className={styles.visualizeButton}>
                 View Interactive Animations
               </a>
             </div>
@@ -135,7 +135,7 @@ export default function Chapter18() {
                     <p><strong>Quantum:</strong> {verse.quantum}</p>
                   </div>
                   <div className={styles.verseLinks}>
-                    <Link href={`/Ch18_tbd/index.html#verse-${verse.number}`}>
+                    <Link href={`/Ch18/index.html#verse-${verse.number}`}>
                       View Animation
                     </Link>
                   </div>

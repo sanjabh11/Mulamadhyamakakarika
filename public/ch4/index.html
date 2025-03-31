@@ -2,54 +2,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emptiness and Quantum Physics</title>
+    <title>Madhyamaka 3D Interactive Verses</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="overlay">
-        <div class="overlay-content">
-            <h1>Emptiness and Quantum Physics</h1>
-            <button id="startExperience">Begin Experience</button>
-        </div>
+    <div id="loader">
+        <div class="spinner"></div>
+        <div class="loading-text">Loading Madhyamaka Experience...</div>
     </div>
-    
-    <div id="scene-container"></div>
-    
-    <div id="ui-container">
-        <div class="content-panel" id="contentPanel">
-            <div id="verseContainer" class="content-section"></div>
-            <div id="madhyamakaContainer" class="content-section"></div>
-            <div id="quantumContainer" class="content-section"></div>
-            <div id="explanationContainer" class="content-section"></div>
+
+    <div id="container">
+        <canvas id="canvas"></canvas>
+        
+        <div id="verse-panel">
+            <div class="verse-header">
+                <h2 id="verse-title">Chapter IV - Examination of the Aggregates</h2>
+                <div class="verse-number" id="verse-number">Verse 1</div>
+            </div>
+            
+            <div class="verse-content">
+                <div class="verse-text" id="verse-text">
+                    "Apart from the cause of form,<br>
+                    Form cannot be conceived.<br>
+                    Apart from form,<br>
+                    The cause of form is not seen."
+                </div>
+                
+                <div class="explanation-container">
+                    <button id="explanation-toggle" class="toggle-button">
+                        <span class="toggle-icon">+</span> Show Explanation
+                    </button>
+                    
+                    <div id="explanation-content" class="hidden">
+                        <div class="explanation-section">
+                            <h3>Madhyamaka Concept</h3>
+                            <p id="madhyamaka-concept">Nagarjuna begins by examining form (rupa), the first of the five aggregates (skandhas), and its relationship with its cause. He argues that form cannot exist or even be thought of without its cause, and the cause has no identity without form. This mutual reliance illustrates shunyata (emptiness)—nothing has inherent, independent existence; everything arises dependently.</p>
+                        </div>
+                        
+                        <div class="explanation-section">
+                            <h3>Quantum Physics Parallel</h3>
+                            <p id="quantum-parallel">This mirrors quantum entanglement, where two particles are so interconnected that the state of one depends on the other. Neither particle has a definite state by itself—only their relationship defines them, much like form and its cause.</p>
+                        </div>
+                        
+                        <div class="explanation-section">
+                            <h3>Accessible Explanation</h3>
+                            <p id="accessible-explanation">Picture a shadow: it needs light and an object to appear. No light, no shadow; no object, no shadow. In quantum physics, entangled particles are like this—each relies on the other to "be."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="verse-navigation">
+                <button id="prev-verse" class="nav-button" disabled>&larr; Previous</button>
+                <button id="next-verse" class="nav-button">Next &rarr;</button>
+            </div>
         </div>
         
-        <div class="controls-panel">
-            <div class="navigation">
-                <button id="prevVerse">Previous</button>
-                <span id="verseCounter">1/9</span>
-                <button id="nextVerse">Next</button>
-            </div>
-            <div class="animation-controls">
-                <button id="restartAnimation">Restart</button>
-                <button id="toggleInteraction">Interact</button>
-                <button id="togglePanel">Hide Panel</button>
-            </div>
+        <div id="interaction-hint">
+            Click and drag to interact with the animation
         </div>
     </div>
 
-    <!-- Import map for ES modules -->
     <script type="importmap">
-    {
-        "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@0.156.1/build/three.module.js",
-            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.156.1/examples/jsm/",
-            "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.2/index.js",
-            "d3": "https://cdn.jsdelivr.net/npm/d3@7/+esm"
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.150.1/examples/jsm/",
+                "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.11.5/index.js"
+            }
         }
-    }
     </script>
-    <script src="config.js" type="module"></script>
-    <script src="animations.js" type="module"></script>
-    <script src="main.js" type="module"></script>
+    <script type="module" src="config.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>

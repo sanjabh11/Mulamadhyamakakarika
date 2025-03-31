@@ -4,21 +4,26 @@ import { gsap } from 'gsap';
 // Utility function to create standard slider
 function createSlider(container, label, min, max, value, step, onChange) {
     const sliderContainer = document.createElement('div');
-    sliderContainer.className = 'slider-container';
+    sliderContainer.className = 'slider-container'; // Use a class for styling if needed
     
     const sliderLabel = document.createElement('label');
     sliderLabel.textContent = label;
-    
+    sliderLabel.style.display = 'block'; // Style label
+    sliderLabel.style.marginBottom = '4px';
+    sliderLabel.style.fontSize = '0.8rem';
+
     const slider = document.createElement('input');
     slider.type = 'range';
     slider.min = min;
     slider.max = max;
     slider.value = value;
     slider.step = step || 0.01;
+    slider.style.width = '100%'; // Style slider
     slider.addEventListener('input', onChange);
     
     sliderContainer.appendChild(sliderLabel);
     sliderContainer.appendChild(slider);
+    sliderContainer.style.marginBottom = '10px'; // Add margin
     container.appendChild(sliderContainer);
     
     return slider;
@@ -27,14 +32,17 @@ function createSlider(container, label, min, max, value, step, onChange) {
 // Utility function to create a checkbox
 function createCheckbox(container, label, checked, onChange) {
     const checkboxContainer = document.createElement('div');
-    
+    checkboxContainer.style.marginBottom = '10px'; // Add margin
+
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = checked;
+    checkbox.style.marginRight = '5px'; // Style checkbox
     checkbox.addEventListener('change', onChange);
     
     const checkboxLabel = document.createElement('label');
     checkboxLabel.textContent = label;
+    checkboxLabel.style.fontSize = '0.85rem'; // Style label
     
     checkboxContainer.appendChild(checkbox);
     checkboxContainer.appendChild(checkboxLabel);
@@ -47,7 +55,22 @@ function createCheckbox(container, label, checked, onChange) {
 function createButton(container, label, onClick) {
     const button = document.createElement('button');
     button.textContent = label;
+    // Apply styles similar to .button-control from styles.css
+    button.style.backgroundColor = 'var(--accent-color)';
+    button.style.color = 'white';
+    button.style.border = 'none';
+    button.style.borderRadius = '4px';
+    button.style.padding = '0.5rem 1rem';
+    button.style.cursor = 'pointer';
+    button.style.transition = 'background-color 0.2s';
+    button.style.marginRight = '0.5rem';
+    button.style.marginBottom = '0.5rem';
     button.addEventListener('click', onClick);
+    
+    // Hover effect (optional, CSS is better but JS fallback)
+    button.addEventListener('mouseenter', () => button.style.backgroundColor = 'var(--button-hover)');
+    button.addEventListener('mouseleave', () => button.style.backgroundColor = 'var(--accent-color)');
+
     container.appendChild(button);
     
     return button;
@@ -106,16 +129,15 @@ export function createSuperpositionAnimation(scene, config, colors) {
         curves.push({ mesh: waveMesh, curve });
     }
     
-    // Create instructional text
-    const textMaterial = new THREE.MeshBasicMaterial({ 
-        color: colors.accent,
-        side: THREE.DoubleSide
-    });
-    
-    const textGeometry = new THREE.PlaneGeometry(6, 1);
-    const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-    textMesh.position.set(0, 7, 0);
-    scene.add(textMesh);
+    // Create instructional text (Optional, can be removed if not needed)
+    // const textMaterial = new THREE.MeshBasicMaterial({ 
+    //     color: colors.accent,
+    //     side: THREE.DoubleSide
+    // });
+    // const textGeometry = new THREE.PlaneGeometry(6, 1);
+    // const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+    // textMesh.position.set(0, 7, 0);
+    // scene.add(textMesh);
     
     // Update function
     function update() {
@@ -146,16 +168,16 @@ export function createSuperpositionAnimation(scene, config, colors) {
                 const w2 = Math.exp(-Math.pow(particle.position.y - 0, 2) / 5);
                 const w3 = Math.exp(-Math.pow(particle.position.y - waveSeparation, 2) / 5);
                 
-                const totalWeight = w1 + w2 + w3;
+                const totalWeight = w1 + w2 + w3 + 1e-6; // Avoid division by zero
                 
                 particle.position.z = (wave1 * w1 + wave2 * w2 + wave3 * w3) / totalWeight;
             }
         });
         
         // Update wave curves
-        curves.forEach((curve, i) => {
+        curves.forEach((curveData, i) => { // Renamed 'curve' to 'curveData'
             const offset = (i - 1) * waveSeparation;
-            const points = curve.curve.points;
+            const points = curveData.curve.points; // Use curveData.curve
             
             for (let j = 0; j < points.length; j++) {
                 const x = points[j].x;
@@ -165,18 +187,18 @@ export function createSuperpositionAnimation(scene, config, colors) {
                 // During collapse, fade out other waves
                 if (isCollapsing) {
                     if (i - 1 === collapseTo) {
-                        curve.mesh.material.opacity = 0.5;
+                        curveData.mesh.material.opacity = 0.5; // Use curveData.mesh
                     } else {
-                        curve.mesh.material.opacity = 0.5 * (1 - collapseProgress);
+                        curveData.mesh.material.opacity = 0.5 * (1 - collapseProgress); // Use curveData.mesh
                     }
                 } else {
-                    curve.mesh.material.opacity = 0.5;
+                    curveData.mesh.material.opacity = 0.5; // Use curveData.mesh
                 }
             }
             
             // Update the curve geometry
-            curve.mesh.geometry.dispose();
-            curve.mesh.geometry = new THREE.TubeGeometry(curve.curve, 64, 0.1, 8, false);
+            curveData.mesh.geometry.dispose(); // Use curveData.mesh
+            curveData.mesh.geometry = new THREE.TubeGeometry(curveData.curve, 64, 0.1, 8, false); // Use curveData.curve
         });
     }
     
@@ -225,9 +247,9 @@ export function createSuperpositionAnimation(scene, config, colors) {
     
     // Set up controls
     function setupControls(container) {
-        container.innerHTML = '<h3>Quantum Superposition Controls</h3>';
+        // container.innerHTML = '<h3>Quantum Superposition Controls</h3>'; // Title added in main app.js
         
-        const amplitudeSlider = createSlider(
+        createSlider(
             container, 
             'Wave Amplitude', 
             0.1, 
@@ -237,7 +259,7 @@ export function createSuperpositionAnimation(scene, config, colors) {
             (e) => { waveAmplitude = parseFloat(e.target.value); }
         );
         
-        const speedSlider = createSlider(
+        createSlider(
             container, 
             'Wave Speed', 
             0.1, 
@@ -247,13 +269,13 @@ export function createSuperpositionAnimation(scene, config, colors) {
             (e) => { waveSpeed = parseFloat(e.target.value); }
         );
         
-        const measureButton = createButton(
+        createButton(
             container,
             'Measure/Collapse',
             measure
         );
         
-        const resetButton = createButton(
+        createButton(
             container,
             'Reset Particles',
             reset
@@ -264,17 +286,22 @@ export function createSuperpositionAnimation(scene, config, colors) {
     function dispose() {
         // Dispose geometries and materials
         particles.children.forEach(particle => {
-            particle.geometry.dispose();
-            particle.material.dispose();
+            if (particle.geometry) particle.geometry.dispose();
+            if (particle.material) particle.material.dispose();
+        });
+        scene.remove(particles);
+        
+        curves.forEach(curveData => { // Use curveData
+            if (curveData.mesh.geometry) curveData.mesh.geometry.dispose();
+            if (curveData.mesh.material) curveData.mesh.material.dispose();
+            scene.remove(curveData.mesh);
         });
         
-        curves.forEach(curve => {
-            curve.mesh.geometry.dispose();
-            curve.mesh.material.dispose();
-        });
-        
-        textMesh.geometry.dispose();
-        textMesh.material.dispose();
+        // if (textMesh) {
+        //     if (textMesh.geometry) textMesh.geometry.dispose();
+        //     if (textMesh.material) textMesh.material.dispose();
+        //     scene.remove(textMesh);
+        // }
     }
     
     return {
@@ -332,7 +359,7 @@ export function createWaveFunctionAnimation(scene, config, colors) {
                 opacity: 0.3
             });
             const line = new THREE.Line(lineGeometry, lineMaterial);
-            arrow.add(line);
+            arrow.add(line); // Add line as child of arrow
         }
     }
     
@@ -341,10 +368,10 @@ export function createWaveFunctionAnimation(scene, config, colors) {
     scene.add(particles);
     
     const particleGeometry = new THREE.SphereGeometry(0.05, 8, 8);
-    const particleMaterial = new THREE.MeshBasicMaterial({ color: colors.primary });
+    // Material will be set in resetParticle
     
     for (let i = 0; i < particleCount; i++) {
-        const particle = new THREE.Mesh(particleGeometry, particleMaterial);
+        const particle = new THREE.Mesh(particleGeometry); // Material set later
         resetParticle(particle);
         particles.add(particle);
     }
@@ -378,7 +405,6 @@ export function createWaveFunctionAnimation(scene, config, colors) {
         const timeScale = evolutionSpeed;
         
         // Using a simple vector field for demonstration
-        // This could be improved with a more complex field like curl noise
         const vx = Math.sin(y * scale + time * timeScale) * Math.cos(x * scale);
         const vy = Math.cos(y * scale) * Math.sin(x * scale + time * timeScale);
         
@@ -397,6 +423,7 @@ export function createWaveFunctionAnimation(scene, config, colors) {
         
         // Random colors based on position
         const hue = (Math.atan2(particle.position.y, particle.position.x) / (Math.PI * 2)) + 0.5;
+        if (particle.material) particle.material.dispose(); // Dispose old material
         particle.material = new THREE.MeshBasicMaterial({ 
             color: new THREE.Color().setHSL(hue, 1, 0.5) 
         });
@@ -408,17 +435,19 @@ export function createWaveFunctionAnimation(scene, config, colors) {
         
         // Update flow field arrows
         arrowGroup.children.forEach(arrow => {
-            const x = arrow.position.x;
-            const y = arrow.position.y;
-            
-            const flow = getFlowVector(x, y);
-            
-            // Rotate arrow to flow direction
-            arrow.rotation.z = Math.atan2(flow.y, flow.x) - Math.PI / 2;
-            
-            // Scale arrow based on flow magnitude (optional)
-            const magnitude = flow.length();
-            arrow.scale.y = magnitude * 2;
+            if (arrow instanceof THREE.Mesh) { // Ensure it's the arrow mesh
+                const x = arrow.position.x;
+                const y = arrow.position.y;
+                
+                const flow = getFlowVector(x, y);
+                
+                // Rotate arrow to flow direction
+                arrow.rotation.z = Math.atan2(flow.y, flow.x) - Math.PI / 2;
+                
+                // Scale arrow based on flow magnitude (optional)
+                const magnitude = flow.length();
+                arrow.scale.y = magnitude * 2;
+            }
         });
         
         // Update particles
@@ -463,7 +492,7 @@ export function createWaveFunctionAnimation(scene, config, colors) {
     
     // Set up controls
     function setupControls(container) {
-        container.innerHTML = '<h3>Wave Function Evolution Controls</h3>';
+        // container.innerHTML = '<h3>Wave Function Evolution Controls</h3>';
         
         createSlider(
             container,
@@ -509,19 +538,22 @@ export function createWaveFunctionAnimation(scene, config, colors) {
     // Clean up
     function dispose() {
         arrowGroup.children.forEach(arrow => {
-            arrow.children[0].geometry.dispose();
-            arrow.children[0].material.dispose();
-            arrow.geometry.dispose();
-            arrow.material.dispose();
+            if (arrow.children[0] && arrow.children[0].geometry) arrow.children[0].geometry.dispose(); // Line geometry
+            if (arrow.children[0] && arrow.children[0].material) arrow.children[0].material.dispose(); // Line material
+            if (arrow.geometry) arrow.geometry.dispose();
+            if (arrow.material) arrow.material.dispose();
         });
+        scene.remove(arrowGroup);
         
         particles.children.forEach(particle => {
-            particle.geometry.dispose();
-            particle.material.dispose();
+            if (particle.geometry) particle.geometry.dispose();
+            if (particle.material) particle.material.dispose();
         });
+        scene.remove(particles);
         
-        waveMesh.geometry.dispose();
-        waveMesh.material.dispose();
+        if (waveMesh.geometry) waveMesh.geometry.dispose();
+        if (waveMesh.material) waveMesh.material.dispose();
+        scene.remove(waveMesh);
     }
     
     return {
@@ -576,17 +608,17 @@ export function createParticleInteractionAnimation(scene, config, colors) {
             (Math.random() - 0.5) * particleSpeed * 0.5
         );
         
-        // Add label
-        const labelGeometry = new THREE.BoxGeometry(0.2, 0.1, 0.05);
-        const labelMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        const label = new THREE.Mesh(labelGeometry, labelMaterial);
-        label.position.set(0, particleSize + 0.2, 0);
+        // Add label (Optional, can be complex to manage visibility)
+        // const labelGeometry = new THREE.BoxGeometry(0.2, 0.1, 0.05);
+        // const labelMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        // const label = new THREE.Mesh(labelGeometry, labelMaterial);
+        // label.position.set(0, particleSize + 0.2, 0);
         
         scene.add(particle);
         particles.push({
             mesh: particle,
             velocity,
-            label,
+            // label,
             type: index,
             interacting: false,
             interactionTimer: 0,
@@ -597,7 +629,7 @@ export function createParticleInteractionAnimation(scene, config, colors) {
     // Create lines to represent interactions
     const interactionLines = [];
     
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 10; i++) { // Pool of 10 lines
         const lineGeometry = new THREE.BufferGeometry();
         const positions = new Float32Array(6); // Two points (x, y, z) each
         lineGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -687,7 +719,9 @@ export function createParticleInteractionAnimation(scene, config, colors) {
                     particle.interacting = false;
                     if (particle.interactionPartner) {
                         particle.interactionPartner.interacting = false;
+                        particle.interactionPartner = null; // Clear partner
                     }
+                    particle.interactionPartner = null; // Clear partner
                 }
                 
                 // During interaction, particles are attracted to each other
@@ -701,33 +735,38 @@ export function createParticleInteractionAnimation(scene, config, colors) {
         });
         
         // Update interaction lines
-        interactionLines.forEach(line => {
-            if (line.active) {
-                line.timer += 0.01;
+        interactionLines.forEach(lineData => { // Renamed 'line' to 'lineData'
+            if (lineData.active) {
+                lineData.timer += 0.01;
                 
-                // Update line positions
-                const positions = line.line.geometry.attributes.position.array;
-                positions[0] = line.source.mesh.position.x;
-                positions[1] = line.source.mesh.position.y;
-                positions[2] = line.source.mesh.position.z;
-                positions[3] = line.target.mesh.position.x;
-                positions[4] = line.target.mesh.position.y;
-                positions[5] = line.target.mesh.position.z;
-                line.line.geometry.attributes.position.needsUpdate = true;
+                // Update line positions if source and target exist
+                if (lineData.source && lineData.target) {
+                    const positions = lineData.line.geometry.attributes.position.array;
+                    positions[0] = lineData.source.mesh.position.x;
+                    positions[1] = lineData.source.mesh.position.y;
+                    positions[2] = lineData.source.mesh.position.z;
+                    positions[3] = lineData.target.mesh.position.x;
+                    positions[4] = lineData.target.mesh.position.y;
+                    positions[5] = lineData.target.mesh.position.z;
+                    lineData.line.geometry.attributes.position.needsUpdate = true;
+                }
                 
                 // Fade out line over time
-                line.line.material.opacity = Math.max(0, 1 - line.timer / 2);
+                lineData.line.material.opacity = Math.max(0, 1 - lineData.timer / 2);
                 
                 // End line after timer expires
-                if (line.timer > 2) {
-                    line.active = false;
-                    line.line.material.opacity = 0;
+                if (lineData.timer > 2) {
+                    lineData.active = false;
+                    lineData.line.material.opacity = 0;
+                    lineData.source = null; // Clear references
+                    lineData.target = null;
                 }
             }
         });
         
         // Update virtual particles
-        virtualParticles.children.forEach(particle => {
+        for (let i = virtualParticles.children.length - 1; i >= 0; i--) { // Iterate backwards for removal
+            const particle = virtualParticles.children[i];
             particle.userData.timer += 0.01;
             
             // Move particle along path
@@ -756,9 +795,11 @@ export function createParticleInteractionAnimation(scene, config, colors) {
                 particle.scale.set(scale, scale, scale);
             } else {
                 // Remove particle after it completes its path
+                if (particle.geometry) particle.geometry.dispose();
+                if (particle.material) particle.material.dispose();
                 virtualParticles.remove(particle);
             }
-        });
+        }
     }
     
     // Create a virtual particle (gauge boson) to visualize interaction
@@ -786,7 +827,7 @@ export function createParticleInteractionAnimation(scene, config, colors) {
     
     // Setup controls
     function setupControls(container) {
-        container.innerHTML = '<h3>Particle Interaction Controls</h3>';
+        // container.innerHTML = '<h3>Particle Interaction Controls</h3>';
         
         createSlider(
             container,
@@ -872,20 +913,20 @@ export function createParticleInteractionAnimation(scene, config, colors) {
     // Clean up
     function dispose() {
         particles.forEach(particle => {
-            particle.mesh.geometry.dispose();
-            particle.mesh.material.dispose();
+            if (particle.mesh.geometry) particle.mesh.geometry.dispose();
+            if (particle.mesh.material) particle.mesh.material.dispose();
             scene.remove(particle.mesh);
         });
         
-        interactionLines.forEach(line => {
-            line.line.geometry.dispose();
-            line.line.material.dispose();
-            scene.remove(line.line);
+        interactionLines.forEach(lineData => { // Use lineData
+            if (lineData.line.geometry) lineData.line.geometry.dispose();
+            if (lineData.line.material) lineData.line.material.dispose();
+            scene.remove(lineData.line);
         });
         
         virtualParticles.children.forEach(particle => {
-            particle.geometry.dispose();
-            particle.material.dispose();
+            if (particle.geometry) particle.geometry.dispose();
+            if (particle.material) particle.material.dispose();
         });
         scene.remove(virtualParticles);
     }
@@ -903,7 +944,7 @@ export function createDoubleslitAnimation(scene, config, colors) {
     let slitWidth = config.slitWidth;
     let slitSeparation = config.slitSeparation;
     let particleSpeed = config.particleSpeed;
-    let observationStrength = config.observationStrength;
+    let observationStrength = config.observationStrength; // Not directly used in this simplified version
     let isObserving = false;
     
     // Create the double slit barrier
@@ -924,14 +965,14 @@ export function createDoubleslitAnimation(scene, config, colors) {
         // Clear existing slits
         while(slitGroup.children.length > 0) {
             const child = slitGroup.children[0];
-            child.geometry.dispose();
-            child.material.dispose();
+            if (child.geometry) child.geometry.dispose();
+            if (child.material) child.material.dispose();
             slitGroup.remove(child);
         }
         
         // Create two slits
         const slitGeometry = new THREE.BoxGeometry(slitWidth, barrierHeight, barrierDepth * 1.1);
-        const slitMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        const slitMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 }); // Color to make it look like a hole
         
         const leftSlit = new THREE.Mesh(slitGeometry, slitMaterial);
         leftSlit.position.x = -slitSeparation / 2;
@@ -956,10 +997,10 @@ export function createDoubleslitAnimation(scene, config, colors) {
     const screenHeight = 6;
     const screenGeometry = new THREE.PlaneGeometry(screenWidth, screenHeight);
     const screenMaterial = new THREE.MeshBasicMaterial({ 
-        color: 0x000000,
+        color: 0x111111, // Darker screen
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.2
+        opacity: 0.8 // Slightly more opaque
     });
     const screen = new THREE.Mesh(screenGeometry, screenMaterial);
     screen.position.z = 5;
@@ -981,7 +1022,7 @@ export function createDoubleslitAnimation(scene, config, colors) {
     const observerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
     const observer = new THREE.Mesh(observerGeometry, observerMaterial);
     observer.rotation.x = Math.PI / 2;
-    observer.position.set(0, 0, -1);
+    observer.position.set(0, 0, -1); // Position near slits
     observer.visible = false;
     scene.add(observer);
     
@@ -1005,7 +1046,8 @@ export function createDoubleslitAnimation(scene, config, colors) {
             velocity: new THREE.Vector3(0, 0, particleSpeed),
             passedBarrier: false,
             isWave: !isObserving,
-            slitChoice: null
+            slitChoice: null,
+            interferencePhase: Math.random() * Math.PI * 2 // Phase for interference calculation
         };
         
         particles.add(particle);
@@ -1024,6 +1066,19 @@ export function createDoubleslitAnimation(scene, config, colors) {
         detectionPoints.push({ x, y });
     }
     
+    // Simplified interference calculation
+    function calculateInterferenceIntensity(x) {
+        const wavelength = 0.5; // Arbitrary wavelength
+        const screenDistance = 5 - barrier.position.z; // Distance from slits to screen
+        
+        // Path difference from slits to point x on screen
+        const pathDiff = slitSeparation * x / screenDistance;
+        
+        // Intensity based on phase difference
+        const phaseDiff = (2 * Math.PI / wavelength) * pathDiff;
+        return Math.pow(Math.cos(phaseDiff / 2), 2);
+    }
+
     // Update function
     function update() {
         // Emit new particles randomly
@@ -1032,7 +1087,8 @@ export function createDoubleslitAnimation(scene, config, colors) {
         }
         
         // Update particles
-        particles.children.forEach(particle => {
+        for (let i = particles.children.length - 1; i >= 0; i--) { // Iterate backwards for removal
+            const particle = particles.children[i];
             const pos = particle.position;
             const userData = particle.userData;
             
@@ -1060,16 +1116,15 @@ export function createDoubleslitAnimation(scene, config, colors) {
                 
                 // Remove particle if it hits the barrier
                 if (!passedThrough) {
+                    if (particle.geometry) particle.geometry.dispose();
+                    if (particle.material) particle.material.dispose();
                     particles.remove(particle);
-                    particle.geometry.dispose();
-                    particle.material.dispose();
-                    return;
+                    continue; // Skip rest of loop for this particle
                 }
                 
                 // If we are observing, force particle behavior (no interference)
                 if (isObserving) {
                     userData.isWave = false;
-                    
                     // Make the particle's path straighter when observed
                     userData.velocity.x *= 0.2;
                     userData.velocity.y *= 0.2;
@@ -1081,10 +1136,7 @@ export function createDoubleslitAnimation(scene, config, colors) {
             }
             
             // After passing barrier, wave behavior differs from particle behavior
-            if (userData.passedBarrier && !userData.isWave) {
-                // Particle-like behavior - straighter path
-                // Nothing special to do here since we already adjusted velocity
-            } else if (userData.passedBarrier) {
+            if (userData.passedBarrier && userData.isWave) {
                 // Wave-like behavior - more spread and potential interference
                 // Add some random deflection to simulate wave behavior
                 userData.velocity.x += (Math.random() - 0.5) * 0.01;
@@ -1093,15 +1145,26 @@ export function createDoubleslitAnimation(scene, config, colors) {
             
             // Check if particle hits the screen
             if (pos.z >= screen.position.z) {
-                // Register detection point
-                addDetectionPoint(pos.x, pos.y);
+                let finalX = pos.x;
+                
+                // If wave behavior, calculate landing position based on interference
+                if (userData.isWave) {
+                    const intensity = calculateInterferenceIntensity(pos.x);
+                    // Randomly decide if particle lands based on intensity
+                    if (Math.random() < intensity) {
+                         addDetectionPoint(finalX, pos.y);
+                    }
+                } else {
+                    // Particle behavior - lands directly
+                    addDetectionPoint(finalX, pos.y);
+                }
                 
                 // Remove the particle
+                if (particle.geometry) particle.geometry.dispose();
+                if (particle.material) particle.material.dispose();
                 particles.remove(particle);
-                particle.geometry.dispose();
-                particle.material.dispose();
             }
-        });
+        }
         
         // Update observer visibility
         observer.visible = isObserving;
@@ -1109,7 +1172,7 @@ export function createDoubleslitAnimation(scene, config, colors) {
     
     // Setup controls
     function setupControls(container) {
-        container.innerHTML = '<h3>Double-slit Experiment Controls</h3>';
+        // container.innerHTML = '<h3>Double-slit Experiment Controls</h3>';
         
         createSlider(
             container,
@@ -1147,11 +1210,21 @@ export function createDoubleslitAnimation(scene, config, colors) {
             (e) => { particleSpeed = parseFloat(e.target.value); }
         );
         
-        createCheckbox(
+        const observeCheckbox = createCheckbox( // Store checkbox reference
             container,
             'Observe Which-Path',
             isObserving,
-            (e) => { isObserving = e.target.checked; }
+            (e) => { 
+                isObserving = e.target.checked; 
+                // Clear pattern when changing observation state
+                 while (detectorDots.children.length > 0) {
+                    const dot = detectorDots.children[0];
+                    if (dot.geometry) dot.geometry.dispose();
+                    if (dot.material) dot.material.dispose();
+                    detectorDots.remove(dot);
+                }
+                detectionPoints.length = 0;
+            }
         );
         
         createButton(
@@ -1161,8 +1234,8 @@ export function createDoubleslitAnimation(scene, config, colors) {
                 // Clear all detection points
                 while (detectorDots.children.length > 0) {
                     const dot = detectorDots.children[0];
-                    dot.geometry.dispose();
-                    dot.material.dispose();
+                    if (dot.geometry) dot.geometry.dispose();
+                    if (dot.material) dot.material.dispose();
                     detectorDots.remove(dot);
                 }
                 detectionPoints.length = 0;
@@ -1172,37 +1245,37 @@ export function createDoubleslitAnimation(scene, config, colors) {
     
     // Clean up
     function dispose() {
-        barrier.geometry.dispose();
-        barrier.material.dispose();
+        if (barrier.geometry) barrier.geometry.dispose();
+        if (barrier.material) barrier.material.dispose();
         scene.remove(barrier);
         
         slitGroup.children.forEach(slit => {
-            slit.geometry.dispose();
-            slit.material.dispose();
+            if (slit.geometry) slit.geometry.dispose();
+            if (slit.material) slit.material.dispose();
         });
         scene.remove(slitGroup);
         
-        emitter.geometry.dispose();
-        emitter.material.dispose();
+        if (emitter.geometry) emitter.geometry.dispose();
+        if (emitter.material) emitter.material.dispose();
         scene.remove(emitter);
         
-        screen.geometry.dispose();
-        screen.material.dispose();
+        if (screen.geometry) screen.geometry.dispose();
+        if (screen.material) screen.material.dispose();
         scene.remove(screen);
         
         particles.children.forEach(particle => {
-            particle.geometry.dispose();
-            particle.material.dispose();
+            if (particle.geometry) particle.geometry.dispose();
+            if (particle.material) particle.material.dispose();
         });
         scene.remove(particles);
         
-        observer.geometry.dispose();
-        observer.material.dispose();
+        if (observer.geometry) observer.geometry.dispose();
+        if (observer.material) observer.material.dispose();
         scene.remove(observer);
         
         detectorDots.children.forEach(dot => {
-            dot.geometry.dispose();
-            dot.material.dispose();
+            if (dot.geometry) dot.geometry.dispose();
+            if (dot.material) dot.material.dispose();
         });
         scene.remove(detectorDots);
     }
@@ -1321,16 +1394,16 @@ export function createEntanglementAnimation(scene, config, colors) {
     const downArrow2 = new THREE.Mesh(arrowGeometry, arrowMaterial);
     
     upArrow1.position.set(-particleDistance/2, 1, 0);
-    upArrow1.rotation.z = Math.PI;
+    upArrow1.rotation.z = Math.PI; // Pointing up
     
     downArrow1.position.set(-particleDistance/2, -1, 0);
-    downArrow1.rotation.z = 0;
+    downArrow1.rotation.z = 0; // Pointing down
     
     upArrow2.position.set(particleDistance/2, 1, 0);
-    upArrow2.rotation.z = Math.PI;
+    upArrow2.rotation.z = Math.PI; // Pointing up
     
     downArrow2.position.set(particleDistance/2, -1, 0);
-    downArrow2.rotation.z = 0;
+    downArrow2.rotation.z = 0; // Pointing down
     
     upArrow1.visible = false;
     downArrow1.visible = false;
@@ -1442,7 +1515,7 @@ export function createEntanglementAnimation(scene, config, colors) {
     
     // Setup controls
     function setupControls(container) {
-        container.innerHTML = '<h3>Quantum Entanglement Controls</h3>';
+        // container.innerHTML = '<h3>Quantum Entanglement Controls</h3>';
         
         createSlider(
             container,
@@ -1519,18 +1592,18 @@ export function createEntanglementAnimation(scene, config, colors) {
     // Clean up
     function dispose() {
         // Dispose of geometries and materials
-        particleGeometry.dispose();
-        particleMaterial1.dispose();
-        particleMaterial2.dispose();
+        if (particleGeometry) particleGeometry.dispose();
+        if (particleMaterial1) particleMaterial1.dispose();
+        if (particleMaterial2) particleMaterial2.dispose();
         
         states1.children.forEach(state => {
-            state.geometry.dispose();
-            state.material.dispose();
+            if (state.geometry) state.geometry.dispose();
+            if (state.material) state.material.dispose();
         });
         
         states2.children.forEach(state => {
-            state.geometry.dispose();
-            state.material.dispose();
+            if (state.geometry) state.geometry.dispose();
+            if (state.material) state.material.dispose();
         });
         
         // Dispose of all other objects
@@ -1545,16 +1618,20 @@ export function createEntanglementAnimation(scene, config, colors) {
         scene.remove(downArrow2);
         
         // Dispose of line geometry and material
-        entanglementLine.geometry.dispose();
-        entanglementLine.material.dispose();
+        if (entanglementLine.geometry) entanglementLine.geometry.dispose();
+        if (entanglementLine.material) entanglementLine.material.dispose();
         
         // Dispose of arrow geometries and materials
-        arrowGeometry.dispose();
-        arrowMaterial.dispose();
+        if (arrowGeometry) arrowGeometry.dispose();
+        if (arrowMaterial) arrowMaterial.dispose();
         
         // Dispose of eye geometry and material
-        eyeGeometry.dispose();
-        eyeMaterial.dispose();
+        if (eyeGeometry) eyeGeometry.dispose();
+        if (eyeMaterial) eyeMaterial.dispose();
+
+        // Dispose state geometry and material
+        if (stateGeometry) stateGeometry.dispose();
+        if (stateMaterial) stateMaterial.dispose();
     }
     
     return {
@@ -1587,8 +1664,8 @@ export function createAttractionAnimation(scene, config, colors) {
         // Clear existing field lines
         while (fieldLines.children.length > 0) {
             const line = fieldLines.children[0];
-            line.geometry.dispose();
-            line.material.dispose();
+            if (line.geometry) line.geometry.dispose();
+            if (line.material) line.material.dispose();
             fieldLines.remove(line);
         }
         
@@ -1606,15 +1683,6 @@ export function createAttractionAnimation(scene, config, colors) {
             const x = Math.sin(phi) * Math.cos(theta);
             const y = Math.sin(phi) * Math.sin(theta);
             const z = Math.cos(phi);
-            
-            // Create a line from the point to the center
-            const startPoint = new THREE.Vector3(
-                x * fieldRadius,
-                y * fieldRadius,
-                z * fieldRadius
-            );
-            
-            const endPoint = new THREE.Vector3(0, 0, 0);
             
             // Create a curved path for the field line
             const curvePoints = [];
@@ -1663,46 +1731,49 @@ export function createAttractionAnimation(scene, config, colors) {
     ];
     
     // Create objects
-    for (let i = 0; i < objectCount; i++) {
-        const geometryIndex = Math.floor(Math.random() * geometries.length);
-        const geometry = geometries[geometryIndex];
-        
-        // Create material with random hue but same primary color family
-        const hue = Math.random() * 0.1 + 0.6; // Range from 0.6 to 0.7 for a consistent color family
-        const material = new THREE.MeshBasicMaterial({ 
-            color: new THREE.Color().setHSL(hue, 0.8, 0.5) 
-        });
-        
-        const object = new THREE.Mesh(geometry, material);
-        
-        // Set random position within field radius
-        const angle = Math.random() * Math.PI * 2;
-        const radius = Math.random() * fieldRadius * 1.5;
-        
-        object.position.x = Math.cos(angle) * radius;
-        object.position.y = Math.sin(angle) * radius;
-        object.position.z = (Math.random() - 0.5) * fieldRadius;
-        
-        // Set random velocity
-        const speed = 0.02 + Math.random() * 0.05;
-        const velocityAngle = Math.random() * Math.PI * 2;
-        
-        object.userData = {
-            velocity: new THREE.Vector3(
-                Math.cos(velocityAngle) * speed,
-                Math.sin(velocityAngle) * speed,
-                (Math.random() - 0.5) * speed
-            ),
-            rotation: new THREE.Vector3(
-                Math.random() * 0.05,
-                Math.random() * 0.05,
-                Math.random() * 0.05
-            ),
-            attraction: 0.5 + Math.random() * 0.5 // Random attraction strength per object
-        };
-        
-        objects.add(object);
+    function createObjects(count) {
+         for (let i = 0; i < count; i++) {
+            const geometryIndex = Math.floor(Math.random() * geometries.length);
+            const geometry = geometries[geometryIndex];
+            
+            // Create material with random hue but same primary color family
+            const hue = Math.random() * 0.1 + 0.6; // Range from 0.6 to 0.7 for a consistent color family
+            const material = new THREE.MeshBasicMaterial({ 
+                color: new THREE.Color().setHSL(hue, 0.8, 0.5) 
+            });
+            
+            const object = new THREE.Mesh(geometry, material);
+            
+            // Set random position within field radius
+            const angle = Math.random() * Math.PI * 2;
+            const radius = Math.random() * fieldRadius * 1.5;
+            
+            object.position.x = Math.cos(angle) * radius;
+            object.position.y = Math.sin(angle) * radius;
+            object.position.z = (Math.random() - 0.5) * fieldRadius;
+            
+            // Set random velocity
+            const speed = 0.02 + Math.random() * 0.05;
+            const velocityAngle = Math.random() * Math.PI * 2;
+            
+            object.userData = {
+                velocity: new THREE.Vector3(
+                    Math.cos(velocityAngle) * speed,
+                    Math.sin(velocityAngle) * speed,
+                    (Math.random() - 0.5) * speed
+                ),
+                rotation: new THREE.Vector3(
+                    Math.random() * 0.05,
+                    Math.random() * 0.05,
+                    Math.random() * 0.05
+                ),
+                attraction: 0.5 + Math.random() * 0.5 // Random attraction strength per object
+            };
+            
+            objects.add(object);
+        }
     }
+    createObjects(objectCount); // Create initial objects
     
     // Create craving/clinging visualization
     const cravingLines = new THREE.Group();
@@ -1712,8 +1783,8 @@ export function createAttractionAnimation(scene, config, colors) {
         // Clear existing craving lines
         while (cravingLines.children.length > 0) {
             const line = cravingLines.children[0];
-            line.geometry.dispose();
-            line.material.dispose();
+            if (line.geometry) line.geometry.dispose();
+            if (line.material) line.material.dispose();
             cravingLines.remove(line);
         }
         
@@ -1797,7 +1868,7 @@ export function createAttractionAnimation(scene, config, colors) {
     
     // Setup controls
     function setupControls(container) {
-        container.innerHTML = '<h3>Attraction Force Controls</h3>';
+        // container.innerHTML = '<h3>Attraction Force Controls</h3>';
         
         createSlider(
             container,
@@ -1839,44 +1910,7 @@ export function createAttractionAnimation(scene, config, colors) {
             container,
             'Add Objects',
             () => {
-                // Add 5 more objects
-                for (let i = 0; i < 5; i++) {
-                    const geometryIndex = Math.floor(Math.random() * geometries.length);
-                    const geometry = geometries[geometryIndex];
-                    
-                    const hue = Math.random() * 0.1 + 0.6;
-                    const material = new THREE.MeshBasicMaterial({ 
-                        color: new THREE.Color().setHSL(hue, 0.8, 0.5) 
-                    });
-                    
-                    const object = new THREE.Mesh(geometry, material);
-                    
-                    const angle = Math.random() * Math.PI * 2;
-                    const radius = fieldRadius * 1.2;
-                    
-                    object.position.x = Math.cos(angle) * radius;
-                    object.position.y = Math.sin(angle) * radius;
-                    object.position.z = (Math.random() - 0.5) * fieldRadius;
-                    
-                    const speed = 0.02 + Math.random() * 0.05;
-                    const velocityAngle = Math.random() * Math.PI * 2;
-                    
-                    object.userData = {
-                        velocity: new THREE.Vector3(
-                            Math.cos(velocityAngle) * speed,
-                            Math.sin(velocityAngle) * speed,
-                            (Math.random() - 0.5) * speed
-                        ),
-                        rotation: new THREE.Vector3(
-                            Math.random() * 0.05,
-                            Math.random() * 0.05,
-                            Math.random() * 0.05
-                        ),
-                        attraction: 0.5 + Math.random() * 0.5
-                    };
-                    
-                    objects.add(object);
-                }
+                createObjects(5); // Add 5 more objects
             }
         );
         
@@ -1898,25 +1932,25 @@ export function createAttractionAnimation(scene, config, colors) {
     
     // Clean up
     function dispose() {
-        centerGeometry.dispose();
-        centerMaterial.dispose();
+        if (center.geometry) center.geometry.dispose();
+        if (center.material) center.material.dispose();
         scene.remove(center);
         
         fieldLines.children.forEach(line => {
-            line.geometry.dispose();
-            line.material.dispose();
+            if (line.geometry) line.geometry.dispose();
+            if (line.material) line.material.dispose();
         });
         scene.remove(fieldLines);
         
         objects.children.forEach(object => {
-            object.geometry.dispose();
-            object.material.dispose();
+            if (object.geometry) object.geometry.dispose();
+            if (object.material) object.material.dispose();
         });
         scene.remove(objects);
         
         cravingLines.children.forEach(line => {
-            line.geometry.dispose();
-            line.material.dispose();
+            if (line.geometry) line.geometry.dispose();
+            if (line.material) line.material.dispose();
         });
         scene.remove(cravingLines);
         
@@ -1933,6 +1967,7 @@ export function createAttractionAnimation(scene, config, colors) {
     };
 }
 
+// VERSE 7: Quantum Coherence/Decoherence Animation
 export function createCoherenceAnimation(scene, config, colors) {
     // Implementation for Verse 7: Quantum Coherence/Decoherence
     let coherenceStrength = config.coherenceStrength;
@@ -1959,7 +1994,7 @@ export function createCoherenceAnimation(scene, config, colors) {
     // Create particles arranged on the torus
     for (let i = 0; i < particleCount; i++) {
         const theta = (i / particleCount) * Math.PI * 2;
-        const phi = (i % 30) / 30 * Math.PI * 2;
+        const phi = (i % 30) / 30 * Math.PI * 2; // Use modulo for better distribution
         
         const x = (3 + 0.5 * Math.cos(phi)) * Math.cos(theta);
         const y = (3 + 0.5 * Math.cos(phi)) * Math.sin(theta);
@@ -1981,7 +2016,7 @@ export function createCoherenceAnimation(scene, config, colors) {
             phase: Math.random() * Math.PI * 2,
             frequency: 1 + Math.random() * 0.5,
             amplitude: 0.1 + Math.random() * 0.1,
-            decoherence: 0
+            decoherence: 0 // 0 = fully coherent, 1 = fully decoherent
         };
         
         particles.add(particle);
@@ -2140,11 +2175,12 @@ export function createCoherenceAnimation(scene, config, colors) {
     // Toggle coherence state
     function toggleCoherence() {
         isCoherent = !isCoherent;
+        // Update button text in setupControls
     }
     
     // Setup controls
     function setupControls(container) {
-        container.innerHTML = '<h3>Quantum Coherence Controls</h3>';
+        // container.innerHTML = '<h3>Quantum Coherence Controls</h3>';
         
         createSlider(
             container,
@@ -2176,33 +2212,37 @@ export function createCoherenceAnimation(scene, config, colors) {
             (e) => { decayRate = parseFloat(e.target.value); }
         );
         
-        createButton(
+        const toggleButton = createButton( // Store button reference
             container,
             isCoherent ? 'Induce Decoherence' : 'Restore Coherence',
-            toggleCoherence
+            () => {
+                toggleCoherence();
+                // Update button text
+                toggleButton.textContent = isCoherent ? 'Induce Decoherence' : 'Restore Coherence';
+            }
         );
     }
     
     // Clean up
     function dispose() {
-        systemGeometry.dispose();
-        systemMaterial.dispose();
+        if (systemGeometry) systemGeometry.dispose();
+        if (systemMaterial) systemMaterial.dispose();
         scene.remove(quantumSystem);
         
         particles.children.forEach(particle => {
-            particle.geometry.dispose();
-            particle.material.dispose();
+            if (particle.geometry) particle.geometry.dispose();
+            if (particle.material) particle.material.dispose();
         });
         scene.remove(particles);
         
         environmentParticles.children.forEach(particle => {
-            particle.geometry.dispose();
-            particle.material.dispose();
+            if (particle.geometry) particle.geometry.dispose();
+            if (particle.material) particle.material.dispose();
         });
         scene.remove(environmentParticles);
         
-        wavefunction.geometry.dispose();
-        wavefunction.material.dispose();
+        if (wavefunction.geometry) wavefunction.geometry.dispose();
+        if (wavefunction.material) wavefunction.material.dispose();
         scene.remove(wavefunction);
     }
     
@@ -2213,6 +2253,7 @@ export function createCoherenceAnimation(scene, config, colors) {
     };
 }
 
+// VERSE 8: Radioactive Decay Animation
 export function createDecayAnimation(scene, config, colors) {
     // Implementation for Verse 8: Radioactive Decay
     let halfLife = config.halfLife;
@@ -2365,7 +2406,8 @@ export function createDecayAnimation(scene, config, colors) {
         particle.userData = {
             velocity: direction.multiplyScalar(decayParticleSpeed),
             age: 0,
-            maxAge: 3 + Math.random() * 2
+            maxAge: 3 + Math.random() * 2,
+            trail: null // Initialize trail as null
         };
         
         radiationParticles.add(particle);
@@ -2487,14 +2529,14 @@ export function createDecayAnimation(scene, config, colors) {
                 // Remove trail
                 if (particle.userData.trail) {
                     scene.remove(particle.userData.trail);
-                    particle.userData.trail.geometry.dispose();
-                    particle.userData.trail.material.dispose();
+                    if (particle.userData.trail.geometry) particle.userData.trail.geometry.dispose();
+                    if (particle.userData.trail.material) particle.userData.trail.material.dispose();
                 }
                 
                 // Remove particle
                 radiationParticles.remove(particle);
-                particle.geometry.dispose();
-                particle.material.dispose();
+                if (particle.geometry) particle.geometry.dispose();
+                if (particle.material) particle.material.dispose();
             }
         }
         
@@ -2566,20 +2608,20 @@ export function createDecayAnimation(scene, config, colors) {
             // Remove trail
             if (particle.userData.trail) {
                 scene.remove(particle.userData.trail);
-                particle.userData.trail.geometry.dispose();
-                particle.userData.trail.material.dispose();
+                if (particle.userData.trail.geometry) particle.userData.trail.geometry.dispose();
+                if (particle.userData.trail.material) particle.userData.trail.material.dispose();
             }
             
             // Remove particle
             radiationParticles.remove(particle);
-            particle.geometry.dispose();
-            particle.material.dispose();
+            if (particle.geometry) particle.geometry.dispose();
+            if (particle.material) particle.material.dispose();
         }
     }
     
     // Setup controls
     function setupControls(container) {
-        container.innerHTML = '<h3>Radioactive Decay Controls</h3>';
+        // container.innerHTML = '<h3>Radioactive Decay Controls</h3>';
         
         createSlider(
             container,
@@ -2641,13 +2683,13 @@ export function createDecayAnimation(scene, config, colors) {
         nuclei.children.forEach(nucleus => {
             // Clean up electrons
             nucleus.userData.electrons.forEach(electron => {
-                electron.geometry.dispose();
-                electron.material.dispose();
+                if (electron.geometry) electron.geometry.dispose();
+                if (electron.material) electron.material.dispose();
                 nucleus.remove(electron);
             });
             
-            nucleus.geometry.dispose();
-            nucleus.material.dispose();
+            if (nucleus.geometry) nucleus.geometry.dispose();
+            if (nucleus.material) nucleus.material.dispose();
         });
         scene.remove(nuclei);
         
@@ -2655,25 +2697,25 @@ export function createDecayAnimation(scene, config, colors) {
         radiationParticles.children.forEach(particle => {
             if (particle.userData.trail) {
                 scene.remove(particle.userData.trail);
-                particle.userData.trail.geometry.dispose();
-                particle.userData.trail.material.dispose();
+                if (particle.userData.trail.geometry) particle.userData.trail.geometry.dispose();
+                if (particle.userData.trail.material) particle.userData.trail.material.dispose();
             }
             
-            particle.geometry.dispose();
-            particle.material.dispose();
+            if (particle.geometry) particle.geometry.dispose();
+            if (particle.material) particle.material.dispose();
         });
         scene.remove(radiationParticles);
         
         // Clean up aggregates
         aggregates.forEach(aggregate => {
-            aggregate.geometry.dispose();
-            aggregate.material.dispose();
+            if (aggregate.geometry) aggregate.geometry.dispose();
+            if (aggregate.material) aggregate.material.dispose();
             scene.remove(aggregate);
         });
         
         // Clean up aging sphere
-        agingSphere.geometry.dispose();
-        agingSphere.material.dispose();
+        if (agingSphere.geometry) agingSphere.geometry.dispose();
+        if (agingSphere.material) agingSphere.material.dispose();
         scene.remove(agingSphere);
     }
     
@@ -2684,9 +2726,10 @@ export function createDecayAnimation(scene, config, colors) {
     };
 }
 
+// VERSE 9: Entropy Increase Animation
 export function createEntropyAnimation(scene, config, colors) {
     // Implementation for Verse 9: Entropy Increase
-    let initialOrder = config.initialOrder;
+    let initialOrder = config.initialOrder; // Not directly used in this simplified version
     let disorderRate = config.disorderRate;
     let particleCount = config.particleCount;
     let systemSize = config.systemSize;
@@ -2730,7 +2773,7 @@ export function createEntropyAnimation(scene, config, colors) {
         const z = (iz - gridCount/2) * spacing;
         
         // Create particle
-        const particle = new THREE.Mesh(particleGeometry, particleMaterial);
+        const particle = new THREE.Mesh(particleGeometry, particleMaterial.clone()); // Clone material
         particle.position.set(x, y, z);
         
         // Store original ordered position
@@ -2956,19 +2999,17 @@ export function createEntropyAnimation(scene, config, colors) {
     
     // Setup controls
     function setupControls(container) {
-        container.innerHTML = '<h3>Entropy Increase Controls</h3>';
+        // container.innerHTML = '<h3>Entropy Increase Controls</h3>';
         
         createSlider(
             container,
-            'Initial Order',
+            'Initial Order (Visual Only)', // Slider doesn't reset state here
             0.1,
             1.0,
             initialOrder,
             0.1,
             (e) => { 
                 initialOrder = parseFloat(e.target.value);
-                // Redoing initial state would require complex reorganization
-                // So we just reset and let the animation progress from current state
             }
         );
         
@@ -2999,28 +3040,31 @@ export function createEntropyAnimation(scene, config, colors) {
     function dispose() {
         // Clean up particles
         organizedParticles.children.forEach(particle => {
-            particle.geometry.dispose();
-            particle.material.dispose();
+            if (particle.geometry) particle.geometry.dispose();
+            if (particle.material) particle.material.dispose();
         });
         scene.remove(organizedParticles);
         
         disorganizedParticles.children.forEach(particle => {
-            particle.geometry.dispose();
-            particle.material.dispose();
+            if (particle.geometry) particle.geometry.dispose();
+            if (particle.material) particle.material.dispose();
         });
         scene.remove(disorganizedParticles);
         
         // Clean up boundary
-        boundary.geometry.dispose();
-        boundary.material.dispose();
+        if (boundary.geometry) boundary.geometry.dispose();
+        if (boundary.material) boundary.material.dispose();
         scene.remove(boundary);
         
         // Clean up concept visualizations
         conceptVisualizations.forEach(concept => {
-            concept.geometry.dispose();
-            concept.material.dispose();
+            if (concept.geometry) concept.geometry.dispose();
+            if (concept.material) concept.material.dispose();
             scene.remove(concept);
         });
+
+        // Dispose particle geometry
+        if (particleGeometry) particleGeometry.dispose();
     }
     
     return {
@@ -3030,6 +3074,7 @@ export function createEntropyAnimation(scene, config, colors) {
     };
 }
 
+// VERSE 10: Initial Conditions Animation
 export function createInitialConditionsAnimation(scene, config, colors) {
     // Implementation for Verse 10: Initial Conditions
     let trajectoryCount = config.trajectoryCount;
@@ -3048,55 +3093,73 @@ export function createInitialConditionsAnimation(scene, config, colors) {
     scene.add(referencePoint);
     
     // Create trajectories with slightly different initial conditions
-    for (let i = 0; i < trajectoryCount; i++) {
-        // Create initial point
-        const pointGeometry = new THREE.SphereGeometry(0.1, 12, 12);
-        
-        // Color gradient from primary to secondary
-        const t = i / (trajectoryCount - 1);
-        const color = new THREE.Color().lerpColors(
-            new THREE.Color(colors.primary),
-            new THREE.Color(colors.secondary),
-            t
-        );
-        
-        const pointMaterial = new THREE.MeshBasicMaterial({ color });
-        const point = new THREE.Mesh(pointGeometry, pointMaterial);
-        
-        // Position with small offsets
-        const offset = (i - trajectoryCount/2) * initialSeparation;
-        point.position.set(offset, 0, 0);
-        
-        // Add properties for trajectory evolution
-        point.userData = {
-            timeOffset: i * 0.1,
-            index: i,
-            initialPosition: new THREE.Vector3(offset, 0, 0),
-            pointsHistory: [],
-            maxHistoryLength: 100,
-            wise: i === 0 // The first trajectory represents the "wise" path
-        };
-        
-        scene.add(point);
-        trajectories.push(point);
-        
-        // Create line for trajectory
-        const lineGeometry = new THREE.BufferGeometry();
-        const lineMaterial = new THREE.LineBasicMaterial({ 
-            color,
-            transparent: true,
-            opacity: 0.7
+    function createTrajectories() {
+        // Clear existing
+        trajectories.forEach(point => {
+            if (point.geometry) point.geometry.dispose();
+            if (point.material) point.material.dispose();
+            scene.remove(point);
         });
-        
-        // Initialize with current position
-        const positions = new Float32Array(point.userData.maxHistoryLength * 3);
-        lineGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        
-        const line = new THREE.Line(lineGeometry, lineMaterial);
-        scene.add(line);
-        trajectoryLines.push(line);
+        trajectories.length = 0;
+
+        trajectoryLines.forEach(line => {
+            if (line.geometry) line.geometry.dispose();
+            if (line.material) line.material.dispose();
+            scene.remove(line);
+        });
+        trajectoryLines.length = 0;
+
+        for (let i = 0; i < trajectoryCount; i++) {
+            // Create initial point
+            const pointGeometry = new THREE.SphereGeometry(0.1, 12, 12);
+            
+            // Color gradient from primary to secondary
+            const t = i / (trajectoryCount - 1);
+            const color = new THREE.Color().lerpColors(
+                new THREE.Color(colors.primary),
+                new THREE.Color(colors.secondary),
+                t
+            );
+            
+            const pointMaterial = new THREE.MeshBasicMaterial({ color });
+            const point = new THREE.Mesh(pointGeometry, pointMaterial);
+            
+            // Position with small offsets
+            const offset = (i - trajectoryCount/2) * initialSeparation;
+            point.position.set(offset, 0, 0);
+            
+            // Add properties for trajectory evolution
+            point.userData = {
+                timeOffset: i * 0.1,
+                index: i,
+                initialPosition: new THREE.Vector3(offset, 0, 0),
+                pointsHistory: [],
+                maxHistoryLength: 100,
+                wise: i === 0 // The first trajectory represents the "wise" path
+            };
+            
+            scene.add(point);
+            trajectories.push(point);
+            
+            // Create line for trajectory
+            const lineGeometry = new THREE.BufferGeometry();
+            const lineMaterial = new THREE.LineBasicMaterial({ 
+                color,
+                transparent: true,
+                opacity: 0.7
+            });
+            
+            // Initialize with current position
+            const positions = new Float32Array(point.userData.maxHistoryLength * 3);
+            lineGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            
+            const line = new THREE.Line(lineGeometry, lineMaterial);
+            scene.add(line);
+            trajectoryLines.push(line);
+        }
     }
-    
+    createTrajectories(); // Initial creation
+
     // Create a "wisdom" visualization for the first trajectory
     const wisdomGeometry = new THREE.TorusGeometry(0.3, 0.05, 16, 32);
     const wisdomMaterial = new THREE.MeshBasicMaterial({ 
@@ -3149,9 +3212,6 @@ export function createInitialConditionsAnimation(scene, config, colors) {
     // Function to calculate trajectory evolution
     function evolveTrajectory(point, time) {
         const userData = point.userData;
-        
-        // For demonstration, use a chaotic system inspired by Lorenz attractor
-        // but simplified for visual clarity
         
         // Current position
         const x = point.position.x;
@@ -3213,29 +3273,40 @@ export function createInitialConditionsAnimation(scene, config, colors) {
             
             // Update trajectory line
             const history = point.userData.pointsHistory;
-            const positions = trajectoryLines[index].geometry.attributes.position.array;
-            
-            for (let i = 0; i < history.length; i++) {
-                const pos = history[i];
-                positions[i * 3] = pos.x;
-                positions[i * 3 + 1] = pos.y;
-                positions[i * 3 + 2] = pos.z;
+            const line = trajectoryLines[index];
+            if (line) { // Check if line exists
+                const positions = line.geometry.attributes.position.array;
+                
+                for (let i = 0; i < history.length; i++) {
+                    const pos = history[i];
+                    positions[i * 3] = pos.x;
+                    positions[i * 3 + 1] = pos.y;
+                    positions[i * 3 + 2] = pos.z;
+                }
+                
+                // Set unused points to last point to avoid drawing lines to origin
+                for (let i = history.length; i < point.userData.maxHistoryLength; i++) {
+                    if (history.length > 0) {
+                        const lastPos = history[history.length - 1];
+                        positions[i * 3] = lastPos.x;
+                        positions[i * 3 + 1] = lastPos.y;
+                        positions[i * 3 + 2] = lastPos.z;
+                    }
+                }
+
+                line.geometry.setDrawRange(0, history.length);
+                line.geometry.attributes.position.needsUpdate = true;
             }
-            
-            trajectoryLines[index].geometry.setDrawRange(0, history.length);
-            trajectoryLines[index].geometry.attributes.position.needsUpdate = true;
         });
         
         // Update wisdom ring to follow the wise trajectory
-        if (trajectories.length > 0) {
-            const wiseTrajectory = trajectories.find(t => t.userData.wise);
-            if (wiseTrajectory) {
-                wisdomRing.position.copy(wiseTrajectory.position);
-                
-                // Make ring pulse
-                const scale = 1 + Math.sin(time * 2) * 0.2;
-                wisdomRing.scale.set(scale, scale, scale);
-            }
+        const wiseTrajectory = trajectories.find(t => t.userData.wise);
+        if (wiseTrajectory) {
+            wisdomRing.position.copy(wiseTrajectory.position);
+            
+            // Make ring pulse
+            const scale = 1 + Math.sin(time * 2) * 0.2;
+            wisdomRing.scale.set(scale, scale, scale);
         }
         
         // Update reality visualization
@@ -3255,15 +3326,16 @@ export function createInitialConditionsAnimation(scene, config, colors) {
         
         // Reset lines
         trajectoryLines.forEach(line => {
-            const positions = line.geometry.attributes.position.array;
-            line.geometry.setDrawRange(0, 0);
-            line.geometry.attributes.position.needsUpdate = true;
+            if (line) { // Check if line exists
+                line.geometry.setDrawRange(0, 0);
+                line.geometry.attributes.position.needsUpdate = true;
+            }
         });
     }
     
     // Setup controls
     function setupControls(container) {
-        container.innerHTML = '<h3>Initial Conditions Controls</h3>';
+        // container.innerHTML = '<h3>Initial Conditions Controls</h3>';
         
         createSlider(
             container,
@@ -3273,9 +3345,9 @@ export function createInitialConditionsAnimation(scene, config, colors) {
             trajectoryCount,
             1,
             (e) => { 
-                // Changing trajectory count would require complex recreation
-                // We just update the value for new reset
                 trajectoryCount = parseInt(e.target.value);
+                createTrajectories(); // Recreate trajectories
+                resetTrajectories();
             }
         );
         
@@ -3308,14 +3380,13 @@ export function createInitialConditionsAnimation(scene, config, colors) {
             0.01,
             (e) => {
                 initialSeparation = parseFloat(e.target.value);
-                resetTrajectories();
                 
                 // Update initial positions
                 trajectories.forEach((point, i) => {
                     const offset = (i - trajectoryCount/2) * initialSeparation;
                     point.userData.initialPosition.set(offset, 0, 0);
-                    point.position.copy(point.userData.initialPosition);
                 });
+                resetTrajectories(); // Reset to new initial positions
             }
         );
         
@@ -3329,38 +3400,38 @@ export function createInitialConditionsAnimation(scene, config, colors) {
     // Clean up
     function dispose() {
         // Clean up reference point
-        referenceGeometry.dispose();
-        referenceMaterial.dispose();
+        if (referenceGeometry) referenceGeometry.dispose();
+        if (referenceMaterial) referenceMaterial.dispose();
         scene.remove(referencePoint);
         
         // Clean up trajectories
         trajectories.forEach(point => {
-            point.geometry.dispose();
-            point.material.dispose();
+            if (point.geometry) point.geometry.dispose();
+            if (point.material) point.material.dispose();
             scene.remove(point);
         });
         
         // Clean up trajectory lines
         trajectoryLines.forEach(line => {
-            line.geometry.dispose();
-            line.material.dispose();
+            if (line.geometry) line.geometry.dispose();
+            if (line.material) line.material.dispose();
             scene.remove(line);
         });
         
         // Clean up wisdom ring
-        wisdomGeometry.dispose();
-        wisdomMaterial.dispose();
+        if (wisdomGeometry) wisdomGeometry.dispose();
+        if (wisdomMaterial) wisdomMaterial.dispose();
         scene.remove(wisdomRing);
         
         // Clean up reality visualization
-        realityGeometry.dispose();
-        realityMaterial.dispose();
+        if (realityGeometry) realityGeometry.dispose();
+        if (realityMaterial) realityMaterial.dispose();
         scene.remove(reality);
         
         // Clean up attractors
         attractors.forEach(attractor => {
-            attractor.geometry.dispose();
-            attractor.material.dispose();
+            if (attractor.geometry) attractor.geometry.dispose();
+            if (attractor.material) attractor.material.dispose();
             scene.remove(attractor);
         });
     }
@@ -3372,15 +3443,13 @@ export function createInitialConditionsAnimation(scene, config, colors) {
     };
 }
 
+// VERSE 11: Quantum Erasure Animation
 export function createQuantumErasureAnimation(scene, config, colors) {
-    // Implementation will go here
-    // Clean up
-    
     // Implementation for Verse 11: Quantum Erasure
     let erasureStrength = config.erasureStrength;
     let interferenceStrength = config.interferenceStrength;
     let particleSpeed = config.particleSpeed;
-    let pathWidth = config.pathWidth;
+    let pathWidth = config.pathWidth; // Not directly used in this simplified version
     let isErasing = false;
     
     // Create double slit setup
@@ -3400,8 +3469,8 @@ export function createQuantumErasureAnimation(scene, config, colors) {
         // Clear existing slits
         while(slitGroup.children.length > 0) {
             const child = slitGroup.children[0];
-            child.geometry.dispose();
-            child.material.dispose();
+            if (child.geometry) child.geometry.dispose();
+            if (child.material) child.material.dispose();
             slitGroup.remove(child);
         }
         
@@ -3430,10 +3499,10 @@ export function createQuantumErasureAnimation(scene, config, colors) {
     // Create detector screen
     const screenGeometry = new THREE.PlaneGeometry(10, 6);
     const screenMaterial = new THREE.MeshBasicMaterial({ 
-        color: 0x000000,
+        color: 0x111111,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.2
+        opacity: 0.8
     });
     const screen = new THREE.Mesh(screenGeometry, screenMaterial);
     screen.position.z = 5;
@@ -3454,7 +3523,7 @@ export function createQuantumErasureAnimation(scene, config, colors) {
     scene.add(detectorDots);
     
     // Create path visualizations
-    const leftPathGeometry = new THREE.PlaneGeometry(pathWidth, 10);
+    const leftPathGeometry = new THREE.PlaneGeometry(0.1, 10); // Thinner path
     const leftPathMaterial = new THREE.MeshBasicMaterial({ 
         color: 0xff0000,
         transparent: true,
@@ -3466,7 +3535,7 @@ export function createQuantumErasureAnimation(scene, config, colors) {
     leftPath.rotation.y = Math.PI / 2;
     scene.add(leftPath);
     
-    const rightPathGeometry = new THREE.PlaneGeometry(pathWidth, 10);
+    const rightPathGeometry = new THREE.PlaneGeometry(0.1, 10); // Thinner path
     const rightPathMaterial = new THREE.MeshBasicMaterial({ 
         color: 0x0000ff,
         transparent: true,
@@ -3499,9 +3568,9 @@ export function createQuantumErasureAnimation(scene, config, colors) {
     });
     const beam = new THREE.Mesh(beamGeometry, beamMaterial);
     beam.rotation.x = Math.PI / 2;
-    beam.position.set(0, 0, 0);
+    beam.position.set(0, 0, 0); // Position relative to eraser later
     beam.visible = false;
-    scene.add(beam);
+    eraser.add(beam); // Add beam as child of eraser
     
     // Create ignorance visualization
     const ignoranceGeometry = new THREE.SphereGeometry(1, 16, 16);
@@ -3551,7 +3620,7 @@ export function createQuantumErasureAnimation(scene, config, colors) {
             passedBarrier: false,
             pathChoice: null,
             pathErased: false,
-            interference: Math.random() * Math.PI * 2 // Random phase for interference
+            interferencePhase: Math.random() * Math.PI * 2 // Random phase for interference
         };
         
         particles.add(particle);
@@ -3570,6 +3639,8 @@ export function createQuantumErasureAnimation(scene, config, colors) {
             color = 0xff0000;
         } else if (path === 'right') {
             color = 0x0000ff;
+        } else {
+            color = colors.primary; // Default color if path is somehow undefined
         }
         
         const pointMaterial = new THREE.MeshBasicMaterial({ color });
@@ -3577,6 +3648,19 @@ export function createQuantumErasureAnimation(scene, config, colors) {
         point.position.set(x, y, 5.01); // Just in front of screen
         
         detectorDots.add(point);
+    }
+
+    // Simplified function to calculate interference pattern intensity
+    function calculateInterferenceIntensity(x) {
+        const wavelength = 0.5; // Arbitrary wavelength
+        const screenDistance = 5 - barrier.position.z; // Distance from slits to screen
+        
+        // Path difference from slits to point x on screen
+        const pathDiff = slitSeparation * x / screenDistance;
+        
+        // Intensity based on phase difference
+        const phaseDiff = (2 * Math.PI / wavelength) * pathDiff;
+        return Math.pow(Math.cos(phaseDiff / 2), 2) * interferenceStrength; // Apply strength
     }
     
     // Update function
@@ -3587,7 +3671,8 @@ export function createQuantumErasureAnimation(scene, config, colors) {
         }
         
         // Update particles
-        particles.children.forEach(particle => {
+        for (let i = particles.children.length - 1; i >= 0; i--) { // Iterate backwards for removal
+            const particle = particles.children[i];
             const pos = particle.position;
             const userData = particle.userData;
             
@@ -3619,8 +3704,8 @@ export function createQuantumErasureAnimation(scene, config, colors) {
                             opacity: 0,
                             duration: 2,
                             onComplete: () => {
-                                marker.geometry.dispose();
-                                marker.material.dispose();
+                                if (marker.geometry) marker.geometry.dispose();
+                                if (marker.material) marker.material.dispose();
                                 leftPathMarkers.remove(marker);
                             }
                         });
@@ -3645,8 +3730,8 @@ export function createQuantumErasureAnimation(scene, config, colors) {
                             opacity: 0,
                             duration: 2,
                             onComplete: () => {
-                                marker.geometry.dispose();
-                                marker.material.dispose();
+                                if (marker.geometry) marker.geometry.dispose();
+                                if (marker.material) marker.material.dispose();
                                 rightPathMarkers.remove(marker);
                             }
                         });
@@ -3655,17 +3740,16 @@ export function createQuantumErasureAnimation(scene, config, colors) {
                 
                 // If particle hits barrier, remove it
                 if (!passedThrough) {
+                    if (particle.geometry) particle.geometry.dispose();
+                    if (particle.material) particle.material.dispose();
                     particles.remove(particle);
-                    particle.geometry.dispose();
-                    particle.material.dispose();
-                    return;
+                    continue; // Skip rest of loop
                 }
                 
                 // Change behavior based on whether erasure is active
                 if (isErasing) {
                     // With erasure, path information is lost
                     userData.pathErased = true;
-                    
                     // Particle behavior becomes wave-like (adds diffraction)
                     userData.velocity.x += (Math.random() - 0.5) * 0.03;
                     userData.velocity.y += (Math.random() - 0.5) * 0.03;
@@ -3696,8 +3780,8 @@ export function createQuantumErasureAnimation(scene, config, colors) {
                     opacity: 1
                 });
                 
-                for (let i = 0; i < 5; i++) {
-                    const spark = new THREE.Mesh(sparkGeometry, sparkMaterial);
+                for (let k = 0; k < 5; k++) { // Use k to avoid conflict with outer loop
+                    const spark = new THREE.Mesh(sparkGeometry, sparkMaterial.clone()); // Clone material
                     spark.position.copy(pos);
                     
                     // Add random offset
@@ -3720,8 +3804,8 @@ export function createQuantumErasureAnimation(scene, config, colors) {
                         duration: 0.5,
                         onComplete: () => {
                             scene.remove(spark);
-                            spark.geometry.dispose();
-                            spark.material.dispose();
+                            if (spark.geometry) spark.geometry.dispose();
+                            if (spark.material) spark.material.dispose();
                         }
                     });
                 }
@@ -3729,24 +3813,26 @@ export function createQuantumErasureAnimation(scene, config, colors) {
             
             // Check if particle hits the screen
             if (pos.z >= screen.position.z) {
+                let finalX = pos.x;
+                
                 // With erasure, create interference pattern
                 if (isErasing || userData.pathErased) {
-                    // Calculate interference position (simplified physics)
-                    const interference = interferencePattern(pos.x, pos.y, userData.interference);
-                    
-                    // Add detection point
-                    addDetectionPoint(pos.x, pos.y, null);
+                    const intensity = calculateInterferenceIntensity(pos.x);
+                    // Randomly decide if particle lands based on intensity
+                    if (Math.random() < intensity) {
+                         addDetectionPoint(finalX, pos.y, null); // null path for interference
+                    }
                 } else {
                     // Without erasure, particles form two bands corresponding to slits
-                    addDetectionPoint(pos.x, pos.y, userData.pathChoice);
+                    addDetectionPoint(finalX, pos.y, userData.pathChoice);
                 }
                 
                 // Remove particle
+                if (particle.geometry) particle.geometry.dispose();
+                if (particle.material) particle.material.dispose();
                 particles.remove(particle);
-                particle.geometry.dispose();
-                particle.material.dispose();
             }
-        });
+        }
         
         // Update visualization elements
         const time = performance.now() * 0.001;
@@ -3760,10 +3846,7 @@ export function createQuantumErasureAnimation(scene, config, colors) {
             eraser.rotation.z = Math.sin(time) * 0.2;
             eraser.position.y = Math.sin(time * 0.5) * 0.5;
             
-            // Update beam position
-            beam.position.copy(eraser.position);
-            
-            // Pulsating effect
+            // Pulsating effect for beam
             const pulse = Math.sin(time * 3) * 0.5 + 0.5;
             beam.material.opacity = 0.3 + pulse * 0.3;
         }
@@ -3774,15 +3857,15 @@ export function createQuantumErasureAnimation(scene, config, colors) {
         
         // Update ignorance and wisdom visualizations
         ignorance.scale.set(
-            1 - 0.3 * isErasing,
-            1 - 0.3 * isErasing,
-            1 - 0.3 * isErasing
+            1 - 0.3 * (isErasing ? 1 : 0), // Scale down ignorance when erasing
+            1 - 0.3 * (isErasing ? 1 : 0),
+            1 - 0.3 * (isErasing ? 1 : 0)
         );
         
         wisdom.scale.set(
-            1 + 0.3 * isErasing,
-            1 + 0.3 * isErasing,
-            1 + 0.3 * isErasing
+            1 + 0.3 * (isErasing ? 1 : 0), // Scale up wisdom when erasing
+            1 + 0.3 * (isErasing ? 1 : 0),
+            1 + 0.3 * (isErasing ? 1 : 0)
         );
         
         ignorance.material.opacity = isErasing ? 0.3 : 0.7;
@@ -3793,20 +3876,6 @@ export function createQuantumErasureAnimation(scene, config, colors) {
         wisdom.rotation.y -= 0.01;
     }
     
-    // Simplified function to calculate interference pattern
-    function interferencePattern(x, y, phase) {
-        // Calculate distance from each slit
-        const d1 = Math.sqrt(Math.pow(x - (-slitSeparation/2), 2) + Math.pow(y, 2) + Math.pow(5, 2));
-        const d2 = Math.sqrt(Math.pow(x - (slitSeparation/2), 2) + Math.pow(y, 2) + Math.pow(5, 2));
-        
-        // Phase difference
-        const wavelen = 0.5;
-        const phaseDiff = (2 * Math.PI / wavelen) * (d2 - d1) + phase;
-        
-        // Intensity from interference
-        return Math.pow(Math.cos(phaseDiff / 2), 2);
-    }
-    
     // Toggle erasure
     function toggleErasure() {
         isErasing = !isErasing;
@@ -3814,30 +3883,30 @@ export function createQuantumErasureAnimation(scene, config, colors) {
         // Clear detector points
         while (detectorDots.children.length > 0) {
             const dot = detectorDots.children[0];
-            dot.geometry.dispose();
-            dot.material.dispose();
+            if (dot.geometry) dot.geometry.dispose();
+            if (dot.material) dot.material.dispose();
             detectorDots.remove(dot);
         }
         
         // Clear path markers
         while (leftPathMarkers.children.length > 0) {
             const marker = leftPathMarkers.children[0];
-            marker.geometry.dispose();
-            marker.material.dispose();
+            if (marker.geometry) marker.geometry.dispose();
+            if (marker.material) marker.material.dispose();
             leftPathMarkers.remove(marker);
         }
         
         while (rightPathMarkers.children.length > 0) {
             const marker = rightPathMarkers.children[0];
-            marker.geometry.dispose();
-            marker.material.dispose();
+            if (marker.geometry) marker.geometry.dispose();
+            if (marker.material) marker.material.dispose();
             rightPathMarkers.remove(marker);
         }
     }
     
     // Setup controls
     function setupControls(container) {
-        container.innerHTML = '<h3>Quantum Erasure Controls</h3>';
+        // container.innerHTML = '<h3>Quantum Erasure Controls</h3>';
         
         createSlider(
             container,
@@ -3869,10 +3938,14 @@ export function createQuantumErasureAnimation(scene, config, colors) {
             (e) => { particleSpeed = parseFloat(e.target.value); }
         );
         
-        createButton(
+        const toggleButton = createButton( // Store button reference
             container,
             isErasing ? 'Disable Erasure' : 'Enable Erasure',
-            toggleErasure
+            () => {
+                toggleErasure();
+                // Update button text
+                toggleButton.textContent = isErasing ? 'Disable Erasure' : 'Enable Erasure';
+            }
         );
         
         createButton(
@@ -3882,8 +3955,8 @@ export function createQuantumErasureAnimation(scene, config, colors) {
                 // Clear detector points
                 while (detectorDots.children.length > 0) {
                     const dot = detectorDots.children[0];
-                    dot.geometry.dispose();
-                    dot.material.dispose();
+                    if (dot.geometry) dot.geometry.dispose();
+                    if (dot.material) dot.material.dispose();
                     detectorDots.remove(dot);
                 }
             }
@@ -3893,77 +3966,73 @@ export function createQuantumErasureAnimation(scene, config, colors) {
     // Clean up
     function dispose() {
         // Clean up barrier and slits
-        barrierGeometry.dispose();
-        barrierMaterial.dispose();
+        if (barrier.geometry) barrier.geometry.dispose();
+        if (barrier.material) barrier.material.dispose();
         scene.remove(barrier);
         
         slitGroup.children.forEach(slit => {
-            slit.geometry.dispose();
-            slit.material.dispose();
+            if (slit.geometry) slit.geometry.dispose();
+            if (slit.material) slit.material.dispose();
         });
         scene.remove(slitGroup);
         
         // Clean up emitter and screen
-        emitterGeometry.dispose();
-        emitterMaterial.dispose();
+        if (emitter.geometry) emitter.geometry.dispose();
+        if (emitter.material) emitter.material.dispose();
         scene.remove(emitter);
         
-        screenGeometry.dispose();
-        screenMaterial.dispose();
+        if (screen.geometry) screen.geometry.dispose();
+        if (screen.material) screen.material.dispose();
         scene.remove(screen);
         
         // Clean up particles
         particles.children.forEach(particle => {
-            particle.geometry.dispose();
-            particle.material.dispose();
+            if (particle.geometry) particle.geometry.dispose();
+            if (particle.material) particle.material.dispose();
         });
         scene.remove(particles);
         
         // Clean up path markers
         leftPathMarkers.children.forEach(marker => {
-            marker.geometry.dispose();
-            marker.material.dispose();
+            if (marker.geometry) marker.geometry.dispose();
+            if (marker.material) marker.material.dispose();
         });
         scene.remove(leftPathMarkers);
         
         rightPathMarkers.children.forEach(marker => {
-            marker.geometry.dispose();
-            marker.material.dispose();
+            if (marker.geometry) marker.geometry.dispose();
+            if (marker.material) marker.material.dispose();
         });
         scene.remove(rightPathMarkers);
         
         // Clean up detector dots
         detectorDots.children.forEach(dot => {
-            dot.geometry.dispose();
-            dot.material.dispose();
+            if (dot.geometry) dot.geometry.dispose();
+            if (dot.material) dot.material.dispose();
         });
         scene.remove(detectorDots);
         
         // Clean up path visualizations
-        leftPathGeometry.dispose();
-        leftPathMaterial.dispose();
+        if (leftPath.geometry) leftPath.geometry.dispose();
+        if (leftPath.material) leftPath.material.dispose();
         scene.remove(leftPath);
         
-        rightPathGeometry.dispose();
-        rightPathMaterial.dispose();
+        if (rightPath.geometry) rightPath.geometry.dispose();
+        if (rightPath.material) rightPath.material.dispose();
         scene.remove(rightPath);
         
         // Clean up eraser
-        eraserGeometry.dispose();
-        eraserMaterial.dispose();
-        scene.remove(eraser);
-        
-        beamGeometry.dispose();
-        beamMaterial.dispose();
-        scene.remove(beam);
+        if (eraser.geometry) eraser.geometry.dispose();
+        if (eraser.material) eraser.material.dispose();
+        scene.remove(eraser); // Eraser removes beam as child
         
         // Clean up wisdom and ignorance
-        ignoranceGeometry.dispose();
-        ignoranceMaterial.dispose();
+        if (ignorance.geometry) ignorance.geometry.dispose();
+        if (ignorance.material) ignorance.material.dispose();
         scene.remove(ignorance);
         
-        wisdomGeometry.dispose();
-        wisdomMaterial.dispose();
+        if (wisdom.geometry) wisdom.geometry.dispose();
+        if (wisdom.material) wisdom.material.dispose();
         scene.remove(wisdom);
     }
     
@@ -3974,10 +4043,8 @@ export function createQuantumErasureAnimation(scene, config, colors) {
     };
 }
 
+// VERSE 12: Chain Reaction/Domino Animation
 export function createChainReactionAnimation(scene, config, colors) {
-    // Implementation will go here
-    // Clean up
-    
     // Implementation for Verse 12: Chain Reaction/Domino
     let dominoCount = config.dominoCount;
     let fallingSpeed = config.fallingSpeed;
@@ -4006,8 +4073,8 @@ export function createChainReactionAnimation(scene, config, colors) {
         // Clear existing dominoes
         while (dominoes.children.length > 0) {
             const domino = dominoes.children[0];
-            domino.geometry.dispose();
-            domino.material.dispose();
+            if (domino.geometry) domino.geometry.dispose();
+            if (domino.material) domino.material.dispose();
             dominoes.remove(domino);
         }
         
@@ -4080,13 +4147,14 @@ export function createChainReactionAnimation(scene, config, colors) {
         const domino = dominoes.children[i];
         if (domino) {
             symbol.position.copy(domino.position);
-            symbol.position.y += dominoHeight + 0.5;
+            symbol.position.y += dominoHeight / 2 + 0.5; // Position relative to domino center
         }
         
         symbol.userData = {
             name: linkNames[i % linkNames.length],
             originalY: symbol.position.y,
-            fallProgress: 0
+            fallProgress: 0,
+            index: i // Store index
         };
         
         symbols.add(symbol);
@@ -4195,8 +4263,19 @@ export function createChainReactionAnimation(scene, config, colors) {
                 userData.fallAngle = Math.min(Math.PI/2, 
                     Math.PI/2 * (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t));
                 
-                // Apply rotation
+                // Apply rotation around the bottom edge
+                // Pivot point is at the bottom center of the domino
+                const pivotOffset = new THREE.Vector3(0, -dominoHeight / 2, 0);
+                const pivot = domino.position.clone().add(pivotOffset);
+                
+                // Reset position and rotation before applying new rotation
+                domino.position.copy(userData.originalPosition);
+                domino.rotation.set(0, 0, 0);
+
+                // Translate to pivot, rotate, translate back
+                domino.position.sub(pivot);
                 domino.rotation.z = userData.fallAngle;
+                domino.position.add(pivot);
                 
                 // Check if this domino can trigger the next one
                 if (userData.fallAngle > Math.PI/4 && index < dominoCount - 1 && 
@@ -4224,21 +4303,23 @@ export function createChainReactionAnimation(scene, config, colors) {
                     const t = symbol.userData.fallProgress;
                     const angle = dominoData.fallAngle * t;
                     
+                    // Pivot point at the bottom center of the domino
                     const pivotPoint = new THREE.Vector3(
-                        domino.position.x,
-                        -dominoHeight/2,
-                        domino.position.z
+                        dominoData.originalPosition.x,
+                        -dominoHeight / 2,
+                        dominoData.originalPosition.z
                     );
                     
                     // Calculate new position relative to pivot
-                    const heightAboveDomino = dominoHeight + 0.5;
-                    const radius = heightAboveDomino;
+                    const heightAbovePivot = dominoHeight / 2 + 0.5; // Original Y offset from pivot
+                    const radius = heightAbovePivot;
                     
-                    symbol.position.y = pivotPoint.y + Math.cos(angle) * radius;
-                    symbol.position.z = pivotPoint.z + Math.sin(angle) * radius;
+                    symbol.position.x = pivotPoint.x + Math.sin(angle) * radius; // X changes based on Z rotation
+                    symbol.position.y = pivotPoint.y + Math.cos(angle) * radius; // Y changes based on Z rotation
+                    symbol.position.z = dominoData.originalPosition.z; // Z remains the same
                     
                     // Rotate symbol to match domino rotation
-                    symbol.rotation.x = -angle;
+                    symbol.rotation.z = angle;
                     
                     // Fade out symbol as it falls
                     symbol.material.opacity = 0.7 * (1 - t*0.7);
@@ -4248,19 +4329,26 @@ export function createChainReactionAnimation(scene, config, colors) {
         
         // Check if chain is interrupted
         if (interruptPosition >= 0 && isReactionStarted) {
-            // Show liberation effect
-            liberation.visible = true;
-            liberation.position.x = barrier.position.x + 1;
-            
-            // Animate liberation
-            const time = performance.now() * 0.001;
-            const pulseFactor = 1 + Math.sin(time * 2) * 0.2;
-            liberation.scale.set(pulseFactor, pulseFactor, pulseFactor);
-            liberation.material.opacity = 0.1 + Math.sin(time * 3) * 0.05 + 0.05;
-            
-            // Rotate
-            liberation.rotation.y += 0.01;
-            liberation.rotation.x += 0.005;
+            // Show liberation effect if the chain stopped before the end
+            const lastFallingDomino = dominoes.children.findIndex(d => d.userData.isFalling && d.userData.fallProgress < 1);
+            if (lastFallingDomino <= interruptPosition || lastFallingDomino === -1) { // If stopped at or before barrier, or all have fallen up to barrier
+                liberation.visible = true;
+                liberation.position.x = barrier.position.x + 1;
+                
+                // Animate liberation
+                const time = performance.now() * 0.001;
+                const pulseFactor = 1 + Math.sin(time * 2) * 0.2;
+                liberation.scale.set(pulseFactor, pulseFactor, pulseFactor);
+                liberation.material.opacity = 0.1 + Math.sin(time * 3) * 0.05 + 0.05;
+                
+                // Rotate
+                liberation.rotation.y += 0.01;
+                liberation.rotation.x += 0.005;
+            } else {
+                 liberation.visible = false; // Hide if chain continues past barrier somehow
+            }
+        } else {
+             liberation.visible = false; // Hide if not interrupted
         }
         
         // Animate barrier if visible
@@ -4273,7 +4361,7 @@ export function createChainReactionAnimation(scene, config, colors) {
     
     // Setup controls
     function setupControls(container) {
-        container.innerHTML = '<h3>Chain Reaction Controls</h3>';
+        // container.innerHTML = '<h3>Chain Reaction Controls</h3>';
         
         createSlider(
             container,
@@ -4299,7 +4387,7 @@ export function createChainReactionAnimation(scene, config, colors) {
         
         const interruptSlider = createSlider(
             container,
-            'Interrupt Position',
+            'Interrupt Position (0-' + (dominoCount - 1) + ')',
             0,
             dominoCount - 1,
             Math.floor(dominoCount / 3),
@@ -4325,31 +4413,31 @@ export function createChainReactionAnimation(scene, config, colors) {
     function dispose() {
         // Clean up dominoes
         dominoes.children.forEach(domino => {
-            domino.geometry.dispose();
-            domino.material.dispose();
+            if (domino.geometry) domino.geometry.dispose();
+            if (domino.material) domino.material.dispose();
         });
         scene.remove(dominoes);
         
         // Clean up floor
-        floorGeometry.dispose();
-        floorMaterial.dispose();
+        if (floor.geometry) floor.geometry.dispose();
+        if (floor.material) floor.material.dispose();
         scene.remove(floor);
         
         // Clean up symbols
         symbols.children.forEach(symbol => {
-            symbol.geometry.dispose();
-            symbol.material.dispose();
+            if (symbol.geometry) symbol.geometry.dispose();
+            if (symbol.material) symbol.material.dispose();
         });
         scene.remove(symbols);
         
         // Clean up barrier
-        barrierGeometry.dispose();
-        barrierMaterial.dispose();
+        if (barrier.geometry) barrier.geometry.dispose();
+        if (barrier.material) barrier.material.dispose();
         scene.remove(barrier);
         
         // Clean up liberation
-        liberationGeometry.dispose();
-        liberationMaterial.dispose();
+        if (liberation.geometry) liberation.geometry.dispose();
+        if (liberation.material) liberation.material.dispose();
         scene.remove(liberation);
     }
     

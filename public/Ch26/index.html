@@ -1,57 +1,71 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Madhyamaka & Quantum Physics</title>
+    <title>Interactive 3D Madhyamaka Verses - Chapter 26</title>
     <link rel="stylesheet" href="styles.css">
     <script type="importmap">
-        {
-            "imports": {
-                "three": "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js",
-                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/",
-                "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.3/index.js"
-            }
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/",
+            "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.2/index.js"
         }
+    }
     </script>
 </head>
 <body>
-    <div id="container">
-        <div id="scene-container"></div>
-        
-        <div id="text-overlay">
-            <h1 id="verse-number"></h1>
-            <div id="verse-text"></div>
-            
-            <div id="content-details">
-                <div class="detail-section">
-                    <h3>Madhyamaka Concept</h3>
-                    <p id="madhyamaka-concept"></p>
+    <div class="app-container">
+        <div class="side-panel" id="sidePanel">
+            <div class="panel-content">
+                <h1>Chapter 26: Examination of the Twelve Links</h1>
+                <div class="verse-nav">
+                    <button class="nav-button active" data-verse="1">Verse 1</button>
+                    <button class="nav-button" data-verse="2">Verse 2</button>
+                    <button class="nav-button" data-verse="3">Verse 3</button>
+                    <button class="nav-button" data-verse="4">Verse 4</button>
+                    <button class="nav-button" data-verse="5">Verse 5</button>
+                    <button class="nav-button" data-verse="6">Verse 6</button>
+                    <button class="nav-button" data-verse="7">Verse 7</button>
+                    <button class="nav-button" data-verse="8">Verse 8</button>
+                    <button class="nav-button" data-verse="9">Verse 9</button>
+                    <button class="nav-button" data-verse="10">Verse 10</button>
+                    <button class="nav-button" data-verse="11">Verse 11</button>
+                    <button class="nav-button" data-verse="12">Verse 12</button>
                 </div>
-                
-                <div class="detail-section">
-                    <h3>Quantum Physics Parallel</h3>
-                    <p id="quantum-parallel"></p>
+
+                <h3 id="explanationHeader" class="collapsible-header">Verse Explanation <span class="toggle-indicator">▼</span></h3>
+                <div id="explanationContent" class="collapsible-content">
+                    <div class="verse-details" id="verseDetails">
+                        <!-- Verse details will be populated by JS -->
+                    </div>
                 </div>
-                
-                <div class="detail-section">
-                    <h3>Accessible Explanation</h3>
-                    <p id="accessible-explanation"></p>
+
+                <h3 id="controlsHeader" class="collapsible-header">Animation Controls <span class="toggle-indicator">▼</span></h3>
+                <div id="controlsContentWrapper" class="collapsible-content">
+                     <div class="animation-controls">
+                         <div id="controlsContainer">
+                             <!-- Dynamic controls will be added here based on the verse -->
+                         </div>
+                    </div>
                 </div>
             </div>
+            <button class="panel-toggle" id="panelToggle">
+                <span class="toggle-icon">◀</span>
+            </button>
         </div>
-        
-        <div id="controls">
-            <button id="prev-verse" disabled>&lt; Previous</button>
-            <span id="verse-indicator">1/12</span>
-            <button id="next-verse">Next &gt;</button>
-            <button id="toggle-details">Hide Details</button>
-            <button id="reset-animation">Reset Animation</button>
+
+        <div class="canvas-container" id="canvasContainer">
+            <!-- Three.js canvas will be inserted here -->
         </div>
-        
-        <div id="animation-specific-controls"></div>
     </div>
-    
+
+    <!-- Tooltip for mobile instructions -->
+    <div class="mobile-tooltip" id="mobileTooltip">Tap for interaction</div>
+
+    <!-- Load scripts -->
     <script type="module" src="config.js"></script>
-    <script type="module" src="main.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>

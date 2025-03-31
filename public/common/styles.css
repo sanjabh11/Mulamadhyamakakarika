@@ -119,10 +119,12 @@ canvas {
 h2 {
   margin-bottom: 15px;
   font-size: 1.8rem;
-  background: linear-gradient(90deg, #64dfdf, #80ffdb);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  /* Use a solid color instead of background clip */
+  color: #64dfdf; /* Use start color of gradient */
+  /* background: linear-gradient(90deg, #64dfdf, #80ffdb); */
+  /* -webkit-background-clip: text; */
+  /* background-clip: text; */
+  /* color: transparent; */
 }
 
 #verse-text {
@@ -171,10 +173,12 @@ button:disabled {
 
 #explanation-title {
   font-size: 1.3rem;
-  background: linear-gradient(90deg, #64dfdf, #80ffdb);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  /* Use a solid color instead of background clip */
+  color: #64dfdf; /* Use start color of gradient */
+  /* background: linear-gradient(90deg, #64dfdf, #80ffdb); */
+  /* -webkit-background-clip: text; */
+  /* background-clip: text; */
+  /* color: transparent; */
   margin: 0;
 }
 
@@ -203,6 +207,7 @@ button:disabled {
 .explanation-column p {
   font-size: 0.95rem;
   line-height: 1.5;
+  color: #fff; /* Explicitly set color */
 }
 
 /* Verse Buttons */
@@ -303,4 +308,68 @@ button:disabled {
     flex-direction: column;
     gap: 0.5rem;
   }
-} 
+}
+
+/* Animation Specific Controls Panel */
+#animation-specific-controls {
+  position: absolute;
+  top: 1rem; /* Adjust as needed */
+  right: 1rem; /* Adjust as needed */
+  width: 250px; /* Example width */
+  max-height: calc(100vh - 4rem); /* Example max height */
+  overflow-y: auto;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  padding: 1rem;
+  z-index: 20; /* Ensure it's above other elements */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+/* Individual control item styling */
+.control-item {
+  display: flex;
+  flex-direction: column; /* Stack label and input */
+  gap: 0.3rem;
+}
+
+.control-item label {
+  font-size: 0.9rem;
+  color: #ccc; /* Lighter label color */
+}
+
+/* Slider specific styling */
+.slider-container label {
+  display: flex;
+  justify-content: space-between; /* Place value span at the end */
+}
+.slider-container span {
+    font-size: 0.8rem;
+    color: #aaa;
+}
+
+input[type="range"] {
+  width: 100%;
+  cursor: pointer;
+}
+
+/* Checkbox specific styling */
+.checkbox-container {
+    flex-direction: row; /* Place checkbox and label side-by-side */
+    align-items: center;
+}
+
+input[type="checkbox"] {
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+/* Ensure buttons within controls panel use standard button style */
+#animation-specific-controls button {
+    /* Inherits general button style, add specific overrides if needed */
+    margin-top: 0.5rem; /* Add some space above buttons */
+}

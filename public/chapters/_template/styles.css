@@ -1,29 +1,41 @@
-/* 
- * Chapter-specific styles
- * Only override styles that differ from common
+/**
+ * Chapter Template: Styles
+ * Define chapter-specific CSS variables here.
+ * These variables override the defaults/fallbacks in common/styles.css
+ * and apply the chapter's unique color theme.
  */
 
-/* Custom gradient for this chapter */
-h2, #explanation-title {
-  background: linear-gradient(90deg, var(--primary-color, #5e60ce), var(--secondary-color, #64dfdf));
+/* Define variables within :root or a chapter-specific container selector */
+/* Using :root applies them globally when this stylesheet is loaded */
+:root {
+  /* Replace these placeholder values with the chapter's actual color palette */
+  /* Ensure variable names match those used in public/common/styles.css */
+
+  /* Example: Colors derived from config.js verse1 */
+  --chapter-primary-color: #aabbcc; /* Primary color for gradients, borders etc. */
+  --chapter-secondary-color: #ddeeff; /* Secondary color for gradients etc. */
+
+  /* Example: Button specific colors */
+  --button-bg-color: rgba(170, 187, 204, 0.2); /* Button background (use chapter colors) */
+  --button-text-color: #ddeeff; /* Button text color */
+  --button-border-color: var(--chapter-primary-color); /* Button border, defaults to primary */
+  --button-hover-bg-color: rgba(170, 187, 204, 0.4); /* Button hover background */
+  --button-active-bg-color: rgba(170, 187, 204, 0.6); /* Active verse button background */
+  --button-active-shadow-color: rgba(170, 187, 204, 0.4); /* Active verse button shadow */
+
+  /* Add other chapter-specific variables if needed */
+  /* --some-other-chapter-color: #ff00ff; */
 }
 
-.explanation-column h4 {
-  color: var(--primary-color, #5e60ce);
-}
+/*
+ * Add any genuinely unique structural or stylistic overrides below,
+ * ONLY if they cannot be handled by common/styles.css and variables.
+ * Keep this section minimal.
+ */
 
-/* Custom button styling for this chapter */
-button {
-  background-color: rgba(94, 96, 206, 0.2);
-  color: var(--secondary-color, #64dfdf);
-  border: 1px solid var(--primary-color, #5e60ce);
+/* Example unique override (if absolutely necessary): */
+/*
+.some-chapter-specific-element {
+  font-style: italic;
 }
-
-button:hover {
-  background-color: rgba(94, 96, 206, 0.4);
-}
-
-.verse-button.active {
-  background-color: rgba(94, 96, 206, 0.6);
-  box-shadow: 0 0 10px rgba(94, 96, 206, 0.4);
-} 
+*/

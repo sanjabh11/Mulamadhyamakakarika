@@ -258,4 +258,3 @@ export const colorSchemes = {
         accent: 0xCD5C5C
     }
 };
-
