@@ -343,7 +343,8 @@ export function initVerse1(container, controlsContainer) {
             cancelAnimationFrame(animate);
             renderer.dispose();
         },
-        resize: onResize
+        resize: onResize,
+        camera: camera,
+        renderer: renderer
     };
 }
-

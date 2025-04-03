@@ -24,121 +24,179 @@ body {
 
 #content-panel {
     position: fixed;
+    top: 0;
+    left: 0;
+    width: 320px;
+    height: 100%;
+    background-color: rgba(13, 19, 33, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 10;
+    transition: width 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+#content-panel.collapsed {
+    width: 40px;
+}
+
+#panel-toggle {
+    position: absolute;
+    top: 50%;
+    right: -16px;
+    transform: translateY(-50%);
+    background-color: #5d65b9;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 11;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+#content-panel.collapsed #panel-toggle .icon {
+    transform: rotate(180deg);
+}
+
+.panel-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    width: 100%;
-    height: 100%;
-    padding: 20px;
-    z-index: 1;
-    pointer-events: none;
+    scrollbar-width: thin;
+    scrollbar-color: #5d65b9 rgba(0, 0, 0, 0.2);
 }
 
-#verse-content {
-    background-color: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
-    border-radius: 10px;
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    pointer-events: auto;
+.panel-content::-webkit-scrollbar {
+    width: 8px;
 }
 
-#explanation-panel, #control-panel {
-    background-color: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
-    border-radius: 10px;
-    padding: 15px;
-    max-width: 350px;
-    margin-left: auto;
-    margin-right: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    pointer-events: auto;
+.panel-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
 }
 
-h1 {
-    font-size: 1.5rem;
+.panel-content::-webkit-scrollbar-thumb {
+    background-color: #5d65b9;
+    border-radius: 4px;
+}
+
+.chapter-title {
+    color: #9cb9ff;
+    font-size: 1.3rem;
     margin-bottom: 15px;
-    color: #9cb9ff;
     text-align: center;
-}
-
-#verse-text {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    text-align: justify;
-    margin-bottom: 10px;
-}
-
-.explanation-header, .control-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    padding-bottom: 10px;
-}
-
-.explanation-header h3, .control-header h3 {
-    font-size: 1.2rem;
-    color: #9cb9ff;
-}
-
-button {
-    background-color: #2a46a8;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: #3a5ac4;
-}
-
-button:disabled {
-    background-color: #253b7c;
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-#explanation-content, #controls-content {
-    padding: 10px 0;
-    font-size: 1rem;
-    line-height: 1.5;
 }
 
 #verse-navigation {
     display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+    justify-content: center;
+}
+
+.verse-button {
+    background-color: transparent;
+    color: #fff;
+    border: 1px solid #5d65b9;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.verse-button.active {
+    background-color: #5d65b9;
+    font-weight: bold;
+}
+
+.verse-button:hover {
+    background-color: rgba(93, 101, 185, 0.3);
+}
+
+.collapsible-section {
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    border: 1px solid rgba(93, 101, 185, 0.3);
+}
+
+.section-header {
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 15px;
+    padding: 10px 15px;
+    background-color: rgba(93, 101, 185, 0.2);
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s;
 }
 
-#verse-indicator {
-    font-size: 0.9rem;
+.section-header:hover {
+    background-color: rgba(93, 101, 185, 0.3);
+}
+
+.section-header h3 {
+    font-size: 1.1rem;
     color: #9cb9ff;
+    margin: 0;
 }
 
-.back-link {
-    margin-top: 15px;
-    text-align: center;
+.section-header .toggle-icon {
+    transition: transform 0.3s;
 }
 
-.back-link a {
+.section-header[aria-expanded="false"] .toggle-icon {
+    transform: rotate(-90deg);
+}
+
+.section-content {
+    padding: 15px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    max-height: 0;
+}
+
+.section-content.expanded {
+    max-height: 1000px;
+}
+
+#verse-text {
+    font-style: italic;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.subsection {
+    margin-bottom: 15px;
+}
+
+.subsection h4 {
     color: #9cb9ff;
-    text-decoration: none;
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+}
+
+.subsection p {
     font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
 }
 
-.back-link a:hover {
-    text-decoration: underline;
-}
-
-/* Sliders and interactive controls */
 .control-group {
     margin-bottom: 15px;
 }
@@ -147,11 +205,13 @@ button:disabled {
     display: block;
     margin-bottom: 5px;
     color: #9cb9ff;
+    font-size: 0.9rem;
 }
 
 input[type="range"] {
     width: 100%;
     margin: 8px 0;
+    accent-color: #5d65b9;
 }
 
 .touch-area {
@@ -167,26 +227,40 @@ input[type="range"] {
     touch-action: none;
 }
 
+/* Hide original panels */
+#explanation-panel, #control-panel {
+    display: none;
+}
+
 /* Mobile styles */
 @media (max-width: 768px) {
     #content-panel {
-        padding: 10px;
+        width: 100%;
+        height: 100%;
     }
     
-    #explanation-panel, #control-panel {
-        max-width: 100%;
-        margin: 0 auto;
+    #content-panel.collapsed {
+        width: 40px;
     }
     
-    h1 {
+    .chapter-title {
         font-size: 1.2rem;
     }
     
-    #verse-text, #explanation-content, #controls-content {
+    .verse-button {
+        padding: 5px 8px;
+        font-size: 0.8rem;
+    }
+    
+    .section-header h3 {
+        font-size: 1rem;
+    }
+    
+    .subsection h4 {
         font-size: 0.9rem;
     }
     
-    .hidden-mobile {
-        display: none;
+    .subsection p {
+        font-size: 0.85rem;
     }
 }

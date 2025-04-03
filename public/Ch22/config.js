@@ -147,7 +147,8 @@ export const animationSettings = {
 // UI settings
 export const uiSettings = {
     textFadeSpeed: 0.5,
-    controlsPanelHeight: '200px',
     mobileBreakpoint: 768,
-    defaultFontSize: '16px'
+    defaultFontSize: '16px',
+    panelExpandedWidth: '320px',
+    panelCollapsedWidth: '40px'
 };

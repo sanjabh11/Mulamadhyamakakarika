@@ -33,6 +33,7 @@ class VerseVisualizer {
     init() {
         this.setupThreeJS();
         this.setupEventListeners();
+        this.buildVerseNavigation();
         this.updateVerseInfo();
         this.setupAnimation(verses[this.currentVerseIndex].number);
         this.animate();
@@ -152,76 +153,82 @@ class VerseVisualizer {
     }
     
     setupEventListeners() {
-        document.getElementById('toggleInfo').addEventListener('click', () => this.toggleInfoPanel());
-        document.getElementById('prevVerse').addEventListener('click', () => this.navigateVerse(-1));
-        document.getElementById('nextVerse').addEventListener('click', () => this.navigateVerse(1));
+        // Toggle panel button
+        document.getElementById('togglePanel').addEventListener('click', () => this.togglePanel());
+        
+        // Toggle collapsible sections
+        document.querySelectorAll('.section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.classList.toggle('collapsed');
+                const content = header.nextElementSibling;
+                content.classList.toggle('collapsed');
+            });
+        });
+        
+        // Handle verse navigation
+        document.getElementById('verseNavigation').addEventListener('click', (e) => {
+            if (e.target.classList.contains('verse-btn')) {
+                const verseIndex = parseInt(e.target.dataset.index);
+                if (!isNaN(verseIndex) && verseIndex !== this.currentVerseIndex) {
+                    this.navigateToVerse(verseIndex);
+                }
+            }
+        });
         
         // Add scroll listener for intuitive scrolling in info panel
-        const infoPanel = document.getElementById('infoPanel');
-        infoPanel.addEventListener('wheel', (e) => {
+        const panelContent = document.querySelector('.panel-content');
+        panelContent.addEventListener('wheel', (e) => {
             e.stopPropagation();
         });
         
         // Add keyboard controls for accessibility
         window.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') this.navigateVerse(1);
-            if (e.key === 'ArrowLeft') this.navigateVerse(-1);
+            if (e.key === 'ArrowRight' && this.currentVerseIndex < verses.length - 1) 
+                this.navigateToVerse(this.currentVerseIndex + 1);
+            
+            if (e.key === 'ArrowLeft' && this.currentVerseIndex > 0) 
+                this.navigateToVerse(this.currentVerseIndex - 1);
+            
             if (e.key === 'Escape') {
                 const infoPanel = document.getElementById('infoPanel');
-                if (!infoPanel.classList.contains('infoHidden')) {
-                    this.toggleInfoPanel();
+                if (!infoPanel.classList.contains('collapsed')) {
+                    this.togglePanel();
                 }
             }
         });
     }
     
-    onMouseMove(event) {
-        // Calculate mouse position in normalized device coordinates
-        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-        
-        // Update the raycaster
-        this.raycaster.setFromCamera(this.mouse, this.camera);
-        
-        // Check for intersections with interactive objects
-        const intersects = this.raycaster.intersectObjects(this.interactiveObjects);
-        
-        // Update cursor and highlight based on intersections
-        if (intersects.length > 0) {
-            document.body.style.cursor = 'pointer';
-            this.outlinePass.selectedObjects = [intersects[0].object];
-        } else {
-            document.body.style.cursor = 'auto';
-            this.outlinePass.selectedObjects = [];
-        }
+    buildVerseNavigation() {
+        const navContainer = document.getElementById('verseNavigation');
+        verses.forEach((verse, index) => {
+            const button = document.createElement('button');
+            button.className = 'verse-btn' + (index === this.currentVerseIndex ? ' active' : '');
+            button.textContent = verse.number;
+            button.dataset.index = index;
+            navContainer.appendChild(button);
+        });
     }
     
-    onMouseClick(event) {
-        // Ray cast to check for interactions
-        this.raycaster.setFromCamera(this.mouse, this.camera);
-        const intersects = this.raycaster.intersectObjects(this.interactiveObjects);
+    togglePanel() {
+        const panel = document.getElementById('infoPanel');
+        panel.classList.toggle('collapsed');
         
-        if (intersects.length > 0) {
-            const object = intersects[0].object;
-            if (object.userData.onClick) {
-                object.userData.onClick();
-            }
-        }
+        // Update arrow icon
+        const arrow = document.querySelector('#togglePanel .arrow');
+        arrow.textContent = panel.classList.contains('collapsed') ? '▶' : '◀';
+        
+        // Recalculate renderer and composer sizes after panel toggle
+        setTimeout(() => this.onWindowResize(), 300);
     }
     
-    toggleInfoPanel() {
-        const infoPanel = document.getElementById('infoPanel');
-        const toggleBtn = document.getElementById('toggleInfo');
-        
-        infoPanel.classList.toggle('infoHidden');
-        toggleBtn.textContent = infoPanel.classList.contains('infoHidden') ? 'Show Info' : 'Hide Info';
-    }
-    
-    navigateVerse(direction) {
-        const newIndex = this.currentVerseIndex + direction;
-        
-        if (newIndex >= 0 && newIndex < verses.length) {
-            this.currentVerseIndex = newIndex;
+    navigateToVerse(index) {
+        if (index >= 0 && index < verses.length) {
+            // Update active button
+            document.querySelectorAll('.verse-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+            
+            this.currentVerseIndex = index;
             this.updateVerseInfo();
             this.clearScene();
             this.setupAnimation(verses[this.currentVerseIndex].number);
@@ -231,7 +238,6 @@ class VerseVisualizer {
     updateVerseInfo() {
         const verse = verses[this.currentVerseIndex];
         
-        document.getElementById('verseNumber').textContent = verse.number;
         document.getElementById('verseText').textContent = verse.text;
         document.getElementById('madhyamakaConcept').textContent = verse.madhyamaka;
         document.getElementById('quantumPhysics').textContent = verse.quantum;
@@ -239,10 +245,6 @@ class VerseVisualizer {
         
         // Update control panel
         this.updateControlPanel(verse.controls);
-        
-        // Update navigation buttons
-        document.getElementById('prevVerse').disabled = this.currentVerseIndex === 0;
-        document.getElementById('nextVerse').disabled = this.currentVerseIndex === verses.length - 1;
     }
     
     updateControlPanel(controls) {
@@ -290,9 +292,38 @@ class VerseVisualizer {
     }
     
     clearScene() {
+        // Clear any pending timeouts from previous animations
+        if (this.animationState.delayedChoiceTimeout) {
+            clearTimeout(this.animationState.delayedChoiceTimeout);
+            this.animationState.delayedChoiceTimeout = null;
+        }
+        if (this.animationState.tunnelingTimeout) {
+            clearTimeout(this.animationState.tunnelingTimeout);
+            this.animationState.tunnelingTimeout = null;
+        }
+        // Add checks for other potential timeouts here if needed
+
+        // Explicitly nullify references for Verse 17 objects before cleanup
+        if (this.animationState.particle) this.animationState.particle = null;
+        if (this.animationState.antiparticle) this.animationState.antiparticle = null;
+        // Add other verse-specific nullifications if needed
+
+        
+                // Kill GSAP tweens before removing objects to prevent errors in callbacks
+                // Trying killTweensOf(object) again
+                this.sceneObjects.forEach(object => {
+                    if (object) { // Ensure object exists before killing tweens
+                        gsap.killTweensOf(object);
+                    }
+                });
+        
         // Remove previous animation objects and dispose resources properly
+        // Moved the while loop outside the forEach loop
         while(this.sceneObjects.length > 0) {
             const object = this.sceneObjects.pop();
+            // Add check to ensure object is valid before proceeding
+            if (!object) continue;
+            
             this.scene.remove(object);
             
             // Properly dispose of geometries and materials to prevent memory leaks
@@ -497,7 +528,8 @@ class VerseVisualizer {
         this.animationState = {
             pathChosen: false,
             experimentState: 'initial',
-            photons: []
+            photons: [],
+            delayedChoiceTimeout: null // Add property to store timeout ID
         };
         
         // Setup double-slit experiment
@@ -595,7 +627,8 @@ class VerseVisualizer {
             this.sceneObjects.push(detector);
             
             // Now show individual photons instead of wave pattern
-            setTimeout(() => {
+            // Store the timeout ID
+            this.animationState.delayedChoiceTimeout = setTimeout(() => {
                 this.createPhotonParticles();
             }, 500);
         };
@@ -719,7 +752,8 @@ class VerseVisualizer {
         this.animationState = {
             mode: 'classical',
             barrierHeight: 0.5,
-            particles: []
+            particles: [],
+            tunnelingTimeout: null // Add property to store timeout ID
         };
         
         // Create barrier
@@ -810,7 +844,8 @@ class VerseVisualizer {
                     onComplete: () => {
                         // Repeat animation if still in classical mode
                         if (this.animationState.mode === 'classical') {
-                            setTimeout(() => this.animateTunneling(), 500);
+                            // Store the timeout ID
+                            this.animationState.tunnelingTimeout = setTimeout(() => this.animateTunneling(), 500);
                         }
                     }
                 });
@@ -862,7 +897,8 @@ class VerseVisualizer {
                         onComplete: () => {
                             // Repeat animation if still in quantum mode
                             if (this.animationState.mode === 'quantum') {
-                                setTimeout(() => this.animateTunneling(), 500);
+                                // Store the timeout ID
+                                this.animationState.tunnelingTimeout = setTimeout(() => this.animateTunneling(), 500);
                             }
                         }
                     });
@@ -873,9 +909,12 @@ class VerseVisualizer {
     
     setupDecoherenceAnimation() {
         // For verse 16: Quantum decoherence
+        // Rewriting the state initialization block completely
         this.animationState = {
             observed: false,
-            superpositions: []
+            superpositions: [],
+            topRotationTweens: [], // Array to store top rotation tweens
+            observerGlowTween: null // Store observer glow tween
         };
         
         // Create superposition of states (spinning tops)
@@ -1099,9 +1138,9 @@ class VerseVisualizer {
                     this.scene.add(burst);
                     this.sceneObjects.push(burst);
                     
-                    // Hide particles
-                    particle.visible = false;
-                    antiparticle.visible = false;
+                    // Hide particles (check if they still exist)
+                    if (particle) particle.visible = false;
+                    if (antiparticle) antiparticle.visible = false;
                     
                     // Animate energy burst
                     gsap.to(burst.scale, {
@@ -1117,12 +1156,15 @@ class VerseVisualizer {
                         duration: 1.5,
                         ease: "power2.out",
                         onComplete: () => {
-                            // Remove burst
-                            this.scene.remove(burst);
-                            const index = this.sceneObjects.indexOf(burst);
-                            if (index !== -1) this.sceneObjects.splice(index, 1);
-                            burst.geometry.dispose();
-                            burst.material.dispose();
+                            // Remove burst (check if it still exists and is in the scene)
+                            if (burst && burst.parent) {
+                                this.scene.remove(burst);
+                                const index = this.sceneObjects.indexOf(burst);
+                                if (index !== -1) this.sceneObjects.splice(index, 1);
+                                // Only dispose if geometry/material exist
+                                if (burst.geometry) burst.geometry.dispose();
+                                if (burst.material) burst.material.dispose();
+                            }
                         }
                     });
                     
@@ -1318,22 +1360,25 @@ class VerseVisualizer {
         this.scene.add(antiparticle);
         this.sceneObjects.push(particle, antiparticle);
         
-        // Store particles
-        this.animationState.particles.push({
-            particle,
-            antiparticle,
-            lifetime: 0.5 + Math.random() * 2 * this.animationState.energyLevel,
-            currentTime: 0
-        });
-        
-        // Create fluctuation animation
-        // Particles move slightly apart then back together
-        const distance = 0.1 + Math.random() * 0.3;
+        // Create direction vector first
         const direction = new THREE.Vector3(
             Math.random() - 0.5,
             Math.random() - 0.5,
             Math.random() - 0.5
         ).normalize();
+        
+        // Store particles including direction
+        this.animationState.particles.push({
+            particle,
+            antiparticle,
+            lifetime: 0.5 + Math.random() * 2 * this.animationState.energyLevel,
+            currentTime: 0,
+            direction: direction // Add direction here
+        });
+        
+        // Create fluctuation animation
+        // Particles move slightly apart then back together
+        const distance = 0.1 + Math.random() * 0.3;
         
         gsap.to(particle.position, {
             x: x + direction.x * distance,
@@ -1389,6 +1434,11 @@ class VerseVisualizer {
                 const remaining = 1 - (pair.currentTime / pair.lifetime);
                 pair.particle.material.opacity = remaining * 0.8;
                 pair.antiparticle.material.opacity = remaining * 0.8;
+                
+                // Slight movement
+                const oscillation = Math.sin(pair.currentTime * 5) * 0.01;
+                pair.particle.position.addScaledVector(pair.direction, oscillation);
+                pair.antiparticle.position.addScaledVector(pair.direction, -oscillation);
             }
         }
         
@@ -2561,6 +2611,40 @@ class VerseVisualizer {
             torusKnot.rotation.x += delta * 0.5;
             torusKnot.rotation.y += delta * 0.2;
         };
+    }
+    
+    onMouseMove(event) {
+        // Calculate mouse position in normalized device coordinates
+        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+        
+        // Update the raycaster
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        
+        // Check for intersections with interactive objects
+        const intersects = this.raycaster.intersectObjects(this.interactiveObjects);
+        
+        // Update cursor and highlight based on intersections
+        if (intersects.length > 0) {
+            document.body.style.cursor = 'pointer';
+            this.outlinePass.selectedObjects = [intersects[0].object];
+        } else {
+            document.body.style.cursor = 'auto';
+            this.outlinePass.selectedObjects = [];
+        }
+    }
+    
+    onMouseClick(event) {
+        // Ray cast to check for interactions
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        const intersects = this.raycaster.intersectObjects(this.interactiveObjects);
+        
+        if (intersects.length > 0) {
+            const object = intersects[0].object;
+            if (object.userData.onClick) {
+                object.userData.onClick();
+            }
+        }
     }
     
     onWindowResize() {

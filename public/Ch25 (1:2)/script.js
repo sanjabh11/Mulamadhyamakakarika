@@ -8,6 +8,7 @@ let currentVerse = 1;
 const TOTAL_VERSES = 12;
 let scene, camera, renderer, controls;
 let currentAnimation = null;
+const clock = new THREE.Clock(); // Add a clock instance
 
 // DOM elements
 const canvas = document.getElementById('canvas');
@@ -278,15 +279,42 @@ function loadVerse1() {
     // Animation function for the quantum field
     currentAnimation = function(time) {
         const position = geometry.attributes.position;
-        
+        // Get potentially updated config values, ensuring they are valid numbers
+        const currentAmplitude = typeof config.quantumField.amplitude === 'number' && !isNaN(config.quantumField.amplitude) ? config.quantumField.amplitude : 0.8; // Default if invalid/NaN
+        const currentWaveSpeed = typeof config.quantumField.waveSpeed === 'number' && !isNaN(config.quantumField.waveSpeed) ? config.quantumField.waveSpeed : 0.5; // Default if invalid/NaN
+
+        if (isNaN(time)) {
+            console.error("Invalid time value:", time);
+            return; // Skip update if time is NaN
+        }
+
         for (let i = 0; i < position.count; i++) {
             const x = position.getX(i);
             const y = position.getY(i);
-            const distance = Math.sqrt(x * x + y * y);
             
+            if (isNaN(x) || isNaN(y)) {
+                console.error(`NaN detected in position attribute at index ${i} before wave calculation. x: ${x}, y: ${y}`);
+                continue; // Skip this vertex if its base position is NaN
+            }
+
+            // Ensure sqrt argument is non-negative to prevent NaN
+            const distance = Math.sqrt(Math.max(0, x * x + y * y));
+            
+            if (isNaN(distance)) {
+                console.error(`NaN detected for distance at index ${i}. x: ${x}, y: ${y}`);
+                continue; // Skip if distance is NaN
+            }
+
             // Create wave effect based on distance and time
-            const wave = Math.sin(distance * 0.05 + time * waveSpeed) * amplitude;
-            position.setZ(i, wave);
+            const wave = Math.sin(distance * 0.05 + time * currentWaveSpeed) * currentAmplitude;
+            
+            if (isNaN(wave)) {
+                console.error(`NaN detected for wave value at index ${i}. distance: ${distance}, time: ${time}, waveSpeed: ${currentWaveSpeed}, amplitude: ${currentAmplitude}`);
+                // Optionally set Z to 0 to avoid propagating NaN
+                // position.setZ(i, 0);
+            } else {
+                position.setZ(i, wave);
+            }
         }
         
         position.needsUpdate = true;
@@ -350,7 +378,8 @@ function loadVerse1() {
                 // Distance from ripple center
                 const dx = x - centerX;
                 const dy = y - centerY;
-                const distance = Math.sqrt(dx * dx + dy * dy);
+                // Ensure sqrt argument is non-negative
+                const distance = Math.sqrt(Math.max(0, dx * dx + dy * dy));
                 
                 // Create ripple wave
                 const ripple = Math.sin(distance * 0.4 - progress * 10) * 
@@ -1193,7 +1222,7 @@ function loadVerse6() {
     
     // Add emission point for frame 1
     const emitter1Geometry = new THREE.SphereGeometry(0.5, 16, 16);
-    const emitter1Material = new THREE.MeshBasicMaterial({
+    const emitter1Material = new THREE.MeshPhongMaterial({ // Changed to Phong
         color: lightColor,
         emissive: lightColor,
         emissiveIntensity: 1
@@ -1222,7 +1251,7 @@ function loadVerse6() {
     
     // Add emission point for frame 2
     const emitter2Geometry = new THREE.SphereGeometry(0.5, 16, 16);
-    const emitter2Material = new THREE.MeshBasicMaterial({
+    const emitter2Material = new THREE.MeshPhongMaterial({ // Changed to Phong
         color: lightColor,
         emissive: lightColor,
         emissiveIntensity: 1
@@ -3315,12 +3344,12 @@ function loadVerse12() {
 }
 
 // Animation loop
-function animate(time) {
-    time *= 0.001; // Convert to seconds
+function animate() { // Remove time argument
+    const elapsedTime = clock.getElapsedTime(); // Use clock for reliable time
     
     // Execute current animation function if it exists
     if (currentAnimation) {
-        currentAnimation(time);
+        currentAnimation(elapsedTime);
     }
     
     // Update controls

@@ -13,9 +13,6 @@ class App {
         // Initialize Three.js scene
         this.initScene();
         
-        // Check for URL hash to determine initial verse
-        this.checkUrlHash();
-        
         // Load the initial verse
         this.loadVerse(this.currentVerseIndex);
         
@@ -24,52 +21,89 @@ class App {
     }
     
     setupUI() {
-        // Navigation buttons
-        this.prevBtn = document.getElementById('prev-btn');
-        this.nextBtn = document.getElementById('next-btn');
-        this.verseCounter = document.getElementById('verse-counter');
+        // Content panel elements
+        this.contentPanel = document.getElementById('content-panel');
         this.verseContent = document.getElementById('verse-content');
-        this.controlsPanel = document.getElementById('controls-panel');
-        this.controlsContainer = this.controlsPanel.querySelector('.controls');
-        this.explanationPanel = document.getElementById('explanation-panel');
+        this.verseCounter = document.getElementById('verse-counter');
+        this.controlsPanel = document.getElementById('animation-controls');
+        this.controlsContainer = document.getElementById('controls-container');
+        this.explanationPanel = document.getElementById('verse-explanation');
+        this.explanationContent = document.getElementById('explanation-content');
+
+        // Create panel toggle button
+        this.createPanelToggle();
         
-        // Toggle buttons
-        this.toggleControlsBtn = document.getElementById('toggle-controls');
-        this.toggleExplanationBtn = document.getElementById('toggle-explanation');
+        // Create verse navigation buttons
+        this.createVerseNavigation();
         
-        // Add event listeners
-        this.prevBtn.addEventListener('click', () => this.navigateVerse(-1));
-        this.nextBtn.addEventListener('click', () => this.navigateVerse(1));
-        this.toggleControlsBtn.addEventListener('click', () => this.togglePanel(this.controlsPanel, this.toggleControlsBtn));
-        this.toggleExplanationBtn.addEventListener('click', () => this.togglePanel(this.explanationPanel, this.toggleExplanationBtn));
-        
+        // Set up collapsible sections
+        this.setupCollapsibleSections();
+
         // Handle window resize
         window.addEventListener('resize', () => this.onWindowResize());
-        
-        // Handle URL hash changes
-        window.addEventListener('hashchange', () => this.checkUrlHash());
     }
     
-    checkUrlHash() {
-        const hash = window.location.hash;
-        if (hash.startsWith('#verse-')) {
-            const verseNum = parseInt(hash.substring(7));
-            if (!isNaN(verseNum) && verseNum >= 1 && verseNum <= config.verses.length) {
-                this.currentVerseIndex = verseNum - 1;
+    createPanelToggle() {
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'panel-toggle';
+        toggleBtn.innerHTML = '<span class="arrow">◀</span>';
+        toggleBtn.addEventListener('click', () => {
+            this.contentPanel.classList.toggle('collapsed');
+        });
+        this.contentPanel.appendChild(toggleBtn);
+    }
+    
+    createVerseNavigation() {
+        const navContainer = document.createElement('div');
+        navContainer.className = 'verse-navigation';
+        
+        for (let i = 0; i < config.verses.length; i++) {
+            const verseBtn = document.createElement('button');
+            verseBtn.className = 'verse-btn';
+            verseBtn.textContent = (i + 1).toString();
+            verseBtn.dataset.index = i;
+            
+            if (i === this.currentVerseIndex) {
+                verseBtn.classList.add('active');
             }
+            
+            verseBtn.addEventListener('click', (e) => {
+                const index = parseInt(e.target.dataset.index);
+                this.navigateToVerse(index);
+            });
+            
+            navContainer.appendChild(verseBtn);
         }
+        
+        const panelContent = document.querySelector('.panel-content');
+        panelContent.insertBefore(navContainer, panelContent.firstChild);
     }
     
-    togglePanel(panel, button) {
-        const isHidden = panel.classList.contains('hidden');
+    setupCollapsibleSections() {
+        const sections = document.querySelectorAll('.collapsible-section');
         
-        if (isHidden) {
-            panel.classList.remove('hidden');
-            button.textContent = button.textContent.replace('Show', 'Hide');
-        } else {
-            panel.classList.add('hidden');
-            button.textContent = button.textContent.replace('Hide', 'Show');
-        }
+        sections.forEach(section => {
+            const header = section.querySelector('.section-header');
+            const content = section.querySelector('.section-content');
+            
+            // Set default states
+            if (section.id === 'verse-explanation' && window.innerWidth >= 768) {
+                content.classList.add('expanded');
+            }
+            
+            header.addEventListener('click', () => {
+                const isExpanded = content.classList.contains('expanded');
+                const indicator = header.querySelector('.toggle-indicator');
+                
+                if (isExpanded) {
+                    content.classList.remove('expanded');
+                    indicator.textContent = '►';
+                } else {
+                    content.classList.add('expanded');
+                    indicator.textContent = '▼';
+                }
+            });
+        });
     }
     
     initScene() {
@@ -111,26 +145,25 @@ class App {
     
     loadVerse(index) {
         const verse = config.verses[index];
-        this.verseCounter.textContent = `Verse ${verse.id}/12`;
         
-        // Update verse content
-        this.verseContent.innerHTML = `
-            <div class="verse-box">
-                <div class="verse-number">Verse ${verse.id}</div>
-                <div class="verse-text">${verse.text}</div>
-                <div class="concept-title">Madhyamaka Concept:</div>
-                <div class="concept-content">${verse.concept}</div>
-                <div class="concept-title">Quantum Physics Parallel:</div>
-                <div class="concept-content">${verse.physics}</div>
-                <div class="concept-title">Explanation:</div>
-                <div class="concept-content">${verse.explanation}</div>
-            </div>
-        `;
+        // Update verse buttons
+        const verseButtons = document.querySelectorAll('.verse-btn');
+        verseButtons.forEach(btn => {
+            btn.classList.remove('active');
+            if (parseInt(btn.dataset.index) === index) {
+                btn.classList.add('active');
+            }
+        });
         
-        // Update explanation panel
-        this.explanationPanel.innerHTML = `
-            <h3>Explanation</h3>
-            <p>${verse.explanation}</p>
+        // Update verse explanation content
+        this.explanationContent.innerHTML = `
+            <div class="verse-text">${verse.text}</div>
+            <div class="subsection-title">Madhyamaka Concept</div>
+            <div class="subsection-content">${verse.concept}</div>
+            <div class="subsection-title">Quantum Physics Parallel</div>
+            <div class="subsection-content">${verse.physics}</div>
+            <div class="subsection-title">Accessible Explanation</div>
+            <div class="subsection-content">${verse.explanation}</div>
         `;
         
         // Clear previous animation
@@ -138,11 +171,16 @@ class App {
             this.currentAnimation.dispose();
         }
         
-        // Clear all objects from scene except lights safely by iterating over a copy of the children
-        this.scene.children.slice().forEach(child => {
-            if (child instanceof THREE.Mesh || child instanceof THREE.Points) {
-                this.scene.remove(child);
+        // Clear all objects from scene except lights
+        const objectsToRemove = [];
+        this.scene.traverse(child => {
+            if (child instanceof THREE.Mesh || child instanceof THREE.Points || child instanceof THREE.Line || child instanceof THREE.Group) {
+                objectsToRemove.push(child);
             }
+        });
+        
+        objectsToRemove.forEach(obj => {
+            this.scene.remove(obj);
         });
         
         // Create new animation based on verse type
@@ -164,22 +202,11 @@ class App {
             config.animation.defaultCameraPosition.z
         );
         this.controls.update();
-        
-        // Update navigation buttons
-        this.prevBtn.disabled = index === 0;
-        this.nextBtn.disabled = index === config.verses.length - 1;
-        
-        // Update URL hash without triggering a hashchange event
-        const newHash = `#verse-${verse.id}`;
-        if (window.location.hash !== newHash) {
-            history.replaceState(null, null, newHash);
-        }
     }
     
-    navigateVerse(direction) {
-        const newIndex = this.currentVerseIndex + direction;
-        if (newIndex >= 0 && newIndex < config.verses.length) {
-            this.currentVerseIndex = newIndex;
+    navigateToVerse(index) {
+        if (index >= 0 && index < config.verses.length) {
+            this.currentVerseIndex = index;
             this.loadVerse(this.currentVerseIndex);
         }
     }

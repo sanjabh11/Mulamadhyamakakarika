@@ -2,55 +2,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Madhyamaka and Quantum Physics</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Madhyamaka & Quantum Physics</title>
+    <link rel="stylesheet" href="style.css">
     <script type="importmap">
-    {
-        "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
-            "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.4/index.js"
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+                "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.3/index.js"
+            }
         }
-    }
     </script>
 </head>
 <body>
-    <div id="app">
-        <div id="scene-container"></div>
-        
-        <div id="controls-panel">
-            <button id="hide-controls">Hide Controls</button>
-            <div id="controls-content">
-                <div class="verse-nav">
-                    <button id="prev-verse" disabled>Previous Verse</button>
-                    <span id="verse-number">Verse 1/12</span>
-                    <button id="next-verse">Next Verse</button>
-                </div>
-                <div class="interaction-controls" id="interaction-area">
-                    <!-- Dynamic controls will be inserted here based on the current verse -->
-                </div>
-            </div>
-        </div>
+    <div id="container">
+        <div id="animation-container"></div>
         
         <div id="text-panel">
-            <button id="hide-text">Hide Text</button>
-            <div id="text-content">
-                <h2 id="verse-title">Verse 1: Arising and Ceasing</h2>
-                <div class="text-section">
-                    <h3>Madhyamaka Concept</h3>
-                    <p id="madhyamaka-text">Challenges inherent arising and ceasing, emphasizing emptiness and dependent origination, rejecting inherent essence (svabhāva).</p>
-                </div>
-                <div class="text-section">
-                    <h3>Quantum Physics Parallel</h3>
-                    <p id="quantum-text">Superposition: An electron exists in multiple energy levels until measured.</p>
-                </div>
-                <div class="text-section">
-                    <h3>Accessible Explanation</h3>
-                    <p id="explanation-text">Like a light switch both on and off until checked, things don't inherently start or stop—it's all perspective.</p>
+            <button id="panel-toggle">
+                <span class="toggle-icon">◀</span>
+            </button>
+            <div id="panel-content">
+                <div id="verse-details">
+                    <h1>Chapter 21: Investigation of Rising and Passing</h1>
+                    
+                    <div id="verse-nav">
+                        <!-- Verse buttons will be generated here -->
+                    </div>
+                    
+                    <div id="explanation-section" class="collapsible-section">
+                        <div class="section-header">
+                            Verse Explanation <span class="toggle-indicator">▼</span>
+                        </div>
+                        <div class="section-content" id="verse-content">
+                            <!-- Verse content will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div id="controls-section" class="collapsible-section">
+                        <div class="section-header">
+                            Animation Controls <span class="toggle-indicator">▼</span>
+                        </div>
+                        <div class="section-content" id="interaction-controls">
+                            <!-- Controls will be loaded here -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    
     <script type="module" src="config.js"></script>
     <script type="module" src="main.js"></script>
 </body>

@@ -150,4 +150,3 @@ export const verseData = [
         explanation: "Think of a prism: tilt it one way, you see red; another, blue. Samsara and nirvana are like that—what you see depends on how you look at reality."
     }
 ];
-

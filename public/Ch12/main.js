@@ -6,7 +6,7 @@ class InvestigationOfAnguish {
     constructor() {
         this.currentVerseIndex = 0;
         this.container = document.getElementById('container');
-        this.verseContent = document.getElementById('verse-content');
+        this.verseText = document.getElementById('verse-text');
         this.madhyamakaText = document.getElementById('madhyamaka-text');
         this.quantumText = document.getElementById('quantum-text');
         this.accessibleText = document.getElementById('accessible-text');
@@ -14,6 +14,7 @@ class InvestigationOfAnguish {
         this.currentAnimation = null;
         
         this.initUI();
+        this.setupSidebar();
         this.loadVerse(this.currentVerseIndex);
         
         // Handle resize events
@@ -24,75 +25,79 @@ class InvestigationOfAnguish {
     }
     
     initUI() {
-        // Set up navigation buttons
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
-        const verseNumber = document.getElementById('verse-number');
-        
-        prevBtn.addEventListener('click', () => {
-            if (this.currentVerseIndex > 0) {
-                this.currentVerseIndex--;
-                this.loadVerse(this.currentVerseIndex);
-                
-                // Enable/disable buttons as needed
-                nextBtn.disabled = false;
-                prevBtn.disabled = this.currentVerseIndex === 0;
-                
-                verseNumber.textContent = `Verse ${this.currentVerseIndex + 1}/${verses.length}`;
-                
-                // Reset camera position when changing verses
-                if (this.currentAnimation) {
-                    this.currentAnimation.camera.position.set(0, 2, 10);
-                    this.currentAnimation.camera.lookAt(0, 0, 0);
-                }
-            }
+        // Generate verse buttons
+        const verseButtons = document.getElementById('verse-buttons');
+        verses.forEach((verse, index) => {
+            const button = document.createElement('button');
+            button.className = 'verse-button';
+            button.textContent = index + 1;
+            if (index === 0) button.classList.add('active');
+            
+            button.addEventListener('click', () => {
+                this.currentVerseIndex = index;
+                this.updateVerseButtons();
+                this.loadVerse(index);
+            });
+            
+            verseButtons.appendChild(button);
         });
         
-        // Similar update for the next button
-        nextBtn.addEventListener('click', () => {
-            if (this.currentVerseIndex < verses.length - 1) {
-                this.currentVerseIndex++;
-                this.loadVerse(this.currentVerseIndex);
-                
-                // Enable/disable buttons as needed
-                prevBtn.disabled = false;
-                nextBtn.disabled = this.currentVerseIndex === verses.length - 1;
-                
-                verseNumber.textContent = `Verse ${this.currentVerseIndex + 1}/${verses.length}`;
-                
-                // Reset camera position when changing verses
-                if (this.currentAnimation) {
-                    this.currentAnimation.camera.position.set(0, 2, 10);
-                    this.currentAnimation.camera.lookAt(0, 0, 0);
-                }
-            }
-        });
-        
-        // Set up show/hide toggles with improved transitions
-        const toggleInfo = document.getElementById('toggle-info');
-        const toggleControls = document.getElementById('toggle-controls');
-        const explanation = document.getElementById('explanation');
-        const interactionPanel = document.getElementById('interaction-panel');
-        
-        // Make entire overlay scrollable
-        document.getElementById('overlay').classList.add('scroll-container');
-        
-        // Add scroll container class to panels that need scrolling
-        explanation.classList.add('scroll-container');
-        interactionPanel.classList.add('scroll-container');
-        
-        toggleInfo.addEventListener('click', () => {
-            explanation.classList.toggle('hidden');
-            toggleInfo.textContent = explanation.classList.contains('hidden') ? 'Show Info' : 'Hide Info';
-        });
-        
-        toggleControls.addEventListener('click', () => {
-            interactionPanel.classList.toggle('hidden');
-            toggleControls.textContent = interactionPanel.classList.contains('hidden') ? 'Show Controls' : 'Hide Controls';
-        });
+        // Set up collapsible sections
+        this.setupCollapsibleSection('explanation-header', 'explanation-content', true);
+        this.setupCollapsibleSection('controls-header', 'controls-content', false);
         
         // Set up preloading with visual feedback
         this.preloadAssets();
+    }
+    
+    setupSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+        });
+        
+        // On mobile, start with explanation section collapsed
+        if (window.innerWidth < 768) {
+            const explanationContent = document.getElementById('explanation-content');
+            explanationContent.classList.add('collapsed');
+            document.querySelector('#explanation-header .toggle-indicator').style.transform = 'rotate(-90deg)';
+        }
+    }
+    
+    setupCollapsibleSection(headerId, contentId, defaultExpanded) {
+        const header = document.getElementById(headerId);
+        const content = document.getElementById(contentId);
+        
+        // Set initial state
+        if (!defaultExpanded) {
+            content.classList.add('collapsed');
+            header.querySelector('.toggle-indicator').style.transform = 'rotate(-90deg)';
+        }
+        
+        header.addEventListener('click', () => {
+            content.classList.toggle('collapsed');
+            
+            if (content.classList.contains('collapsed')) {
+                header.querySelector('.toggle-indicator').style.transform = 'rotate(-90deg)';
+            } else {
+                header.querySelector('.toggle-indicator').style.transform = 'rotate(0deg)';
+            }
+        });
+    }
+    
+    updateVerseButtons() {
+        const buttons = document.querySelectorAll('.verse-button');
+        buttons.forEach((button, index) => {
+            if (index === this.currentVerseIndex) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+        });
+        
+        document.getElementById('verse-number-display').textContent = `Verse ${this.currentVerseIndex + 1}/${verses.length}`;
     }
     
     preloadAssets() {
@@ -107,14 +112,13 @@ class InvestigationOfAnguish {
         const verse = verses[index];
         
         // Update text content
-        this.verseContent.innerHTML = `
-            <h2>Verse ${verse.number}</h2>
-            <p>${verse.text}</p>
-        `;
-        
+        this.verseText.textContent = verse.text;
         this.madhyamakaText.textContent = verse.madhyamakaExplanation;
         this.quantumText.textContent = verse.quantumParallel;
         this.accessibleText.textContent = verse.accessibleExplanation;
+        
+        // Update verse number display
+        document.getElementById('verse-number-display').textContent = `Verse ${index + 1}/${verses.length}`;
         
         // Clear existing controls
         this.specificControls.innerHTML = '';

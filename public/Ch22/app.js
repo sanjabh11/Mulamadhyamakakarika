@@ -7,12 +7,14 @@ class TathagataApp {
         this.currentAnimation = null;
         this.animationSpeed = animationSettings.defaultSpeed;
         this.isPlaying = true;
-        this.isTextVisible = true;
-        this.isControlsExpanded = true;
-        this.isExplanationVisible = false;
+        this.isPanelExpanded = true;
+        this.isVerseExplanationExpanded = true;
+        this.isAnimationControlsExpanded = false;
         
         this.initDOMElements();
+        this.setupNavigationButtons();
         this.setupEventListeners();
+        this.setupResponsiveLayout();
         this.loadVerse(this.currentVerseIndex);
     }
     
@@ -20,45 +22,81 @@ class TathagataApp {
         this.animationContainer = document.getElementById('animation-container');
         this.verseContent = document.getElementById('verse-content');
         this.explanationContent = document.getElementById('explanation-content');
-        this.currentVerseElement = document.getElementById('current-verse');
         this.controlsPanel = document.getElementById('controls-panel');
         this.controlsContent = document.getElementById('controls-content');
-        this.textPanel = document.getElementById('text-panel');
+        
+        // Section elements
+        this.verseExplanationSection = document.getElementById('verse-explanation-section');
+        this.animationControlsSection = document.getElementById('animation-controls-section');
+        this.verseExplanationContent = this.verseExplanationSection.querySelector('.collapsible-content');
+        this.animationControlsContent = this.animationControlsSection.querySelector('.collapsible-content');
+        
+        // Section toggle indicators
+        this.verseExplanationToggle = this.verseExplanationSection.querySelector('.section-toggle');
+        this.animationControlsToggle = this.animationControlsSection.querySelector('.section-toggle');
         
         // Buttons
-        this.prevVerseBtn = document.getElementById('prev-verse');
-        this.nextVerseBtn = document.getElementById('next-verse');
+        this.panelToggleBtn = document.getElementById('panel-toggle');
         this.restartAnimationBtn = document.getElementById('restart-animation');
         this.pauseAnimationBtn = document.getElementById('pause-animation');
-        this.toggleExplanationBtn = document.getElementById('toggle-explanation');
-        this.toggleTextBtn = document.getElementById('toggle-text-btn');
-        this.toggleControlsBtn = document.getElementById('toggle-controls-btn');
         
         // Sliders
         this.speedSlider = document.getElementById('animation-speed');
+        
+        // Navigation
+        this.verseNavigation = document.getElementById('verse-navigation');
+    }
+    
+    setupNavigationButtons() {
+        this.verseNavigation.innerHTML = '';
+        
+        // Create a button for each verse
+        verseData.forEach((verse, index) => {
+            const button = document.createElement('button');
+            button.classList.add('verse-btn');
+            button.textContent = (index + 1).toString();
+            button.dataset.verseIndex = index;
+            
+            if (index === this.currentVerseIndex) {
+                button.classList.add('active');
+            }
+            
+            button.addEventListener('click', () => {
+                this.navigateToVerse(index);
+            });
+            
+            this.verseNavigation.appendChild(button);
+        });
     }
     
     setupEventListeners() {
-        this.prevVerseBtn.addEventListener('click', () => this.navigateVerse(-1));
-        this.nextVerseBtn.addEventListener('click', () => this.navigateVerse(1));
+        // Panel toggle
+        this.panelToggleBtn.addEventListener('click', () => this.togglePanel());
         
+        // Section toggles
+        this.verseExplanationSection.querySelector('.section-header').addEventListener('click', () => {
+            this.toggleSection(this.verseExplanationContent, this.verseExplanationToggle);
+            this.isVerseExplanationExpanded = !this.isVerseExplanationExpanded;
+        });
+        
+        this.animationControlsSection.querySelector('.section-header').addEventListener('click', () => {
+            this.toggleSection(this.animationControlsContent, this.animationControlsToggle);
+            this.isAnimationControlsExpanded = !this.isAnimationControlsExpanded;
+        });
+        
+        // Animation controls
         this.restartAnimationBtn.addEventListener('click', () => this.restartAnimation());
         this.pauseAnimationBtn.addEventListener('click', () => this.togglePlayPause());
-        
-        this.toggleExplanationBtn.addEventListener('click', () => this.toggleExplanation());
-        this.toggleTextBtn.addEventListener('click', () => this.toggleText());
-        this.toggleControlsBtn.addEventListener('click', () => this.toggleControls());
-        
         this.speedSlider.addEventListener('input', (e) => this.updateSpeed(parseFloat(e.target.value)));
         
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
             switch (e.key) {
                 case 'ArrowLeft':
-                    this.navigateVerse(-1);
+                    this.navigateToVerse(this.currentVerseIndex - 1);
                     break;
                 case 'ArrowRight':
-                    this.navigateVerse(1);
+                    this.navigateToVerse(this.currentVerseIndex + 1);
                     break;
                 case ' ':
                     this.togglePlayPause();
@@ -67,20 +105,58 @@ class TathagataApp {
         });
     }
     
+    setupResponsiveLayout() {
+        // Check if mobile view
+        const isMobile = window.innerWidth <= uiSettings.mobileBreakpoint;
+        
+        // Set initial panel state based on device
+        if (isMobile) {
+            this.isPanelExpanded = false;
+            this.controlsPanel.classList.add('panel-collapsed');
+            this.isVerseExplanationExpanded = false;
+            this.isAnimationControlsExpanded = false;
+            this.toggleSection(this.verseExplanationContent, this.verseExplanationToggle, false);
+            this.toggleSection(this.animationControlsContent, this.animationControlsToggle, false);
+        } else {
+            this.isPanelExpanded = true;
+            this.isVerseExplanationExpanded = true;
+            this.isAnimationControlsExpanded = false;
+            this.toggleSection(this.animationControlsContent, this.animationControlsToggle, false);
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            const isMobileNow = window.innerWidth <= uiSettings.mobileBreakpoint;
+            
+            // Only change if transitioning between mobile and desktop
+            if (isMobileNow !== isMobile) {
+                if (isMobileNow) {
+                    this.controlsPanel.classList.add('panel-collapsed');
+                    this.isPanelExpanded = false;
+                } else if (!this.isPanelExpanded) {
+                    this.controlsPanel.classList.remove('panel-collapsed');
+                    this.isPanelExpanded = true;
+                }
+            }
+        });
+    }
+    
     loadVerse(index) {
+        // Update navigation
+        const buttons = this.verseNavigation.querySelectorAll('.verse-btn');
+        buttons.forEach(btn => {
+            btn.classList.toggle('active', parseInt(btn.dataset.verseIndex) === index);
+        });
+        
         // Clear current content
         this.verseContent.innerHTML = '';
         this.explanationContent.innerHTML = '';
-        
-        // Update current verse display
-        this.currentVerseElement.textContent = `Verse ${index + 1}/${verseData.length}`;
         
         // Get verse data
         const verse = verseData[index];
         
         // Create verse content
         const verseHTML = `
-            <div class="verse-number">Verse ${verse.verseNumber}</div>
             <div class="verse-text">${verse.verseText}</div>
         `;
         
@@ -103,11 +179,6 @@ class TathagataApp {
         // Set content
         this.verseContent.innerHTML = verseHTML;
         this.explanationContent.innerHTML = explanationHTML;
-        
-        // Reset explanation visibility
-        this.isExplanationVisible = false;
-        this.explanationContent.style.display = 'none';
-        this.toggleExplanationBtn.textContent = 'Show Explanation';
         
         // Load animation
         this.loadAnimation(verse.animationType);
@@ -132,10 +203,9 @@ class TathagataApp {
         }
     }
     
-    navigateVerse(direction) {
-        const newIndex = this.currentVerseIndex + direction;
-        if (newIndex >= 0 && newIndex < verseData.length) {
-            this.currentVerseIndex = newIndex;
+    navigateToVerse(index) {
+        if (index >= 0 && index < verseData.length) {
+            this.currentVerseIndex = index;
             this.loadVerse(this.currentVerseIndex);
         }
     }
@@ -163,32 +233,23 @@ class TathagataApp {
         }
     }
     
-    toggleExplanation() {
-        this.isExplanationVisible = !this.isExplanationVisible;
-        this.explanationContent.style.display = this.isExplanationVisible ? 'block' : 'none';
-        this.toggleExplanationBtn.textContent = this.isExplanationVisible ? 'Hide Explanation' : 'Show Explanation';
-    }
-    
-    toggleText() {
-        this.isTextVisible = !this.isTextVisible;
-        if (this.isTextVisible) {
-            this.textPanel.classList.remove('text-hidden');
-            this.toggleTextBtn.textContent = 'Hide Text';
-        } else {
-            this.textPanel.classList.add('text-hidden');
-            this.toggleTextBtn.textContent = 'Show Text';
+    togglePanel() {
+        this.isPanelExpanded = !this.isPanelExpanded;
+        this.controlsPanel.classList.toggle('panel-collapsed', !this.isPanelExpanded);
+        
+        // For mobile views
+        if (window.innerWidth <= uiSettings.mobileBreakpoint) {
+            this.controlsPanel.classList.toggle('panel-expanded', this.isPanelExpanded);
         }
     }
     
-    toggleControls() {
-        this.isControlsExpanded = !this.isControlsExpanded;
-        if (this.isControlsExpanded) {
-            this.controlsPanel.classList.remove('controls-hidden');
-            this.toggleControlsBtn.textContent = 'Hide Controls';
-        } else {
-            this.controlsPanel.classList.add('controls-hidden');
-            this.toggleControlsBtn.textContent = 'Show Controls';
-        }
+    toggleSection(contentElement, toggleElement, shouldExpand = null) {
+        const isExpanded = shouldExpand !== null ? shouldExpand : 
+                          !contentElement.classList.contains('expanded');
+        
+        contentElement.classList.toggle('expanded', isExpanded);
+        toggleElement.classList.toggle('collapsed', !isExpanded);
+        toggleElement.textContent = isExpanded ? '▼' : '▶';
     }
 }
 
@@ -196,4 +257,3 @@ class TathagataApp {
 document.addEventListener('DOMContentLoaded', () => {
     const app = new TathagataApp();
 });
-

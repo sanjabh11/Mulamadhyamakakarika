@@ -1152,6 +1152,7 @@ class VacuumFluctuationAnimation extends BaseAnimation {
 // Verse 18: Recursive Quantum animation
 class RecursiveQuantumAnimation extends BaseAnimation {
     init() {
+        this.connectionLines = []; // Initialize connectionLines array
         // Create a fractal system to represent recursive quantum processes
         this.fractalDepth = 4;
         this.rootNode = new THREE.Group();
@@ -3045,6 +3046,58 @@ class ThermodynamicEntropyAnimation extends BaseAnimation {
         this.temperatureIndicator.position.set(-30, 0, 0);
         this.scene.add(this.temperatureIndicator);
         this.objects.push(this.temperatureIndicator);
+    }
+
+    createParticles() {
+        const particleGeometry = new THREE.SphereGeometry(0.5, 8, 8);
+        const boxHalfSize = 18; // Slightly smaller than the container box
+
+        // Calculate grid size for initial ordered state
+        const particlesPerSide = Math.ceil(Math.cbrt(this.particleCount));
+        const spacing = (boxHalfSize * 2) / particlesPerSide;
+
+        for (let i = 0; i < this.particleCount; i++) {
+            // Determine grid position
+            const xIndex = i % particlesPerSide;
+            const yIndex = Math.floor(i / particlesPerSide) % particlesPerSide;
+            const zIndex = Math.floor(i / (particlesPerSide * particlesPerSide));
+
+            const x = -boxHalfSize + spacing / 2 + xIndex * spacing;
+            const y = -boxHalfSize + spacing / 2 + yIndex * spacing;
+            const z = -boxHalfSize + spacing / 2 + zIndex * spacing;
+
+            const position = new THREE.Vector3(x, y, z);
+
+            // Assign temperature (e.g., half hot, half cold)
+            const isHot = y < 0; // Example: bottom half is hot
+            const temperature = isHot ? 1.0 : 0.0;
+            const color = isHot ? 0xff6600 : 0x0066ff;
+
+            const particleMaterial = new THREE.MeshPhongMaterial({
+                color: color,
+                emissive: new THREE.Color(color).multiplyScalar(0.5),
+                shininess: 50
+            });
+
+            const particle = new THREE.Mesh(particleGeometry, particleMaterial);
+            particle.position.copy(position);
+
+            particle.userData = {
+                velocity: new THREE.Vector3(
+                    (Math.random() - 0.5) * 0.02,
+                    (Math.random() - 0.5) * 0.02,
+                    (Math.random() - 0.5) * 0.02
+                ),
+                isHot: isHot,
+                temperature: temperature,
+                originalPosition: position.clone(),
+                targetPosition: position.clone() // Initially target is the original position
+            };
+
+            this.particles.push(particle);
+            this.systemContainer.add(particle);
+            this.objects.push(particle); // Add to objects for cleanup
+        }
     }
     
     update() {

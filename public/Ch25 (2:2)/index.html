@@ -20,24 +20,38 @@
 <body>
     <div id="app">
         <div id="animation-container"></div>
-        
-        <div id="text-overlay" class="overlay">
-            <div id="verse-title"></div>
-            <div id="verse-content"></div>
-            <div id="verse-explanation"></div>
-        </div>
-        
-        <div id="controls" class="overlay">
-            <div class="nav-buttons">
-                <button id="prev-btn">Previous</button>
-                <span id="verse-number">Verse 13/24</span>
-                <button id="next-btn">Next</button>
+        <!-- NEW SIDE PANEL -->
+        <div id="side-panel" class="panel-expanded">
+            <button id="panel-toggle" class="panel-toggle">◀</button>
+            <div id="panel-content">
+                <div id="chapter-title">Investigation of Nirvana</div>
+                <div id="verse-navigation">
+                    <div class="nav-buttons">
+                        <button id="prev-btn">Previous</button>
+                        <span id="verse-number">Verse 13/24</span>
+                        <button id="next-btn">Next</button>
+                    </div>
+                    <div class="nav-timeline" id="verses-timeline"></div>
+                </div>
+                <div class="collapsible" id="verse-explanation-section">
+                    <div class="collapsible-header">
+                        Verse Explanation<span class="toggle-indicator">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div id="verse-title"></div>
+                        <div id="verse-content"></div>
+                        <div id="verse-explanation"></div>
+                    </div>
+                </div>
+                <div class="collapsible" id="animation-controls-section">
+                    <div class="collapsible-header">
+                        Animation Controls<span class="toggle-indicator">►</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <!-- Animation controls will be injected here by chapter JS -->
+                    </div>
+                </div>
             </div>
-            <div class="toggle-buttons">
-                <button id="toggle-text">Hide Text</button>
-                <button id="toggle-explanation">Hide Explanation</button>
-            </div>
-            <div class="nav-timeline" id="verses-timeline"></div>
         </div>
     </div>
     

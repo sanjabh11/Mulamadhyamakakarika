@@ -19,35 +19,62 @@
 </head>
 <body>
     <div id="scene-container"></div>
-    <div id="content">
-        <div id="title">
-            <h1>Chapter 7</h1>
-            <h2>Investigation of Birth, Abiding and Perishing</h2>
-            <div id="top-navigation">
+    
+    <!-- New left panel -->
+    <div id="left-panel">
+        <button id="left-panel-toggle">◀</button>
+        <div id="panel-content">
+            <div class="panel-chapter-title">Chapter 7: Investigation of Birth, Abiding and Perishing</div>
+
+            <!-- Add Prev/Next buttons here -->
+            <div class="main-navigation">
                 <button id="prev-btn">Previous</button>
-                <div id="pagination"></div>
                 <button id="next-btn">Next</button>
             </div>
-        </div>
-        <div id="verse-display">
-            <div id="verse-number"></div>
-            <div id="verse-text"></div>
-            <div id="verse-concepts">
-                <div class="concept-section">
-                    <h3>Madhyamaka Concept</h3>
-                    <p id="madhyamaka-concept"></p>
+            
+            <div class="verse-nav-grid" id="verse-navigation">
+                <!-- Verse navigation buttons will be populated by JS -->
+            </div>
+            
+            <div class="collapsible-section" id="verse-explanation-section">
+                <div class="section-header">
+                    <span>Verse Explanation</span>
+                    <span class="toggle-icon">▼</span>
                 </div>
-                <div class="concept-section">
-                    <h3>Quantum Physics Parallel</h3>
-                    <p id="quantum-parallel"></p>
+                <div class="section-content">
+                    <div class="verse-text" id="panel-verse-text"></div>
+                    
+                    <div class="subsection">
+                        <div class="subsection-title">Madhyamaka Concept</div>
+                        <div class="subsection-content" id="panel-madhyamaka-concept"></div>
+                    </div>
+                    
+                    <div class="subsection">
+                        <div class="subsection-title">Quantum Physics Parallel</div>
+                        <div class="subsection-content" id="panel-quantum-parallel"></div>
+                    </div>
+                    
+                    <div class="subsection">
+                        <div class="subsection-title">Accessible Explanation</div>
+                        <div class="subsection-content" id="panel-accessible-explanation"></div>
+                    </div>
                 </div>
-                <div class="concept-section">
-                    <h3>Accessible Explanation</h3>
-                    <p id="accessible-explanation"></p>
+            </div>
+            
+            <div class="collapsible-section" id="animation-controls-section">
+                <div class="section-header collapsed">
+                    <span>Animation Controls</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content collapsed" id="panel-animation-controls">
+                    <!-- Animation controls will be placed here -->
                 </div>
             </div>
         </div>
     </div>
+    
+    <!-- Removed duplicate content block -->
+    
     <div id="current-verse-indicator">Verse <span id="indicator-number">13</span></div>
 </body>
 </html>

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-export default function verse25Animation(container) {
+export default function verse25Animation(container, controlsContainer = null) {
     // Remove any existing canvases
     const existingCanvas = container.querySelector('canvas');
     if (existingCanvas) {
@@ -281,6 +281,43 @@ export default function verse25Animation(container) {
         renderer.setSize(container.clientWidth, container.clientHeight);
     }
     
+    // Add controls to the controlsContainer if provided
+    if (controlsContainer) {
+        // Example controls
+        const speedControl = document.createElement('div');
+        speedControl.innerHTML = `
+            <label for="rotationSpeed">Rotation Speed:</label>
+            <input type="range" id="rotationSpeed" min="0.01" max="0.5" step="0.01" value="0.1">
+        `;
+        controlsContainer.appendChild(speedControl);
+        
+        const rotationSlider = speedControl.querySelector('#rotationSpeed');
+        rotationSlider.addEventListener('input', (e) => {
+            const newSpeed = parseFloat(e.target.value);
+            // Update rotation speed in the animation
+            // This is just an example - adjust based on your actual animation
+            creationSystem.rotation.y = newSpeed * clock.getElapsedTime();
+        });
+        
+        const resetButton = document.createElement('button');
+        resetButton.textContent = 'Reset View';
+        resetButton.style.padding = '8px 12px';
+        resetButton.style.backgroundColor = '#6d4ab1';
+        resetButton.style.border = 'none';
+        resetButton.style.borderRadius = '4px';
+        resetButton.style.color = 'white';
+        resetButton.style.cursor = 'pointer';
+        resetButton.style.marginTop = '10px';
+        
+        resetButton.addEventListener('click', () => {
+            // Reset camera to initial position
+            camera.position.set(0, 2, 6);
+            controls.reset();
+        });
+        
+        controlsContainer.appendChild(resetButton);
+    }
+    
     window.addEventListener('resize', handleResize);
     
     // Cleanup function
@@ -308,4 +345,3 @@ export default function verse25Animation(container) {
         resize: handleResize
     };
 }
-

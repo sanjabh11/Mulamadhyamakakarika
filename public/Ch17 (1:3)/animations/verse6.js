@@ -505,7 +505,8 @@ export function initVerse6(container, controlsContainer) {
             cancelAnimationFrame(animate);
             renderer.dispose();
         },
-        resize: onResize
+        resize: onResize,
+        camera: camera,
+        renderer: renderer
     };
 }
-

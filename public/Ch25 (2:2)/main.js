@@ -17,6 +17,9 @@ import { initVerse22, cleanupVerse22 } from './animations/verse22.js';
 import { initVerse23, cleanupVerse23 } from './animations/verse23.js';
 import { initVerse24, cleanupVerse24 } from './animations/verse24.js';
 
+// Import and initialize the side panel functionality
+import { initPanel } from './panel.js';
+
 // DOM Elements
 const container = document.getElementById('animation-container');
 const verseTitle = document.getElementById('verse-title');
@@ -25,9 +28,6 @@ const verseExplanation = document.getElementById('verse-explanation');
 const verseNumber = document.getElementById('verse-number');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
-const toggleTextBtn = document.getElementById('toggle-text');
-const toggleExplanationBtn = document.getElementById('toggle-explanation');
-const textOverlay = document.getElementById('text-overlay');
 const versesTimeline = document.getElementById('verses-timeline');
 
 // Current verse state
@@ -118,9 +118,6 @@ function initCurrentVerse() {
     
     // Update active marker in timeline
     updateTimelineActiveMarker();
-    
-    // Add 3D effect to text overlay
-    add3DEffect(textOverlay, 5);
 }
 
 // Clean up the current verse before moving to another
@@ -158,44 +155,12 @@ nextBtn.addEventListener('click', () => {
     }
 });
 
-toggleTextBtn.addEventListener('click', () => {
-    textVisible = !textVisible;
-    if (textVisible) {
-        textOverlay.classList.remove('hidden');
-        toggleTextBtn.textContent = 'Hide Text';
-    } else {
-        textOverlay.classList.add('hidden');
-        toggleTextBtn.textContent = 'Show Text';
-    }
-});
-
-toggleExplanationBtn.addEventListener('click', () => {
-    explanationVisible = !explanationVisible;
-    if (explanationVisible) {
-        verseExplanation.style.display = 'block';
-        toggleExplanationBtn.textContent = 'Hide Explanation';
-    } else {
-        verseExplanation.style.display = 'none';
-        toggleExplanationBtn.textContent = 'Show Explanation';
-    }
-});
-
 // Handle keyboard navigation
 document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft' && currentVerse > 13) {
         navigateToVerse(currentVerse - 1);
     } else if (e.key === 'ArrowRight' && currentVerse < 24) {
         navigateToVerse(currentVerse + 1);
-    } else if (e.key === 'Escape') {
-        // Toggle text visibility with Escape key
-        textVisible = !textVisible;
-        if (textVisible) {
-            textOverlay.classList.remove('hidden');
-            toggleTextBtn.textContent = 'Hide Text';
-        } else {
-            textOverlay.classList.add('hidden');
-            toggleTextBtn.textContent = 'Show Text';
-        }
     }
 });
 
@@ -225,16 +190,8 @@ function handleSwipe() {
     }
 }
 
-// Scroll verse text with wheel
-textOverlay.addEventListener('wheel', (e) => {
-    e.stopPropagation(); // Prevent unintended navigation
-});
-
 // Handle wheel events for navigation on desktop
 document.addEventListener('wheel', (e) => {
-    // Don't handle wheel events from text overlay
-    if (e.target.closest('#text-overlay')) return;
-    
     // Debounce wheel navigation
     if (!document.wheelTimeout) {
         document.wheelTimeout = setTimeout(() => {
@@ -251,11 +208,8 @@ document.addEventListener('wheel', (e) => {
 // Responsive UI adjustments
 function handleResize() {
     const isMobile = window.innerWidth < 768;
-    if (isMobile && textVisible) {
-        // Adjust text overlay for mobile
-        textOverlay.style.maxHeight = '40vh';
-    } else {
-        textOverlay.style.maxHeight = '';
+    if (isMobile) {
+        // Adjust for mobile
     }
 }
 
@@ -286,10 +240,13 @@ function init() {
     // Initialize first verse
     initCurrentVerse();
     
+    // Initialize the side panel toggle and collapsible sections
+    initPanel();
+    
     // Add smooth transition style
     container.style.transition = 'opacity 0.3s ease';
     
-    // Add p5.js script dynamically to ensure it's available
+    // Dynamically load p5.js if needed
     if (typeof p5 === 'undefined') {
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js';
@@ -298,5 +255,4 @@ function init() {
     }
 }
 
-// Start the application
 init();

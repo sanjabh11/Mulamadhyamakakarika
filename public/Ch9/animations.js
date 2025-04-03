@@ -1762,14 +1762,17 @@ class EntanglementAnimation extends Animation {
             new THREE.Vector3(-2, 0, 0),
             new THREE.Vector3(2, 0, 0)
         ]);
-        const lineMaterial = new THREE.LineBasicMaterial({ 
+        // lineGeometry.computeLineDistances(); // Moved to the Line object
+        const lineMaterial = new THREE.LineDashedMaterial({ // Changed to LineDashedMaterial
             color: 0xffffff,
             transparent: true,
             opacity: 0.5,
             dashSize: 0.2,
-            gapSize: 0.1
+            gapSize: 0.1,
+            scale: 1 // Required for LineDashedMaterial
         });
         this.connectionLine = new THREE.Line(lineGeometry, lineMaterial);
+        this.connectionLine.computeLineDistances(); // Call on the Line object
         this.scene.add(this.connectionLine);
         
         // State information
@@ -2567,12 +2570,13 @@ class WaveParticleDualityAnimation extends Animation {
         // Create wave rings for both slits
         this.waveRings = [];
         const ringCount = 15;
-        const ringMaterial = new THREE.LineBasicMaterial({ 
+        const ringMaterial = new THREE.LineDashedMaterial({ // Changed to LineDashedMaterial
             color: 0x3498db,
             transparent: true,
             opacity: 0.4,
             dashSize: 0.2,
-            gapSize: 0.1
+            gapSize: 0.1,
+            scale: 1 // Required for LineDashedMaterial
         });
         
         // Create waves from slit 1
@@ -2592,7 +2596,9 @@ class WaveParticleDualityAnimation extends Animation {
             }
             
             ringGeometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            // ringGeometry.computeLineDistances(); // Moved to the Line object
             const ring = new THREE.Line(ringGeometry, ringMaterial.clone());
+            ring.computeLineDistances(); // Call on the Line object
             ring.position.copy(this.slit1.position);
             ring.position.z = -1; // Position after the barrier
             ring.userData = { slit: 1, originalRadius: radius };
@@ -2617,7 +2623,9 @@ class WaveParticleDualityAnimation extends Animation {
             }
             
             ringGeometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            // ringGeometry.computeLineDistances(); // Moved to the Line object
             const ring = new THREE.Line(ringGeometry, ringMaterial.clone());
+            ring.computeLineDistances(); // Call on the Line object
             ring.position.copy(this.slit2.position);
             ring.position.z = -1; // Position after the barrier
             ring.userData = { slit: 2, originalRadius: radius };

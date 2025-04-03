@@ -2,41 +2,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Madhyamaka & Quantum Physics</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Madhyamaka and Quantum Physics</title>
+    <link rel="stylesheet" href="styles.css">
     <script type="importmap">
-        {
-            "imports": {
-                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
-                "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.3/index.js"
-            }
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+            "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.4/index.js"
         }
+    }
     </script>
 </head>
 <body>
-    <div id="container">
-        <div id="animation-container"></div>
+    <div id="app">
+        <div id="scene-container"></div>
         
-        <div id="text-panel">
-            <div id="verse-details">
-                <h1>Chapter 21: Investigation of Rising and Passing (2/2)</h1>
-                <div id="verse-content"></div>
-            </div>
-            <div id="control-panel">
-                <div id="verse-nav">
-                    <button id="prev-btn">Previous Verse</button>
-                    <span id="verse-indicator">Verse 13/21</span>
-                    <button id="next-btn">Next Verse</button>
+        <div id="panel">
+            <button id="panel-toggle">◀</button>
+            <div id="panel-content">
+                <h1 class="chapter-title">Madhyamaka and Quantum Physics</h1>
+                
+                <div id="verse-navigation">
+                    <!-- Verse buttons will be inserted dynamically -->
                 </div>
-                <div id="interaction-controls"></div>
+                
+                <div class="collapsible-section">
+                    <div class="section-header" id="explanation-header">
+                        <span>Verse Explanation</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="section-content" id="explanation-content">
+                        <div class="verse-text" id="verse-title">Verse 1: Arising and Ceasing</div>
+                        <div class="subsection">
+                            <h3>Madhyamaka Concept</h3>
+                            <p id="madhyamaka-text">Challenges inherent arising and ceasing, emphasizing emptiness and dependent origination, rejecting inherent essence (svabhāva).</p>
+                        </div>
+                        <div class="subsection">
+                            <h3>Quantum Physics Parallel</h3>
+                            <p id="quantum-text">Superposition: An electron exists in multiple energy levels until measured.</p>
+                        </div>
+                        <div class="subsection">
+                            <h3>Accessible Explanation</h3>
+                            <p id="explanation-text">Like a light switch both on and off until checked, things don't inherently start or stop—it's all perspective.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="collapsible-section">
+                    <div class="section-header" id="controls-header">
+                        <span>Animation Controls</span>
+                        <span class="toggle-icon">►</span>
+                    </div>
+                    <div class="section-content" id="controls-content" style="display: none;">
+                        <div class="interaction-controls" id="interaction-area">
+                            <!-- Dynamic controls will be inserted here based on the current verse -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        
-        <button id="toggle-text" class="toggle-btn">Hide Text</button>
-        <button id="toggle-controls" class="toggle-btn">Hide Controls</button>
     </div>
-    
     <script type="module" src="config.js"></script>
     <script type="module" src="main.js"></script>
 </body>

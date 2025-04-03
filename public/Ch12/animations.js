@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js'; // Added FontLoader import
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js'; // Added TextGeometry import
 import { animationSettings, colorSchemes, globalSettings } from './config.js';
 import { gsap } from 'gsap';
 
@@ -20,7 +21,7 @@ class BaseAnimation {
         });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        this.renderer.outputEncoding = THREE.sRGBEncoding;
+        this.renderer.outputColorSpace = THREE.SRGBColorSpace; // Updated property
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         this.renderer.toneMappingExposure = 1.2;
         
@@ -2111,7 +2112,7 @@ export class BackActionAnimation extends BaseAnimation {
                     onComplete: () => {
                         // Flash quantum system
                         gsap.to(this.quantumSystem.material, {
-                            emissiveIntensity: 1.5,
+                            emissiveIntensity: 1,
                             duration: 0.3,
                             yoyo: true,
                             repeat: 3,
@@ -2223,19 +2224,19 @@ export class BackActionAnimation extends BaseAnimation {
         if (this.electrons) {
             this.electrons.forEach(electron => {
                 const orbitData = electron.userData;
+                const orbitAxis = orbitData.orbitAxis;
                 
-                if (orbitData && orbitData.orbitAxis) {
-                    const rotationMatrix = new THREE.Matrix4();
-                    const angle = time * orbitData.orbitSpeed + orbitData.orbitPhase;
-                    
-                    rotationMatrix.makeRotationAxis(orbitData.orbitAxis, angle);
-                    
-                    // Apply to base position (along x-axis)
-                    const basePosition = new THREE.Vector3(orbitData.orbitRadius, 0, 0);
-                    basePosition.applyMatrix4(rotationMatrix);
-                    
-                    electron.position.copy(basePosition);
-                }
+                // Create rotation matrix around the custom axis
+                const rotationMatrix = new THREE.Matrix4();
+                const angle = time * orbitData.orbitSpeed + orbitData.orbitPhase;
+                
+                rotationMatrix.makeRotationAxis(orbitAxis, angle);
+                
+                // Apply to base position (along x-axis)
+                const basePosition = new THREE.Vector3(orbitData.orbitRadius, 0, 0);
+                basePosition.applyMatrix4(rotationMatrix);
+                
+                electron.position.copy(basePosition);
             });
         }
         
@@ -2422,31 +2423,12 @@ export class BellTheoremAnimation extends BaseAnimation {
         this.graph.add(yAxis);
         
         // Axis labels
-        const xLabelDiv = document.createElement('div');
-        xLabelDiv.className = 'graph-label';
-        xLabelDiv.textContent = "Angle Difference (°)";
-        xLabelDiv.style.position = 'absolute';
-        xLabelDiv.style.right = '20%';
-        xLabelDiv.style.top = '75%';
-        xLabelDiv.style.color = 'white';
-        xLabelDiv.style.fontSize = '0.8rem';
-        xLabelDiv.style.pointerEvents = 'none';
-        document.body.appendChild(xLabelDiv);
-        
-        const yLabelDiv = document.createElement('div');
-        yLabelDiv.className = 'graph-label';
-        yLabelDiv.textContent = "Correlation";
-        yLabelDiv.style.position = 'absolute';
-        yLabelDiv.style.right = '65%';
-        yLabelDiv.style.top = '25%';
-        yLabelDiv.style.color = 'white';
-        yLabelDiv.style.fontSize = '0.8rem';
-        yLabelDiv.style.transform = 'rotate(-90deg)';
-        yLabelDiv.style.pointerEvents = 'none';
-        document.body.appendChild(yLabelDiv);
-        
-        this.xLabel = xLabelDiv;
-        this.yLabel = yLabelDiv;
+        const loader = new FontLoader(); // Use imported FontLoader
+        this.textMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.9
+        });
         
         // Create placeholders for data point groups
         this.classicalPoints = new THREE.Group();
@@ -3633,7 +3615,8 @@ export class StatisticalLawsAnimation extends BaseAnimation {
             const orbitMaterial = new THREE.MeshBasicMaterial({
                 color: 0x60a5fa,
                 transparent: true,
-                opacity: 0.5
+                opacity: 0.5,
+                side: THREE.DoubleSide
             });
             
             const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
@@ -3881,9 +3864,12 @@ export class StatisticalLawsAnimation extends BaseAnimation {
                 const electron = atom.children[i];
                 const orbitData = electron.userData;
                 
+                // Add checks for orbitData and orbitAxis before using them
                 if (orbitData && orbitData.orbitAxis) {
+                    // Create rotation matrix around the custom axis
                     const rotationMatrix = new THREE.Matrix4();
                     const angle = time * orbitData.orbitSpeed + orbitData.orbitAngle;
+                    
                     rotationMatrix.makeRotationAxis(orbitData.orbitAxis, angle);
                     
                     // Apply to base position (along x-axis)

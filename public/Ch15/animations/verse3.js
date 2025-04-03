@@ -34,17 +34,18 @@ export function initVerse3(container, controlsContainer, options) {
     const spinVisualizationSpeed = options.spinVisualizationSpeed || 0.5;
     const measurementProbability = options.measurementProbability || 0.5;
     
+    
     // Create a line connecting the entangled particles
-    const lineMaterial = new THREE.LineBasicMaterial({
+    const lineMaterial = new THREE.LineDashedMaterial({ // Changed to LineDashedMaterial
         color: 0x00d2ff,
         transparent: true,
         opacity: 0.6,
         dashSize: 0.5,
         gapSize: 0.5,
+        scale: 1 // Required for LineDashedMaterial
     });
     
     const lineGeometry = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(-particleDistance/2, 0, 0),
         new THREE.Vector3(particleDistance/2, 0, 0)
     ]);
     

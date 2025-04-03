@@ -2,50 +2,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quantum Madhyamaka</title>
+    <title>Madhyamaka & Quantum Physics</title>
     <link rel="stylesheet" href="styles.css">
     <script type="importmap">
     {
       "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.module.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/",
-        "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.2/index.js",
-        "d3": "https://cdn.jsdelivr.net/npm/d3@7/+esm"
+        "three": "https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.152.2/examples/jsm/",
+        "lil-gui": "https://cdn.jsdelivr.net/npm/lil-gui@0.18.2/dist/lil-gui.esm.js"
       }
     }
     </script>
-    <script type="module" src="config.js"></script>
-    <script type="module" src="scripts.js"></script>
 </head>
 <body>
-    <div id="scene-container"></div>
-    
-    <div id="overlay">
-        <div id="navigation">
-            <button id="prev-btn" class="nav-btn">Previous</button>
-            <div id="chapter-indicator">Chapter 1/14</div>
-            <button id="next-btn" class="nav-btn">Next</button>
-        </div>
-        
-        <div id="info-panel">
-            <h2 id="concept-title">Rejection of Inherent Existence (svabhava)</h2>
-            <div id="content-container">
-                <div id="madhyamaka-content" class="content-section">
-                    <h3>Madhyamaka Concept</h3>
-                    <p id="madhyamaka-text">The rejection of inherent existence (svabhava) is a fundamental principle in Madhyamaka philosophy, asserting that phenomena lack fixed, independent essence.</p>
-                </div>
-                <div id="quantum-content" class="content-section">
-                    <h3>Quantum Parallel</h3>
-                    <p id="quantum-text">The Copenhagen interpretation suggests particles have no definite properties until measured, existing in probabilistic states rather than fixed realities.</p>
+    <div id="app">
+        <div id="sidePanel" class="side-panel">
+            <div class="side-panel-header">
+                <h2>Madhyamaka & Quantum Physics</h2>
+                <button id="toggleSidePanel" class="toggle-btn">↔</button>
+            </div>
+            
+            <div class="side-panel-section">
+                <h3 class="section-title">Verse Explanation</h3>
+                <div id="verseExplanation" class="section-content">
+                    <p id="verseText" class="verse-text"></p>
+                    <p id="madhyamakaConcept"></p>
+                    <p id="quantumParallel"></p>
+                    <p id="rationale"></p>
+                    <p id="realLifeExample"></p>
                 </div>
             </div>
-            <div id="parallel-rationale">
-                <h3>Parallel Rationale</h3>
-                <p id="rationale-text">Both challenge fixed, inherent properties: Madhyamaka denies intrinsic existence, while the Copenhagen view shows particles lack definite states until observed.</p>
+            
+            <div class="side-panel-section">
+                <h3 class="section-title">Animation Controls</h3>
+                <div id="animationControls" class="section-content">
+                    <!-- Controls will be added dynamically based on the verse -->
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <button id="prevVerse" class="nav-btn" disabled>Previous Verse</button>
+                <span id="verseCounter">1/14</span>
+                <button id="nextVerse" class="nav-btn">Next Verse</button>
+            </div>
+        </div>
+        
+        <div id="mainContent" class="main-content">
+            <div id="animationContainer"></div>
+            <div id="verseOverlay" class="verse-overlay">
+                <h2 id="overlayTitle"></h2>
+                <p id="overlayText"></p>
             </div>
         </div>
     </div>
     
-    <div id="interaction-container"></div>
+    <script type="module" src="main.js"></script>
 </body>
 </html>

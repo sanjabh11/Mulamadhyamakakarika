@@ -17,7 +17,46 @@
 <body>
     <div id="scene-container"></div>
 
-    <div id="ui-container">
+    <!-- New Left Panel UI -->
+    <div id="left-panel">
+        <button id="panel-toggle">◀</button>
+        <div id="panel-content">
+            <h1 id="chapter-title">Chapter 11 - Investigation of Extremes of Before and After</h1>
+            
+            <div id="verse-navigation">
+                <!-- Will be populated by JS -->
+            </div>
+            
+            <div class="collapsible-section" id="verse-explanation-section">
+                <div class="section-header">
+                    <h3>Verse Explanation</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content expanded" id="verse-explanation-content">
+                    <!-- Will be populated by JS -->
+                </div>
+            </div>
+            
+            <div class="collapsible-section" id="animation-controls-section">
+                <div class="section-header">
+                    <h3>Animation Controls</h3>
+                    <span class="toggle-icon">►</span>
+                </div>
+                <div class="section-content" id="animation-controls-content">
+                    <div id="scene-controls">
+                        <!-- Will be populated by JS -->
+                    </div>
+                    <div id="navigation-controls">
+                        <button id="prev-verse" disabled>Previous Verse</button>
+                        <button id="next-verse">Next Verse</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keep the original containers for backward compatibility with the JS -->
+    <div id="ui-container" style="display:none;">
         <div id="verse-content">
             <h1>Chapter 11 - Investigation of Extremes of Before and After</h1>
             <div id="verse-display"></div>
@@ -28,7 +67,6 @@
             <div id="scene-controls"></div>
             <button id="prev-verse" disabled>Previous Verse</button>
             <button id="next-verse">Next Verse</button>
-            <a href="/" class="home-link">Back to Home</a>
         </div>
 
         <div id="explanation-bar">

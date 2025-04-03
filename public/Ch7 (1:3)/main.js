@@ -25,7 +25,7 @@ const verseText = document.getElementById('verse-text');
 const madhyamakaConcept = document.getElementById('madhyamaka-concept');
 const quantumParallel = document.getElementById('quantum-parallel');
 const accessibleExplanation = document.getElementById('accessible-explanation');
-const toggleContentBtn = document.getElementById('toggle-content');
+const toggleContentBtn = document.getElementById('panel-toggle'); // Corrected ID
 const fullscreenBtn = document.getElementById('fullscreen-btn');
 const animationControlBtn = document.getElementById('animation-control');
 const content = document.getElementById('content');
@@ -114,210 +114,175 @@ function init() {
   // Initialize content position
   initializeContentPosition();
 
+  // Initialize new panel UI components
+  initializePanelUI();
+  populateVerseNavigation();
+
   // Start animation loop
   animate();
 }
 
-// New function to initialize canvas interactivity
-function initializeCanvasInteractivity() {
-  const canvas = document.getElementById('animation-canvas');
-
-  // Add interactive highlighting for 3D elements
-  canvas.addEventListener('mousemove', (event) => {
-    if (isPaused) return;
-
-    // Calculate mouse position in normalized device coordinates
-    const rect = canvas.getBoundingClientRect();
-    const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-    // Create raycaster for interactive object selection
-    const raycaster = new THREE.Raycaster();
-    raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
-
-    // Find intersected objects
-    const intersects = raycaster.intersectObjects(scene.children, true);
-
-    if (intersects.length > 0) {
-      // Highlight the first intersected object
-      const object = getTopLevelParent(intersects[0].object);
-      document.body.style.cursor = 'pointer';
-
-      // Scale up the highlighted object slightly
-      gsap.to(object.scale, {
-        x: 1.05,
-        y: 1.05,
-        z: 1.05,
-        duration: 0.3,
-        ease: "power2.out"
-      });
-    } else {
-      document.body.style.cursor = 'default';
+function initializePanelUI() {
+  // Panel toggle
+  const panelToggle = document.getElementById('panel-toggle');
+  const content = document.getElementById('content');
+  
+  panelToggle.addEventListener('click', () => {
+    content.classList.toggle('collapsed');
+  });
+  
+  // Section toggles
+  const verseExplanationHeader = document.getElementById('verse-explanation-header');
+  const verseExplanationContent = document.getElementById('verse-explanation-content');
+  const verseExplanationIcon = verseExplanationHeader.querySelector('.toggle-icon');
+  
+  verseExplanationHeader.addEventListener('click', () => {
+    verseExplanationContent.classList.toggle('collapsed');
+    verseExplanationIcon.textContent = verseExplanationContent.classList.contains('collapsed') ? '►' : '▼';
+  });
+  
+  const animationControlsHeader = document.getElementById('animation-controls-header');
+  const animationControlsContent = document.getElementById('animation-controls-content');
+  const animationControlsIcon = animationControlsHeader.querySelector('.toggle-icon');
+  
+  animationControlsHeader.addEventListener('click', () => {
+    animationControlsContent.classList.toggle('collapsed');
+    animationControlsIcon.textContent = animationControlsContent.classList.contains('collapsed') ? '►' : '▼';
+  });
+  
+  // Zoom control
+  const zoomControl = document.getElementById('zoom-control');
+  zoomControl.addEventListener('input', (e) => {
+    const zoomValue = parseFloat(e.target.value);
+    if (camera) {
+      camera.zoom = zoomValue;
+      camera.updateProjectionMatrix();
     }
   });
-
-  // Add click handler for interactive objects
-  canvas.addEventListener('click', (event) => {
-    if (isPaused) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-    const raycaster = new THREE.Raycaster();
-    raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
-
-    const intersects = raycaster.intersectObjects(scene.children, true);
-
-    if (intersects.length > 0) {
-      const object = getTopLevelParent(intersects[0].object);
-
-      // Pulse the object and add a description popup
-      pulseObject(object);
-
-      // Create educational popup about the selected object
-      createInfoPopup(object, event.clientX, event.clientY);
+  
+  // Rotation speed control
+  const rotationSpeedControl = document.getElementById('rotation-speed');
+  rotationSpeedControl.addEventListener('input', (e) => {
+    const speedValue = parseFloat(e.target.value);
+    // Implement rotation speed adjustment for current animation
+    if (currentAnimation) {
+      currentAnimation.userData = currentAnimation.userData || {};
+      currentAnimation.userData.rotationSpeed = speedValue * 0.002;
     }
   });
+  
+  // Set initial states based on screen size
+  setInitialPanelState();
 }
 
-// Helper function to get the top-level parent of a 3D object
-function getTopLevelParent(object) {
-  if (object.parent && object.parent !== scene) {
-    return getTopLevelParent(object.parent);
-  }
-  return object;
-}
-
-// Function to create a visual pulse effect on an object
-function pulseObject(object) {
-  const originalScale = object.scale.clone();
-
-  gsap.timeline()
-    .to(object.scale, {
-      x: originalScale.x * 1.2,
-      y: originalScale.y * 1.2,
-      z: originalScale.z * 1.2,
-      duration: 0.3,
-      ease: "power2.out"
-    })
-    .to(object.scale, {
-      x: originalScale.x,
-      y: originalScale.y,
-      z: originalScale.z,
-      duration: 0.5,
-      ease: "elastic.out(1, 0.3)"
-    });
-}
-
-// Function to create an information popup for interacted objects
-function createInfoPopup(object, x, y) {
-  // Remove any existing popups
-  const existingPopup = document.querySelector('.info-popup');
-  if (existingPopup) {
-    existingPopup.remove();
-  }
-
-  // Create new popup with quantum physics information
-  const popup = document.createElement('div');
-  popup.className = 'info-popup';
-  popup.style.cssText = `
-    position: absolute;
-    top: ${y}px;
-    left: ${x}px;
-    transform: translate(-50%, -100%);
-    background-color: rgba(20, 20, 50, 0.9);
-    color: white;
-    padding: 12px;
-    border-radius: 8px;
-    max-width: 250px;
-    box-shadow: 0 0 20px rgba(100, 100, 255, 0.5);
-    z-index: 1000;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(100, 100, 255, 0.3);
-    font-size: 14px;
-    transition: opacity 0.3s ease;
-  `;
-
-  // Add title and description
-  const objectName = object.name || "Quantum Object";
-  popup.innerHTML = `
-    <h4 style="margin: 0 0 8px 0; color: #a0a0ff;">${objectName}</h4>
-    <p>${getQuantumDescription(object, currentVerse)}</p>
-    <div style="text-align: right; margin-top: 8px;">
-      <small style="color: #a0a0ff;">Click anywhere to close</small>
-    </div>
-  `;
-
-  document.body.appendChild(popup);
-
-  // Close popup when clicked
-  popup.addEventListener('click', () => {
-    popup.remove();
-  });
-
-  // Auto-close after 10 seconds
-  setTimeout(() => {
-    if (document.body.contains(popup)) {
-      gsap.to(popup, {
-        opacity: 0,
-        duration: 0.5,
-        onComplete: () => popup.remove()
-      });
-    }
-  }, 10000);
-}
-
-// Get quantum physics description based on object type and current verse
-function getQuantumDescription(object, verseIndex) {
-  // Default descriptions based on current verse concepts
-  const concepts = [
-    "This represents a quantum particle in superposition, existing in multiple states simultaneously until observed.",
-    "This illustrates wave-particle duality, showing how quantum entities behave as both waves and particles.",
-    "This demonstrates Heisenberg's uncertainty principle - the more precisely we know position, the less we know about momentum.",
-    "This shows quantum entanglement, where particles remain connected so that actions on one affect the other regardless of distance.",
-    "This visualizes quantum tunneling, where particles can pass through barriers that classical physics would deem impossible.",
-    "This represents quantum feedback loops, where quantum systems maintain self-sustaining states.",
-    "This depicts virtual particles that briefly pop into existence, influencing physical processes before disappearing.",
-    "This shows photon emission and absorption, demonstrating how light interacts with matter at the quantum level.",
-    "This illustrates wave function evolution, showing how quantum probabilities change over time.",
-    "This demonstrates quantum measurement, collapsing possibilities into a definite state.",
-    "This shows quantum non-locality, where distance doesn't limit quantum effects.",
-    "This represents complementarity, where quantum systems exhibit mutually exclusive properties depending on how they're measured."
-  ];
-
-  return concepts[verseIndex] || "A fascinating quantum phenomenon that challenges our classical understanding of reality.";
-}
-
-// Toggle animation play/pause
-function toggleAnimation() {
-  isPaused = !isPaused;
-
-  if (isPaused) {
-    playIcon.style.display = 'none';
-    pauseIcon.style.display = 'block';
+function setInitialPanelState() {
+  const isMobile = window.innerWidth < 768;
+  const content = document.getElementById('content');
+  const verseExplanationContent = document.getElementById('verse-explanation-content');
+  const animationControlsContent = document.getElementById('animation-controls-content');
+  const verseExplanationIcon = document.querySelector('#verse-explanation-header .toggle-icon');
+  const animationControlsIcon = document.querySelector('#animation-controls-header .toggle-icon');
+  
+  if (isMobile) {
+    // For mobile: start with panel expanded but sections collapsed
+    content.classList.remove('collapsed');
+    verseExplanationContent.classList.add('collapsed');
+    animationControlsContent.classList.add('collapsed');
+    verseExplanationIcon.textContent = '►';
+    animationControlsIcon.textContent = '►';
   } else {
-    playIcon.style.display = 'block';
-    pauseIcon.style.display = 'none';
+    // For desktop: start with panel expanded, verse explanation expanded, controls collapsed
+    content.classList.remove('collapsed');
+    verseExplanationContent.classList.remove('collapsed');
+    animationControlsContent.classList.add('collapsed');
+    verseExplanationIcon.textContent = '▼';
+    animationControlsIcon.textContent = '►';
   }
 }
 
-// Toggle fullscreen mode
-function toggleFullscreen() {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen().catch(err => {
-      console.log(`Error attempting to enable fullscreen: ${err.message}`);
-    });
-    isFullscreen = true;
-  } else {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-      isFullscreen = false;
+function populateVerseNavigation() {
+  const container = document.getElementById('verse-nav-container');
+  
+  for (let i = 0; i < verseData.length; i++) {
+    const button = document.createElement('button');
+    button.className = 'verse-nav-btn';
+    button.textContent = i + 1;
+    
+    if (i === currentVerse) {
+      button.classList.add('active');
     }
+    
+    button.addEventListener('click', () => {
+      currentVerse = i;
+      updateVerseContent();
+      loadAnimation(currentVerse);
+      
+      // Update active button
+      document.querySelectorAll('.verse-nav-btn').forEach((btn, index) => {
+        btn.classList.toggle('active', index === i);
+      });
+    });
+    
+    container.appendChild(button);
   }
 }
 
-// Toggle content panel visibility
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  composer.setSize(window.innerWidth, window.innerHeight);
+  
+  // Update panel state based on new window size
+  setInitialPanelState();
+}
+
+function updateVerseContent() {
+  verseNumber.textContent = `Verse ${currentVerse + 1}`;
+  verseIndicator.textContent = `Verse ${currentVerse + 1} of ${verseData.length}`;
+
+  verseText.textContent = verseData[currentVerse].text;
+  madhyamakaConcept.textContent = verseData[currentVerse].madhyamakaConcept;
+  quantumParallel.textContent = verseData[currentVerse].quantumParallel;
+  accessibleExplanation.textContent = verseData[currentVerse].accessibleExplanation;
+
+  prevBtn.disabled = currentVerse === 0;
+  nextBtn.disabled = currentVerse === verseData.length - 1;
+
+  // Update active verse navigation button
+  document.querySelectorAll('.verse-nav-btn').forEach((btn, index) => {
+    btn.classList.toggle('active', index === currentVerse);
+  });
+
+  gsap.fromTo('#verse-explanation-content', // Corrected target ID
+    { opacity: 0, y: 20 },
+    { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+  );
+}
+
+function nextVerse() {
+  if (currentVerse < verseData.length - 1) {
+    currentVerse++;
+    updateVerseContent();
+    loadAnimation(currentVerse);
+  }
+}
+
+function previousVerse() {
+  if (currentVerse > 0) {
+    currentVerse--;
+    updateVerseContent();
+    loadAnimation(currentVerse);
+  }
+}
+
+function initializeContentPosition() {
+  if (window.innerWidth <= 480) {
+    content.classList.remove('expanded');
+    content.classList.add('collapsed');
+  }
+}
+
 function toggleContent() {
   content.classList.toggle('collapsed');
   content.classList.toggle('expanded');
@@ -331,7 +296,6 @@ function toggleContent() {
   }
 }
 
-// Hide scroll guide after user scrolls
 function hideScrollGuide() {
   scrollableGuide.style.opacity = '0';
   setTimeout(() => {
@@ -339,7 +303,6 @@ function hideScrollGuide() {
   }, 500);
 }
 
-// Create stars
 function createStars() {
   const starsGeometry = new THREE.BufferGeometry();
   const starsMaterial = new THREE.PointsMaterial({
@@ -363,7 +326,6 @@ function createStars() {
   scene.add(stars);
 }
 
-// Load animation
 function loadAnimation(verseIndex) {
   // Clear previous animations
   if (currentAnimation) {
@@ -641,54 +603,56 @@ function createDoubleSiltAnimation() {
     for (let i = waves.length - 1; i >= 0; i--) {
       const wave = waves[i];
 
-      if (wave.userData.active) {
-        wave.position.x += wave.userData.speed;
+      if (!wave.userData.active) {
+        continue;
+      }
 
-        if (wave.position.x < 0) {
-          // Before slits, just move forward
-          wave.position.y = Math.sin(wave.userData.phase + Date.now() * 0.001) * 0.5;
-        } else if (wave.position.x <= 0.3) {
-          // Check if it passes through a slit
-          if (wave.position.y > -0.7 && wave.position.y < 0.7) {
-            // Passed through a slit, do nothing
-          } else if (wave.position.y > 1.1 && wave.position.y < 2) {
-            // Passed through upper slit
-            wave.userData.detector = true;
-          } else if (wave.position.y < -1.1 && wave.position.y > -2) {
-            // Passed through lower slit
-            wave.userData.detector = false;
-          } else {
-            // Hit barrier, remove
-            group.remove(wave);
-            waves.splice(i, 1);
-            continue;
-          }
+      wave.position.x += wave.userData.speed;
+
+      if (wave.position.x < 0) {
+        // Before slits, just move forward
+        wave.position.y = Math.sin(wave.userData.phase + Date.now() * 0.001) * 0.5;
+      } else if (wave.position.x <= 0.3) {
+        // Check if it passes through a slit
+        if (wave.position.y > -0.7 && wave.position.y < 0.7) {
+          // Passed through a slit, do nothing
+        } else if (wave.position.y > 1.1 && wave.position.y < 2) {
+          // Passed through upper slit
+          wave.userData.detector = true;
+        } else if (wave.position.y < -1.1 && wave.position.y > -2) {
+          // Passed through lower slit
+          wave.userData.detector = false;
         } else {
-          // After slits, create interference
-          if (wave.userData.detector === true) {
-            // Upper slit path
-            wave.position.y = 1.5 + Math.sin(wave.position.x * wave.userData.frequency + wave.userData.phase) * wave.userData.amplitude;
-          } else if (wave.userData.detector === false) {
-            // Lower slit path
-            wave.position.y = -1.5 + Math.sin(wave.position.x * wave.userData.frequency + wave.userData.phase + Math.PI) * wave.userData.amplitude;
-          } else {
-            // Interference
-            const dist1 = Math.sqrt(Math.pow(wave.position.x, 2) + Math.pow(wave.position.y - 1.5, 2));
-            const dist2 = Math.sqrt(Math.pow(wave.position.x, 2) + Math.pow(wave.position.y + 1.5, 2));
-
-            wave.position.y += Math.sin(dist1 * 3 - Date.now() * 0.003) * 0.01;
-            wave.position.y += Math.sin(dist2 * 3 - Date.now() * 0.003) * 0.01;
-          }
-        }
-
-        // Fade out as it moves away from source
-        wave.material.opacity = Math.max(0, 0.7 - wave.position.x * 0.05);
-
-        // Remove if it reaches the screen or fades out
-        if (wave.position.x >= 5 || wave.material.opacity <= 0.05) {
+          // Hit barrier, remove
           group.remove(wave);
           waves.splice(i, 1);
+          continue;
         }
+      } else {
+        // After slits, create interference
+        if (wave.userData.detector === true) {
+          // Upper slit path
+          wave.position.y = 1.5 + Math.sin(wave.position.x * wave.userData.frequency + wave.userData.phase) * wave.userData.amplitude;
+        } else if (wave.userData.detector === false) {
+          // Lower slit path
+          wave.position.y = -1.5 + Math.sin(wave.position.x * wave.userData.frequency + wave.userData.phase + Math.PI) * wave.userData.amplitude;
+        } else {
+          // Interference
+          const dist1 = Math.sqrt(Math.pow(wave.position.x, 2) + Math.pow(wave.position.y - 1.5, 2));
+          const dist2 = Math.sqrt(Math.pow(wave.position.x, 2) + Math.pow(wave.position.y + 1.5, 2));
+
+          wave.position.y += Math.sin(dist1 * 3 - Date.now() * 0.003) * 0.01;
+          wave.position.y += Math.sin(dist2 * 3 - Date.now() * 0.003) * 0.01;
+        }
+      }
+
+      // Fade out as it moves away from source
+      wave.material.opacity = Math.max(0, 0.7 - wave.position.x * 0.05);
+
+      // Remove if it reaches the screen or fades out
+      if (wave.position.x >= 5 || wave.material.opacity <= 0.05) {
+        group.remove(wave);
+        waves.splice(i, 1);
       }
     }
 
@@ -1087,8 +1051,7 @@ function createQuantumTunnelingAnimation() {
 
   const waveMaterial = new THREE.LineBasicMaterial({
     color: 0x40ff80,
-    transparent: true,
-    opacity: 0.7
+    linewidth: 2
   });
 
   const wave = new THREE.Line(waveGeometry, waveMaterial);
@@ -2538,15 +2501,8 @@ function createQuantumMeasurementAnimation() {
         duration: 0.5
       });
 
-      // Hide value
-      valueText.visible = false;
-    }
-
-    if (measuring) {
-      const elapsed = Date.now() - measurementStartTime;
-
-      if (elapsed > 2000 && !selectedState) {
-        // Randomly select one state
+      // Switch to particle if currently wave
+      if (selectedState === null) {
         selectedState = states[Math.floor(Math.random() * states.length)];
 
         // Make it visible
@@ -2582,7 +2538,13 @@ function createQuantumMeasurementAnimation() {
           yoyo: true,
           repeat: 2
         });
+      } else {
+        // Continue measurement
       }
+    }
+
+    if (measuring) {
+      const elapsed = Date.now() - measurementStartTime;
 
       if (elapsed > 5000) {
         // Complete measurement
@@ -2598,18 +2560,18 @@ function createQuantumMeasurementAnimation() {
         measuring = false;
         selectedState = null;
 
-        // Reset particles
-        gsap.to(particle.material.color, {
+        
+        // Reset cloud particles
+        gsap.to(cloud.material.color, { // Changed particle to cloud
           r: 1,
           g: 0.25,
           b: 0.375,
           duration: 0.5
         });
-        gsap.to(particle.material.emissive, {
+        gsap.to(cloud.material.emissive, { // Changed particle to cloud
           r: 0.5,
           g: 0.125,
           b: 0.1875,
-          duration: 0.5
         });
 
         // Hide states
@@ -3279,17 +3241,216 @@ function createTextImage(canvas, text, parameters = {}) {
   ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 }
 
-function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  composer.setSize(window.innerWidth, window.innerHeight);
+function toggleAnimation() {
+  isPaused = !isPaused;
+
+  if (isPaused) {
+    playIcon.style.display = 'none';
+    pauseIcon.style.display = 'block';
+  } else {
+    playIcon.style.display = 'block';
+    pauseIcon.style.display = 'none';
+  }
+}
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(err => {
+      console.log(`Error attempting to enable fullscreen: ${err.message}`);
+    });
+    isFullscreen = true;
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+      isFullscreen = false;
+    }
+  }
+}
+
+// Removed duplicate toggleContent function definition
+
+// Removed duplicate hideScrollGuide function definition
+
+// New function to initialize canvas interactivity
+function initializeCanvasInteractivity() {
+  const canvas = document.getElementById('animation-canvas');
+
+  // Add interactive highlighting for 3D elements
+  canvas.addEventListener('mousemove', (event) => {
+    if (isPaused) return;
+
+    // Calculate mouse position in normalized device coordinates
+    const rect = canvas.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+    // Create raycaster for interactive object selection
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
+
+    // Find intersected objects
+    const intersects = raycaster.intersectObjects(scene.children, true);
+
+    if (intersects.length > 0) {
+      // Highlight the first intersected object
+      const object = getTopLevelParent(intersects[0].object);
+      document.body.style.cursor = 'pointer';
+
+      // Scale up the highlighted object slightly
+      gsap.to(object.scale, {
+        x: 1.05,
+        y: 1.05,
+        z: 1.05,
+        duration: 0.3,
+        ease: "power2.out"
+      });
+    } else {
+      document.body.style.cursor = 'default';
+    }
+  });
+
+  // Add click handler for interactive objects
+  canvas.addEventListener('click', (event) => {
+    if (isPaused) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
+
+    const intersects = raycaster.intersectObjects(scene.children, true);
+
+    if (intersects.length > 0) {
+      const object = getTopLevelParent(intersects[0].object);
+
+      // Pulse the object and add a description popup
+      pulseObject(object);
+
+      // Create educational popup about the selected object
+      createInfoPopup(object, event.clientX, event.clientY);
+    }
+  });
+}
+
+// Helper function to get the top-level parent of a 3D object
+function getTopLevelParent(object) {
+  if (object.parent && object.parent !== scene) {
+    return getTopLevelParent(object.parent);
+  }
+  return object;
+}
+
+// Function to create a visual pulse effect on an object
+function pulseObject(object) {
+  const originalScale = object.scale.clone();
+
+  gsap.timeline()
+    .to(object.scale, {
+      x: originalScale.x * 1.2,
+      y: originalScale.y * 1.2,
+      z: originalScale.z * 1.2,
+      duration: 0.3,
+      ease: "power2.out"
+    })
+    .to(object.scale, {
+      x: originalScale.x,
+      y: originalScale.y,
+      z: originalScale.z,
+      duration: 0.5,
+      ease: "elastic.out(1, 0.3)"
+    });
+}
+
+// Function to create an information popup for interacted objects
+function createInfoPopup(object, x, y) {
+  // Remove any existing popups
+  const existingPopup = document.querySelector('.info-popup');
+  if (existingPopup) {
+    existingPopup.remove();
+  }
+
+  // Create new popup with quantum physics information
+  const popup = document.createElement('div');
+  popup.className = 'info-popup';
+  popup.style.cssText = `
+    position: absolute;
+    top: ${y}px;
+    left: ${x}px;
+    transform: translate(-50%, -100%);
+    background-color: rgba(20, 20, 50, 0.9);
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    max-width: 250px;
+    box-shadow: 0 0 20px rgba(100, 100, 255, 0.5);
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(100, 100, 255, 0.3);
+    font-size: 14px;
+    transition: opacity 0.3s ease;
+  `;
+
+  // Add title and description
+  const objectName = object.name || "Quantum Object";
+  popup.innerHTML = `
+    <h4 style="margin: 0 0 8px 0; color: #a0a0ff;">${objectName}</h4>
+    <p>${getQuantumDescription(object, currentVerse)}</p>
+    <div style="text-align: right; margin-top: 8px;">
+      <small style="color: #a0a0ff;">Click anywhere to close</small>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+
+  // Close popup when clicked
+  popup.addEventListener('click', () => {
+    popup.remove();
+  });
+
+  // Auto-close after 10 seconds
+  setTimeout(() => {
+    if (document.body.contains(popup)) {
+      gsap.to(popup, {
+        opacity: 0,
+        duration: 0.5,
+        onComplete: () => popup.remove()
+      });
+    }
+  }, 10000);
+}
+
+// Get quantum physics description based on object type and current verse
+function getQuantumDescription(object, verseIndex) {
+  // Default descriptions based on current verse concepts
+  const concepts = [
+    "This represents a quantum particle in superposition, existing in multiple states simultaneously until observed.",
+    "This illustrates wave-particle duality, showing how quantum entities behave as both waves and particles.",
+    "This demonstrates Heisenberg's uncertainty principle - the more precisely we know position, the less we know about momentum.",
+    "This shows quantum entanglement, where particles remain connected so that actions on one affect the other regardless of distance.",
+    "This visualizes quantum tunneling, where particles can pass through barriers that classical physics would deem impossible.",
+    "This represents quantum feedback loops, where quantum systems maintain self-sustaining states.",
+    "This depicts virtual particles that briefly pop into existence, influencing physical processes before disappearing.",
+    "This shows photon emission and absorption, demonstrating how light interacts with matter at the quantum level.",
+    "This illustrates wave function evolution, showing how quantum probabilities change over time.",
+    "This demonstrates quantum measurement, collapsing possibilities into a definite state.",
+    "This shows quantum non-locality, where distance doesn't limit quantum effects.",
+    "This represents complementarity, where quantum systems exhibit mutually exclusive properties depending on how they're measured."
+  ];
+
+  return concepts[verseIndex] || "A fascinating quantum phenomenon that challenges our classical understanding of reality.";
 }
 
 function animate() {
   requestAnimationFrame(animate);
 
   if (!isPaused) {
+    // Apply rotation speed from UI controls if available
+    if (currentAnimation && currentAnimation.userData && currentAnimation.userData.rotationSpeed) {
+      currentAnimation.rotation.y += currentAnimation.userData.rotationSpeed;
+    }
+    
     // Run all active animation mixers
     for (const mixer of animationMixers) {
       mixer();
@@ -3299,52 +3460,3 @@ function animate() {
   controls.update();
   composer.render();
 }
-
-function updateVerseContent() {
-  // Update verse number and indicator
-  verseNumber.textContent = `Verse ${currentVerse + 1}`;
-  verseIndicator.textContent = `Verse ${currentVerse + 1} of ${verseData.length}`;
-
-  // Update verse content
-  verseText.textContent = verseData[currentVerse].text;
-  madhyamakaConcept.textContent = verseData[currentVerse].madhyamakaConcept;
-  quantumParallel.textContent = verseData[currentVerse].quantumParallel;
-  accessibleExplanation.textContent = verseData[currentVerse].accessibleExplanation;
-
-  // Update button states
-  prevBtn.disabled = currentVerse === 0;
-  nextBtn.disabled = currentVerse === verseData.length - 1;
-
-  // Fade effect
-  gsap.fromTo('#verse-container',
-    { opacity: 0, y: 20 },
-    { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
-  );
-}
-
-function nextVerse() {
-  if (currentVerse < verseData.length - 1) {
-    currentVerse++;
-    updateVerseContent();
-    loadAnimation(currentVerse);
-  }
-}
-
-function previousVerse() {
-  if (currentVerse > 0) {
-    currentVerse--;
-    updateVerseContent();
-    loadAnimation(currentVerse);
-  }
-}
-
-// Initialize content position - start expanded on desktop, collapsed on small mobile
-function initializeContentPosition() {
-  if (window.innerWidth <= 480) {
-    content.classList.remove('expanded');
-    content.classList.add('collapsed');
-  }
-}
-
-// Call on page load
-document.addEventListener('DOMContentLoaded', initializeContentPosition);

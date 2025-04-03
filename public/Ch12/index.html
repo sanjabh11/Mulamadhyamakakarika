@@ -24,41 +24,56 @@
         <canvas id="canvas"></canvas>
         
         <div id="overlay">
-            <div id="title">
-                <h1>Chapter 12: Investigation of Anguish</h1>
-                <p>Interactive 3D Visualization of Madhyamaka Concepts & Quantum Physics</p>
-            </div>
-            
-            <div id="verse-container">
-                <div id="verse-content"></div>
-            </div>
-            
-            <div id="controls">
-                <button id="prev-btn" disabled>Previous Verse</button>
-                <span id="verse-number">Verse 1/10</span>
-                <button id="next-btn">Next Verse</button>
-                <button id="toggle-info" class="toggle-btn">Hide Info</button>
-                <button id="toggle-controls" class="toggle-btn">Hide Controls</button>
-                <button id="take-screenshot" class="toggle-btn"> Screenshot</button>
-            </div>
-            
-            <div id="interaction-panel">
-                <h3>Interaction Controls</h3>
-                <div id="specific-controls"></div>
-            </div>
-            
-            <div id="explanation">
-                <div class="explanation-section">
-                    <h3>Madhyamaka Concept</h3>
-                    <p id="madhyamaka-text"></p>
-                </div>
-                <div class="explanation-section">
-                    <h3>Quantum Physics Parallel</h3>
-                    <p id="quantum-text"></p>
-                </div>
-                <div class="explanation-section">
-                    <h3>Accessible Explanation</h3>
-                    <p id="accessible-text"></p>
+            <div id="sidebar">
+                <button id="sidebar-toggle">
+                    <span class="sidebar-arrow">◀</span>
+                </button>
+                <div id="sidebar-content">
+                    <div class="panel-section">
+                        <h1 class="panel-title">Investigation of Anguish</h1>
+                    </div>
+                    
+                    <div class="panel-section">
+                        <div class="verse-buttons" id="verse-buttons">
+                            <!-- Verse buttons will be generated here -->
+                        </div>
+                        <div id="verse-number-display">Verse 1/10</div>
+                    </div>
+                    
+                    <div class="panel-section">
+                        <div class="collapsible-header" id="explanation-header">
+                            <span>Verse Explanation</span>
+                            <span class="toggle-indicator">▼</span>
+                        </div>
+                        <div class="collapsible-content" id="explanation-content">
+                            <div class="verse-text" id="verse-text"></div>
+                            
+                            <div class="verse-content">
+                                <div class="explanation-title">Madhyamaka Concept</div>
+                                <div class="explanation-content" id="madhyamaka-text"></div>
+                                
+                                <div class="explanation-title">Quantum Physics Parallel</div>
+                                <div class="explanation-content" id="quantum-text"></div>
+                                
+                                <div class="explanation-title">Accessible Explanation</div>
+                                <div class="explanation-content" id="accessible-text"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="panel-section">
+                        <div class="collapsible-header" id="controls-header">
+                            <span>Animation Controls</span>
+                            <span class="toggle-indicator">▼</span>
+                        </div>
+                        <div class="collapsible-content collapsed" id="controls-content">
+                            <div id="specific-controls"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="panel-section">
+                        <button id="take-screenshot" class="verse-button">Take Screenshot</button>
+                    </div>
                 </div>
             </div>
         </div>

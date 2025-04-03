@@ -22,6 +22,11 @@ const nextVerseButton = document.getElementById('next-verse');
 const verseIndicator = document.getElementById('verse-indicator');
 const toggleExplanationButton = document.getElementById('toggle-explanation');
 const toggleControlsButton = document.getElementById('toggle-controls');
+// Add new panel elements
+const panelToggle = document.getElementById('panel-toggle');
+const verseNavigation = document.getElementById('verse-navigation');
+const explanationSection = document.getElementById('explanation-section');
+const controlsSection = document.getElementById('controls-section');
 
 // Initialize the scene
 function init() {
@@ -71,6 +76,9 @@ function init() {
     // Setup event listeners
     setupEventListeners();
 
+    // Setup new panel UI
+    setupPanelUI();
+
     // Start animation loop
     animate();
 }
@@ -105,17 +113,18 @@ function loadVerse(index) {
     const verse = config.verses[index];
 
     // Update verse content
-    verseText.innerHTML = `
-        <h2>${verse.title}</h2>
-        <p>${verse.text}</p>
-    `;
+    verseText.innerHTML = `<p>${verse.text}</p>`;
 
     // Update explanation
     explanationContent.innerHTML = `
-        <h4>${verse.quantumConcept}</h4>
-        <p>${verse.explanation}</p>
-        <h4>Metaphor</h4>
-        <p>${verse.metaphor}</p>
+        <div class="subsection">
+            <h4>${verse.quantumConcept}</h4>
+            <p>${verse.explanation}</p>
+        </div>
+        <div class="subsection">
+            <h4>Metaphor</h4>
+            <p>${verse.metaphor}</p>
+        </div>
     `;
 
     // Update controls based on animation type
@@ -128,6 +137,9 @@ function loadVerse(index) {
     verseIndicator.textContent = `Verse ${index + 1}/${config.verses.length}`;
     prevVerseButton.disabled = index === 0;
     nextVerseButton.disabled = index === config.verses.length - 1;
+
+    // Update verse navigation buttons in new panel
+    updateVerseButtons();
 
     // Reset camera position
     gsap.to(camera.position, {
@@ -3154,8 +3166,6 @@ function setupEventListeners() {
         if (currentVerseIndex > 0) {
             currentVerseIndex--;
             loadVerse(currentVerseIndex);
-            // Update URL hash
-            window.location.hash = `verse-${currentVerseIndex + 1}`;
         }
     });
 
@@ -3163,15 +3173,7 @@ function setupEventListeners() {
         if (currentVerseIndex < config.verses.length - 1) {
             currentVerseIndex++;
             loadVerse(currentVerseIndex);
-            // Update URL hash
-            window.location.hash = `verse-${currentVerseIndex + 1}`;
         }
-    });
-
-    // Listen for hash changes
-    window.addEventListener('hashchange', () => {
-        checkUrlHash();
-        loadVerse(currentVerseIndex);
     });
 
     // Toggle explanation visibility
@@ -3201,17 +3203,80 @@ function setupEventListeners() {
     });
 }
 
-// Check URL hash for direct verse linking
-function checkUrlHash() {
-    const hash = window.location.hash;
-    if (hash.startsWith('#verse-')) {
-        const verseNumber = parseInt(hash.substring(7));
-        if (!isNaN(verseNumber) && verseNumber >= 1 && verseNumber <= config.verses.length) {
-            currentVerseIndex = verseNumber - 1;
-        }
+// New function to set up panel UI
+function setupPanelUI() {
+    // Create verse navigation buttons
+    createVerseButtons();
+
+    // Panel toggle button
+    panelToggle.addEventListener('click', () => {
+        contentPanel.classList.toggle('collapsed');
+    });
+
+    // Section collapsible functionality
+    const sectionHeaders = document.querySelectorAll('.section-header');
+    sectionHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const expanded = header.getAttribute('aria-expanded') === 'true';
+            header.setAttribute('aria-expanded', !expanded);
+            const content = header.nextElementSibling;
+            if (expanded) {
+                content.classList.remove('expanded');
+            } else {
+                content.classList.add('expanded');
+            }
+        });
+    });
+
+    // Set default states
+    if (window.innerWidth < 768) {
+        // Mobile default: collapse sections
+        document.querySelectorAll('.section-header').forEach(header => {
+            header.setAttribute('aria-expanded', 'false');
+            header.nextElementSibling.classList.remove('expanded');
+        });
+    } else {
+        // Desktop default: expand explanation, collapse controls
+        const controlsHeader = controlsSection.querySelector('.section-header');
+        controlsHeader.setAttribute('aria-expanded', 'false');
+        controlsHeader.nextElementSibling.classList.remove('expanded');
     }
 }
 
+// Create verse navigation buttons
+function createVerseButtons() {
+    verseNavigation.innerHTML = '';
+
+    for (let i = 0; i < config.verses.length; i++) {
+        const button = document.createElement('button');
+        button.className = 'verse-button';
+        button.textContent = (i + 1).toString();
+        button.setAttribute('aria-label', `Verse ${i + 1}`);
+
+        if (i === currentVerseIndex) {
+            button.classList.add('active');
+        }
+
+        button.addEventListener('click', () => {
+            currentVerseIndex = i;
+            loadVerse(currentVerseIndex);
+        });
+
+        verseNavigation.appendChild(button);
+    }
+}
+
+// Update verse buttons to reflect current selection
+function updateVerseButtons() {
+    const buttons = verseNavigation.querySelectorAll('.verse-button');
+    buttons.forEach((button, index) => {
+        if (index === currentVerseIndex) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    });
+}
+
 // Initialize the application
-checkUrlHash();
 init();

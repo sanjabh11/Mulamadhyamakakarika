@@ -16,47 +16,81 @@ let currentVerseId = null;
 let currentCleanupFunction = null;
 
 // DOM elements
-const verseSelector = document.getElementById('verse-selector');
-const togglePanelBtn = document.getElementById('toggle-panel');
-const toggleControlsBtn = document.getElementById('toggle-controls');
 const animationContainer = document.getElementById('animation-container');
 const controlsContent = document.getElementById('controls-content');
-const textPanelSide = document.getElementById('text-panel-side');
+const panel = document.getElementById('panel');
+const togglePanelBtn = document.getElementById('toggle-panel');
+const verseExplanationHeader = document.getElementById('verse-explanation-header');
+const verseContent = document.getElementById('verse-content');
+const animationControlsHeader = document.getElementById('animation-controls-header');
+const verseNavigationContainer = document.getElementById('verse-navigation');
 
 // Initialize the application
 function init() {
+    // Create verse navigation buttons
+    createVerseNavigation();
+    
+    // Setup event listeners
     setupEventListeners();
     
     // Set initial verse (either from URL or default to 1)
     const urlParams = new URLSearchParams(window.location.search);
     const initialVerse = urlParams.get('verse') || '1';
-    verseSelector.value = initialVerse;
     
     // Load initial verse
     loadVerse(parseInt(initialVerse));
+    
+    // Set default panel states based on screen size
+    setDefaultPanelStates();
+}
+
+// Create verse navigation buttons
+function createVerseNavigation() {
+    verseData.forEach(verse => {
+        const button = document.createElement('button');
+        button.classList.add('verse-button');
+        button.dataset.verseId = verse.id;
+        button.textContent = `${verse.id}`;
+        button.title = verse.title;
+        
+        button.addEventListener('click', () => {
+            loadVerse(verse.id);
+            
+            // Update URL without reloading page
+            const url = new URL(window.location);
+            url.searchParams.set('verse', verse.id);
+            window.history.pushState({}, '', url);
+        });
+        
+        verseNavigationContainer.appendChild(button);
+    });
 }
 
 // Setup event listeners
 function setupEventListeners() {
-    // Verse selection change
-    verseSelector.addEventListener('change', (e) => {
-        const verseId = parseInt(e.target.value);
-        loadVerse(verseId);
-        
-        // Update URL without reloading page
-        const url = new URL(window.location);
-        url.searchParams.set('verse', verseId);
-        window.history.pushState({}, '', url);
-    });
-    
-    // Toggle text panel
+    // Toggle panel
     togglePanelBtn.addEventListener('click', () => {
-        document.body.classList.toggle('text-panel-hidden');
+        panel.classList.toggle('collapsed');
     });
     
-    // Toggle control panel
-    toggleControlsBtn.addEventListener('click', () => {
-        document.body.classList.toggle('control-panel-visible');
+    // Toggle verse explanation section
+    verseExplanationHeader.addEventListener('click', () => {
+        verseExplanationHeader.classList.toggle('collapsed');
+        if (verseExplanationHeader.classList.contains('collapsed')) {
+            verseContent.style.display = 'none';
+        } else {
+            verseContent.style.display = 'block';
+        }
+    });
+    
+    // Toggle animation controls section
+    animationControlsHeader.addEventListener('click', () => {
+        animationControlsHeader.classList.toggle('collapsed');
+        if (animationControlsHeader.classList.contains('collapsed')) {
+            controlsContent.style.display = 'none';
+        } else {
+            controlsContent.style.display = 'block';
+        }
     });
     
     // Handle back/forward browser navigation
@@ -65,56 +99,40 @@ function setupEventListeners() {
         const verseId = parseInt(urlParams.get('verse') || '1');
         
         if (verseId !== currentVerseId) {
-            verseSelector.value = verseId;
             loadVerse(verseId);
         }
     });
     
     // Handle resize events
     window.addEventListener('resize', debounce(() => {
+        setDefaultPanelStates();
+        
         if (currentVerseId) {
             // Reload current verse to adjust for new dimensions
             loadVerse(currentVerseId);
         }
     }, 250));
+}
+
+// Set default panel states based on screen size
+function setDefaultPanelStates() {
+    const isMobile = window.innerWidth <= 768;
     
-    // Add swipe gesture for mobile - text panel
-    let touchStartX = 0;
-    let touchStartY = 0;
-    
-    textPanelSide.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-    }, false);
-    
-    textPanelSide.addEventListener('touchend', (e) => {
-        const touchEndX = e.changedTouches[0].clientX;
-        const touchEndY = e.changedTouches[0].clientY;
-        const deltaX = touchEndX - touchStartX;
-        const deltaY = touchEndY - touchStartY;
+    if (isMobile) {
+        // Mobile defaults
+        verseExplanationHeader.classList.add('collapsed');
+        verseContent.style.display = 'none';
         
-        // Horizontal swipe detection for desktop
-        if (window.innerWidth > 768 && Math.abs(deltaX) > 50 && Math.abs(deltaY) < 50) {
-            if (deltaX < 0) {
-                // Swipe left - hide panel
-                document.body.classList.add('text-panel-hidden');
-            } else {
-                // Swipe right - show panel
-                document.body.classList.remove('text-panel-hidden');
-            }
-        }
+        animationControlsHeader.classList.add('collapsed');
+        controlsContent.style.display = 'none';
+    } else {
+        // Desktop defaults
+        verseExplanationHeader.classList.remove('collapsed');
+        verseContent.style.display = 'block';
         
-        // Vertical swipe detection for mobile
-        if (window.innerWidth <= 768 && Math.abs(deltaY) > 50 && Math.abs(deltaX) < 50) {
-            if (deltaY < 0) {
-                // Swipe up - hide panel
-                document.body.classList.add('text-panel-hidden');
-            } else {
-                // Swipe down - show panel
-                document.body.classList.remove('text-panel-hidden');
-            }
-        }
-    }, false);
+        animationControlsHeader.classList.add('collapsed');
+        controlsContent.style.display = 'none';
+    }
 }
 
 // Debounce function to prevent excessive resize handling
@@ -153,6 +171,15 @@ function loadVerse(verseId) {
     
     // Update verse data display
     updateVerseContent(verseId);
+    
+    // Update active verse in navigation
+    document.querySelectorAll('.verse-button').forEach(button => {
+        if (parseInt(button.dataset.verseId) === verseId) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    });
     
     // Initialize new animation
     currentVerseId = verseId;
@@ -203,6 +230,22 @@ function loadVerse(verseId) {
     }
 }
 
+// Update verse content in the text panel
+function updateVerseContent(verseId) {
+    const verse = verseData.find(v => v.id === verseId);
+    
+    if (!verse) {
+        console.error(`Verse ${verseId} not found in data`);
+        return;
+    }
+    
+    document.getElementById('verse-title').textContent = verse.title;
+    document.getElementById('original-verse').textContent = verse.originalVerse;
+    document.getElementById('madhyamaka-concept').textContent = verse.madhyamakaConcept;
+    document.getElementById('quantum-parallel').textContent = verse.quantumParallel;
+    document.getElementById('accessible-explanation').textContent = verse.accessibleExplanation;
+}
+
 // Placeholder animation for verses without implementations
 function createPlaceholderAnimation(container, controlsContainer) {
     const placeholderDiv = document.createElement('div');
@@ -233,22 +276,6 @@ function createPlaceholderAnimation(container, controlsContainer) {
     return function cleanup() {
         container.removeChild(placeholderDiv);
     };
-}
-
-// Update verse content in the text panel
-function updateVerseContent(verseId) {
-    const verse = verseData.find(v => v.id === verseId);
-    
-    if (!verse) {
-        console.error(`Verse ${verseId} not found in data`);
-        return;
-    }
-    
-    document.getElementById('verse-title').textContent = verse.title;
-    document.getElementById('original-verse').textContent = verse.originalVerse;
-    document.getElementById('madhyamaka-concept').textContent = verse.madhyamakaConcept;
-    document.getElementById('quantum-parallel').textContent = verse.quantumParallel;
-    document.getElementById('accessible-explanation').textContent = verse.accessibleExplanation;
 }
 
 // Initialize application when DOM is loaded

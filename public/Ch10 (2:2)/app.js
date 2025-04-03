@@ -10,15 +10,13 @@ let p5Instance = null;
 
 // DOM elements
 const animationContainer = document.getElementById('animation-container');
-const verseIndicator = document.getElementById('verse-indicator');
-const prevVerseBtn = document.getElementById('prev-verse');
-const nextVerseBtn = document.getElementById('next-verse');
+const controlsPanel = document.getElementById('controls-panel');
+const panelToggle = document.getElementById('panel-toggle');
 const playPauseBtn = document.getElementById('play-pause');
 const resetBtn = document.getElementById('reset');
-const hideControlsBtn = document.getElementById('hide-controls');
-const showControlsBtn = document.getElementById('show-controls');
-const controlsPanel = document.getElementById('controls-panel');
+const verseText = document.getElementById('verse-text');
 const animationSpecificControls = document.getElementById('animation-specific-controls');
+const verseButtons = document.getElementById('verse-buttons');
 
 // Tab elements
 const tabButtons = document.querySelectorAll('.tab-button');
@@ -33,28 +31,58 @@ document.addEventListener('DOMContentLoaded', init);
 
 function init() {
     setupEventListeners();
-    
-    // Check for verse in URL hash
-    const hash = window.location.hash;
-    if (hash.startsWith('#verse-')) {
-        const verseNumber = parseInt(hash.substring(7));
-        // Find the index of the verse with this number
-        const verseIndex = verses.findIndex(v => v.number === verseNumber);
-        if (verseIndex !== -1) {
-            currentVerseIndex = verseIndex;
-        }
-    }
-    
+    createVerseButtons();
     loadVerse(currentVerseIndex);
+    
+    // Set initial state for collapsible sections
+    const verseExplanation = document.getElementById('verse-explanation');
+    const animationControls = document.getElementById('animation-controls');
+    
+    // On mobile, collapse verse explanation by default
+    if (window.innerWidth < 768) {
+        verseExplanation.classList.add('collapsed');
+        document.querySelector('[data-target="verse-explanation"] .toggle-indicator').textContent = '►';
+        animationControls.classList.add('collapsed');
+        document.querySelector('[data-target="animation-controls"] .toggle-indicator').textContent = '►';
+    }
+}
+
+function createVerseButtons() {
+    verseButtons.innerHTML = '';
+    verses.forEach((verse, index) => {
+        const button = document.createElement('button');
+        button.className = 'verse-button';
+        button.textContent = verse.number;
+        button.addEventListener('click', () => loadVerse(index));
+        
+        if (index === currentVerseIndex) {
+            button.classList.add('active');
+        }
+        
+        verseButtons.appendChild(button);
+    });
 }
 
 function setupEventListeners() {
-    prevVerseBtn.addEventListener('click', () => navigateVerse(-1));
-    nextVerseBtn.addEventListener('click', () => navigateVerse(1));
+    // Panel toggle
+    panelToggle.addEventListener('click', () => {
+        controlsPanel.classList.toggle('collapsed');
+    });
+    
+    // Collapsible sections
+    document.querySelectorAll('.section-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const targetId = header.getAttribute('data-target');
+            const content = document.getElementById(targetId);
+            const indicator = header.querySelector('.toggle-indicator');
+            
+            content.classList.toggle('collapsed');
+            indicator.textContent = content.classList.contains('collapsed') ? '►' : '▼';
+        });
+    });
+    
     playPauseBtn.addEventListener('click', togglePlayPause);
     resetBtn.addEventListener('click', resetAnimation);
-    hideControlsBtn.addEventListener('click', hideControls);
-    showControlsBtn.addEventListener('click', showControls);
     
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -69,53 +97,29 @@ function setupEventListeners() {
     
     // Handle window resize
     window.addEventListener('resize', () => {
-        if (currentAnimation) {
-            if (currentAnimation.onResize) {
-                currentAnimation.onResize();
-            }
+        if (currentAnimation && currentAnimation.onResize) {
+            currentAnimation.onResize();
         }
     });
-    
-    // Handle hash changes
-    window.addEventListener('hashchange', () => {
-        const hash = window.location.hash;
-        if (hash.startsWith('#verse-')) {
-            const verseNumber = parseInt(hash.substring(7));
-            // Find the index of the verse with this number
-            const verseIndex = verses.findIndex(v => v.number === verseNumber);
-            if (verseIndex !== -1 && verseIndex !== currentVerseIndex) {
-                loadVerse(verseIndex);
-            }
-        }
-    });
-}
-
-function navigateVerse(direction) {
-    const newIndex = currentVerseIndex + direction;
-    if (newIndex >= 0 && newIndex < verses.length) {
-        // Update URL hash without triggering hashchange event
-        const verse = verses[newIndex];
-        history.replaceState(null, null, `#verse-${verse.number}`);
-        loadVerse(newIndex);
-    }
 }
 
 function loadVerse(index) {
     currentVerseIndex = index;
     const verse = verses[index];
     
-    // Update verse indicator
-    verseIndicator.textContent = `Verse ${verse.number}`;
+    // Update verse buttons
+    document.querySelectorAll('.verse-button').forEach((button, i) => {
+        button.classList.toggle('active', i === index);
+    });
+    
+    // Update verse text
+    verseText.textContent = verse.text;
     
     // Update tab contents
     verseContent.textContent = verse.text;
     madhyamakaContent.textContent = verse.madhyamaka;
     quantumContent.textContent = verse.quantum;
     accessibleContent.textContent = verse.accessible;
-    
-    // Enable/disable navigation buttons
-    prevVerseBtn.disabled = index === 0;
-    nextVerseBtn.disabled = index === verses.length - 1;
     
     // Clear animation container
     cleanupCurrentAnimation();
@@ -283,19 +287,6 @@ function cleanupCurrentAnimation() {
     }
 }
 
-function hideControls() {
-    controlsPanel.classList.add('controls-hidden');
-    hideControlsBtn.style.display = 'none';
-    showControlsBtn.style.display = 'block';
-}
-
-function showControls() {
-    controlsPanel.classList.remove('controls-hidden');
-    hideControlsBtn.style.display = 'block';
-    showControlsBtn.style.display = 'none';
-}
-
-// Three.js Animation Implementations
 function createQuantumContextualityAnimation() {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, animationContainer.clientWidth / animationContainer.clientHeight, 0.1, 1000);
@@ -1679,7 +1670,6 @@ function createSummaryAnimation() {
     };
 }
 
-// P5.js Animation Implementations
 function createSuperpositionAnimation() {
     let sketch = function(p) {
         let particles = [];
@@ -1894,12 +1884,6 @@ function createWaveParticleAnimation() {
         p.setup = function() {
             p.createCanvas(animationContainer.clientWidth, animationContainer.clientHeight);
             p.colorMode(p.HSB, 100);
-            p.noStroke();
-            
-            barrierX = p.width * 0.4;
-            slitY1 = p.height / 2 - slitSeparation / 2;
-            slitY2 = p.height / 2 + slitSeparation / 2;
-            
             initParticles();
         };
         

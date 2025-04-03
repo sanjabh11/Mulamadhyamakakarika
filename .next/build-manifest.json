@@ -27,20 +27,15 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/chapter-18": [
+    "/chapter-2": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/chapter-18.js"
+      "static/chunks/pages/chapter-2.js"
     ],
-    "/chapter-4": [
+    "/chapter-23": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/chapter-4.js"
-    ],
-    "/chapter-6": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/chapter-6.js"
+      "static/chunks/pages/chapter-23.js"
     ]
   },
   "ampFirstPages": []

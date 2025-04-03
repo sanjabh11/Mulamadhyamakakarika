@@ -250,7 +250,7 @@ export default function verse31Animation(container) {
         };
         
         beamsGroup.add(beam);
-    } // Correctly close the for loop from line 185
+    } // End of for loop
     
     // Animation
     const clock = new THREE.Clock();

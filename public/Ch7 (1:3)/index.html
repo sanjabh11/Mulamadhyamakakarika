@@ -21,16 +21,6 @@
     <canvas id="animation-canvas"></canvas>
     
     <div id="controls-panel">
-      <button id="toggle-content" aria-label="Toggle Content">
-        <svg viewBox="0 0 24 24" width="24" height="24">
-          <path fill="currentColor" d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
-        </svg>
-      </button>
-      <button id="fullscreen-btn" aria-label="Fullscreen">
-        <svg viewBox="0 0 24 24" width="24" height="24">
-          <path fill="currentColor" d="M5,5H10V7H7V10H5V5M19,5V10H17V7H14V5H19M5,19V14H7V17H10V19H5M19,19H14V17H17V14H19V19Z" />
-        </svg>
-      </button>
       <button id="animation-control" aria-label="Play/Pause">
         <svg viewBox="0 0 24 24" width="24" height="24" class="play-icon">
           <path fill="currentColor" d="M8,5.14V19.14L19,12.14L8,5.14Z" />
@@ -39,39 +29,84 @@
           <path fill="currentColor" d="M14,19H18V5H14M6,19H10V5H6V19Z" />
         </svg>
       </button>
+      <button id="fullscreen-btn" aria-label="Fullscreen">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <path fill="currentColor" d="M5,5H10V7H7V10H5V5M19,5V10H17V7H14V5H19M5,19V14H7V17H10V19H5M19,19H14V17H17V14H19V19Z" />
+        </svg>
+      </button>
     </div>
     
     <div id="content" class="side-panel">
-      <div id="chapter-title">
-        <h1>Chapter 7 - Investigation of Birth, Abiding and Perishing</h1>
+      <div class="panel-toggle-btn" id="panel-toggle">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <path fill="currentColor" d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" />
+        </svg>
       </div>
-      
-      <div id="verse-container">
-        <div id="verse-number"></div>
-        <div id="verse-text"></div>
+
+      <div class="panel-content">
+        <div id="chapter-title">
+          <h1>Chapter 7 - Investigation of Birth, Abiding and Perishing</h1>
+        </div>
         
-        <div id="concept-container">
-          <div class="concept-box">
-            <h3>Madhyamaka Concept</h3>
-            <p id="madhyamaka-concept"></p>
+        <div class="verse-navigation" id="verse-nav-container">
+          <!-- Verse navigation buttons will be generated here -->
+        </div>
+        
+        <div class="collapsible-section">
+          <div class="section-header" id="verse-explanation-header">
+            <h2>Verse Explanation</h2>
+            <span class="toggle-icon">▼</span>
           </div>
           
-          <div class="concept-box">
-            <h3>Quantum Physics Parallel</h3>
-            <p id="quantum-parallel"></p>
-          </div>
-          
-          <div class="concept-box">
-            <h3>Accessible Explanation</h3>
-            <p id="accessible-explanation"></p>
+          <div class="section-content" id="verse-explanation-content">
+            <div id="verse-number"></div>
+            <div id="verse-text"></div>
+            
+            <div id="concept-container">
+              <div class="concept-box">
+                <h3>Madhyamaka Concept</h3>
+                <p id="madhyamaka-concept"></p>
+              </div>
+              
+              <div class="concept-box">
+                <h3>Quantum Physics Parallel</h3>
+                <p id="quantum-parallel"></p>
+              </div>
+              
+              <div class="concept-box">
+                <h3>Accessible Explanation</h3>
+                <p id="accessible-explanation"></p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      
-      <div id="navigation">
-        <button id="prev-btn">Previous Verse</button>
-        <div id="verse-indicator">Verse 1 of 12</div>
-        <button id="next-btn">Next Verse</button>
+        
+        <div class="collapsible-section">
+          <div class="section-header" id="animation-controls-header">
+            <h2>Animation Controls</h2>
+            <span class="toggle-icon">►</span>
+          </div>
+          
+          <div class="section-content collapsed" id="animation-controls-content">
+            <div class="control-group">
+              <label for="zoom-control">Zoom</label>
+              <input type="range" id="zoom-control" min="0.5" max="2" step="0.1" value="1">
+            </div>
+            <div class="control-group">
+              <label for="rotation-speed">Rotation Speed</label>
+              <input type="range" id="rotation-speed" min="0" max="2" step="0.1" value="1">
+            </div>
+            <div id="animation-specific-controls">
+              <!-- Animation specific controls will be added here -->
+            </div>
+          </div>
+        </div>
+        
+        <div id="navigation">
+          <button id="prev-btn">Previous Verse</button>
+          <div id="verse-indicator">Verse 1 of 12</div>
+          <button id="next-btn">Next Verse</button>
+        </div>
       </div>
     </div>
     

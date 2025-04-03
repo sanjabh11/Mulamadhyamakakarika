@@ -1,0 +1,115 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investigation of Nirvana</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="panel.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/",
+            "p5": "https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js",
+            "d3": "https://cdn.jsdelivr.net/npm/d3@7/+esm"
+        }
+    }
+    </script>
+    <!-- Preload p5.js library to ensure it's available -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div id="animation-container"></div>
+        
+        <!-- New Side Panel -->
+        <aside class="side-panel">
+            <button class="panel-toggle">◀</button>
+            <div class="panel-content">
+                <h1 class="chapter-title">Investigation of Nirvana</h1>
+                
+                <div class="verse-navigation" id="verse-navigation">
+                    <!-- Verse buttons will be added dynamically -->
+                </div>
+                
+                <div class="collapsible-section" id="verse-explanation-section">
+                    <div class="section-header">
+                        <span>Verse Explanation</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="section-content expanded">
+                        <div class="verse-text" id="verse-text"></div>
+                        
+                        <div class="subsection-header">Verse Title</div>
+                        <div class="subsection-content" id="verse-title"></div>
+                        
+                        <div class="subsection-header">Content</div>
+                        <div class="subsection-content" id="verse-content"></div>
+                        
+                        <div class="subsection-header">Explanation</div>
+                        <div class="subsection-content" id="verse-explanation"></div>
+                    </div>
+                </div>
+                
+                <div class="collapsible-section" id="animation-controls-section">
+                    <div class="section-header">
+                        <span>Animation Controls</span>
+                        <span class="toggle-icon">►</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="control-item">
+                            <div id="controls" class="animation-controls">
+                                <div class="nav-buttons">
+                                    <button id="prev-btn" class="control-button">Previous</button>
+                                    <span id="verse-number">Verse 13/24</span>
+                                    <button id="next-btn" class="control-button">Next</button>
+                                </div>
+                                <div class="toggle-buttons">
+                                    <button id="toggle-text" class="control-button">Hide Text</button>
+                                    <button id="toggle-explanation" class="control-button">Hide Explanation</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <div id="text-overlay" class="overlay">
+            <div id="verse-title-overlay"></div>
+            <div id="verse-content-overlay"></div>
+            <div id="verse-explanation-overlay"></div>
+        </div>
+        
+        <div id="controls-overlay" class="overlay">
+            <div class="nav-buttons">
+                <button id="prev-btn-overlay">Previous</button>
+                <span id="verse-number-overlay">Verse 13/24</span>
+                <button id="next-btn-overlay">Next</button>
+            </div>
+            <div class="toggle-buttons">
+                <button id="toggle-text-overlay">Hide Text</button>
+                <button id="toggle-explanation-overlay">Hide Explanation</button>
+            </div>
+            <div class="nav-timeline" id="verses-timeline"></div>
+        </div>
+    </div>
+    
+    <script type="module" src="config.js"></script>
+    <script type="module" src="animations/verse13.js"></script>
+    <script type="module" src="animations/verse14.js"></script>
+    <script type="module" src="animations/verse15.js"></script>
+    <script type="module" src="animations/verse16.js"></script>
+    <script type="module" src="animations/verse17.js"></script>
+    <script type="module" src="animations/verse18.js"></script>
+    <script type="module" src="animations/verse19.js"></script>
+    <script type="module" src="animations/verse20.js"></script>
+    <script type="module" src="animations/verse21.js"></script>
+    <script type="module" src="animations/verse22.js"></script>
+    <script type="module" src="animations/verse23.js"></script>
+    <script type="module" src="animations/verse24.js"></script>
+    <script type="module" src="ui-effects.js"></script>
+    <script type="module" src="panel-ui.js"></script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>

@@ -57,13 +57,11 @@ export function waveCollapseAnimation(scene, camera, controls) {
     
     particlesGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
     particlesGeometry.setAttribute('size', new THREE.BufferAttribute(particleSizes, 1));
-    
-    // Create particle texture
-    const particleTexture = new THREE.TextureLoader().load('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGASURBVFhH7ZdBSsNQEIa7VXAjegK9gO5cecF6AU8g3sGtK2/gQt2JGzfiIUS3VVAxf+GFMryZvJcX26K/8NEmM5N5/yeZxJ6KonhLKQ3JL/JbHuV6ZqYY50qgWa5DMsQC30zGRVx5DomGxASbTL6V6PJorhkEeJ7IJ3kiL1DsCxkX5lQy2nzHJDCBh8zdZhk76ZFMgpxXGTtpzCTIeZKxk3ompyCfpZq8lK6+k7GTeiSnIqfmjvTy8vwkV+T0RJNTk0Nz53pL/vvQPJBR5k5c7G85BjnP5CX5Td6Sd+Q16ep/IhOQ80ZGk2KMcwxymLzqPRnq32lsVQRY3JMInhXBIrnEDPV4dhzI2e9kbx90gXWc+h14Fk3Isd9BDi3Hfge9wTvO/Q7yNp1rWwZ5q86dfQf9BfbknH0HlZZz9h1UXs7dd9AIOfe7UIAXMf/vcB+n8I/2wT4osuMfqSKbzpF9AYtsOr+iSLN0juwLuOgc/X3QSE4iOYnkJILJ3XdQ3MmrOp4AvwsHUGcUyVcAAAAASUVORK5CYII=');
-    
+
+    // Define material first with null texture
     const particleMaterial = new THREE.ShaderMaterial({
         uniforms: {
-            pointTexture: { value: particleTexture },
+            pointTexture: { value: null }, // Initialize with null
             color: { value: new THREE.Color(config.primaryColor) }
         },
         vertexShader: `
@@ -88,6 +86,14 @@ export function waveCollapseAnimation(scene, camera, controls) {
         depthTest: false,
         transparent: true
     });
+
+    // Create a simple 1x1 white pixel texture programmatically
+    const pixelData = new Uint8Array([255, 255, 255, 255]); // RGBA white
+    const simpleTexture = new THREE.DataTexture(pixelData, 1, 1, THREE.RGBAFormat);
+    simpleTexture.needsUpdate = true;
+
+    // Assign the simple texture to the material uniform
+    particleMaterial.uniforms.pointTexture.value = simpleTexture;
     
     const particleSystem = new THREE.Points(particlesGeometry, particleMaterial);
     animationGroup.add(particleSystem);

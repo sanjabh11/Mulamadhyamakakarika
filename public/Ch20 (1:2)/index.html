@@ -1,0 +1,166 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investigation of Combination - Chapter 20</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/",
+                "OrbitControls": "https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/controls/OrbitControls.js",
+                "p5": "https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.min.js",
+                "d3": "https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"
+            }
+        }
+    </script>
+    <script type="module" src="app.js" defer></script>
+</head>
+<body>
+    <div id="app-container">
+        <div id="side-panel">
+            <button id="panel-toggle">◀</button>
+            <div id="panel-content">
+                <h2 class="chapter-title">Chapter 20 - Investigation of Combination</h2>
+                
+                <div class="verse-nav" id="verse-nav">
+                    <!-- Verse navigation buttons will be generated here by JS -->
+                </div>
+                
+                <div class="collapsible-section">
+                    <div class="section-header" id="explanation-header">
+                        <h3>Verse Explanation</h3>
+                        <span class="toggle-indicator">▼</span>
+                    </div>
+                    <div class="section-content" id="explanation-content">
+                        <div id="current-verse-text" class="verse-text"></div>
+                        
+                        <div class="subsection">
+                            <h4>Madhyamaka Concept</h4>
+                            <p id="madhyamaka-concept"></p>
+                        </div>
+                        
+                        <div class="subsection">
+                            <h4>Quantum Physics Parallel</h4>
+                            <p id="quantum-parallel"></p>
+                        </div>
+                        
+                        <div class="subsection">
+                            <h4>Accessible Explanation</h4>
+                            <p id="accessible-explanation"></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="collapsible-section">
+                    <div class="section-header" id="controls-header">
+                        <h3>Animation Controls</h3>
+                        <span class="toggle-indicator">►</span>
+                    </div>
+                    <div class="section-content collapsed" id="controls-content">
+                        <div id="interaction-controls">
+                            <!-- Interactive controls will be inserted here by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <main>
+            <div id="animation-container">
+                <div id="scene-container"></div>
+                
+                <!-- Original panels (now hidden, keeping for backward compatibility) -->
+                <div id="verse-info" class="info-panel">
+                    <h2 id="verse-number">Verse 1</h2>
+                    <div id="verse-text"></div>
+                    <div class="concepts">
+                        <div class="concept">
+                            <h3>Madhyamaka Concept</h3>
+                            <p id="madhyamaka-concept"></p>
+                        </div>
+                        <div class="concept">
+                            <h3>Quantum Physics Parallel</h3>
+                            <p id="quantum-parallel"></p>
+                        </div>
+                        <div class="concept">
+                            <h3>Accessible Explanation</h3>
+                            <p id="accessible-explanation"></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="controls-panel">
+                    <div class="controls-header">
+                        <h3>Controls</h3>
+                        <button id="toggle-controls" class="toggle-btn">Hide</button>
+                    </div>
+                    <div id="controls-content">
+                        <div id="verse-navigation">
+                            <button id="prev-verse" class="nav-btn">Previous</button>
+                            <select id="verse-selector"></select>
+                            <button id="next-verse" class="nav-btn">Next</button>
+                        </div>
+                        <div id="interaction-controls"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Interactive 3D animations exploring Madhyamaka philosophy and quantum physics parallels</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Panel toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidePanel = document.getElementById('side-panel');
+            const panelToggle = document.getElementById('panel-toggle');
+            const mainContent = document.querySelector('main');
+            
+            // Toggle panel function
+            panelToggle.addEventListener('click', function() {
+                sidePanel.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+                panelToggle.textContent = sidePanel.classList.contains('collapsed') ? '▶' : '◀';
+            });
+            
+            // Collapsible sections
+            const explanationHeader = document.getElementById('explanation-header');
+            const explanationContent = document.getElementById('explanation-content');
+            const controlsHeader = document.getElementById('controls-header');
+            const controlsContent = document.getElementById('controls-content');
+            
+            explanationHeader.addEventListener('click', function() {
+                explanationContent.classList.toggle('collapsed');
+                explanationHeader.querySelector('.toggle-indicator').textContent = 
+                    explanationContent.classList.contains('collapsed') ? '►' : '▼';
+            });
+            
+            controlsHeader.addEventListener('click', function() {
+                controlsContent.classList.toggle('collapsed');
+                controlsHeader.querySelector('.toggle-indicator').textContent = 
+                    controlsContent.classList.contains('collapsed') ? '►' : '▼';
+            });
+            
+            // Default collapsed state for mobile
+            function checkMobile() {
+                if (window.innerWidth < 768) {
+                    explanationContent.classList.add('collapsed');
+                    explanationHeader.querySelector('.toggle-indicator').textContent = '►';
+                } else {
+                    if (explanationContent.classList.contains('collapsed')) {
+                        explanationContent.classList.remove('collapsed');
+                        explanationHeader.querySelector('.toggle-indicator').textContent = '▼';
+                    }
+                }
+            }
+            
+            checkMobile();
+            window.addEventListener('resize', checkMobile);
+        });
+    </script>
+</body>
+</html>

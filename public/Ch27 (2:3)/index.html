@@ -8,9 +8,7 @@
     {
         "imports": {
             "three": "https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.module.js",
-            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/",
-            "d3": "https://cdn.jsdelivr.net/npm/d3@7/+esm",
-            "p5": "https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js"
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.158.0/examples/jsm/"
         }
     }
     </script>
@@ -18,40 +16,40 @@
 <body>
     <div id="animation-container"></div>
     
-    <div id="info-panel">
-        <div id="verse-container">
-            <h3 id="verse-number"></h3>
-            <p id="verse-text"></p>
-        </div>
-        <div id="explanation-toggle">
-            <button id="toggle-button">Show Explanation</button>
-        </div>
-        <div id="explanation-container" class="hidden">
-            <div class="tab-container">
-                <button class="tab-button active" data-tab="concept">Madhyamaka Concept</button>
-                <button class="tab-button" data-tab="quantum">Quantum Physics</button>
-                <button class="tab-button" data-tab="simple">Simple Explanation</button>
-            </div>
-            <div id="tab-content">
-                <div class="tab-panel active" id="concept-panel">
-                    <p id="concept-text"></p>
+    <div id="info-panel" class="expanded">
+        <div id="panel-content">
+            <h2 id="chapter-title">Investigation of Views</h2>
+            
+            <div id="verse-nav"></div>
+            
+            <div class="collapsible-section expanded">
+                <div class="section-header" data-target="verse-container">
+                    <h3>Verse Explanation</h3>
+                    <span class="toggle-icon">▼</span>
                 </div>
-                <div class="tab-panel" id="quantum-panel">
-                    <p id="quantum-text"></p>
-                </div>
-                <div class="tab-panel" id="simple-panel">
-                    <p id="simple-text"></p>
+                <div id="verse-container" class="section-content">
+                    <h3 id="verse-number"></h3>
+                    <p id="verse-text"></p>
+                    <p id="explanation-text"></p>
                 </div>
             </div>
+            
+            <div class="collapsible-section">
+                <div class="section-header" data-target="animation-controls">
+                    <h3>Animation Controls</h3>
+                    <span class="toggle-icon">►</span>
+                </div>
+                <div id="animation-controls" class="section-content hidden">
+                    <!-- Controls will be populated by JS -->
+                    <div class="control-group">
+                        <label for="zoom-slider">Zoom Level</label>
+                        <input type="range" id="zoom-slider" min="1" max="10" value="5">
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="navigation">
-            <button id="prev-button">Previous</button>
-            <button id="next-button">Next</button>
-        </div>
-        <div id="interaction-panel">
-            <button id="interact-button">Interact with Animation</button>
-            <div id="interaction-controls"></div>
-        </div>
+        
+        <button id="panel-toggle">◀</button>
     </div>
 
     <script type="module" src="config.js"></script>

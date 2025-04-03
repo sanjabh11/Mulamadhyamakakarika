@@ -434,6 +434,17 @@ export function initVerse8(container, controlsContainer, options) {
         });
     }
     
+    // Function to update decay count display
+    function updateDecayCount() {
+        const decayCountElement = document.getElementById('decay-count');
+        if (decayCountElement) { 
+            decayCountElement.textContent = decayCount;
+        }
+
+        // Update periodically
+        setTimeout(updateDecayCount, 500);
+    }
+
     // Handle window resize
     function onWindowResize() {
         camera.aspect = container.clientWidth / container.clientHeight;
@@ -445,20 +456,7 @@ export function initVerse8(container, controlsContainer, options) {
     
     // Initialize controls and start animation
     createControls();
-    
-    // Function to update decay count display - declared here so it can be called after createControls
-    function updateDecayCount() {
-        const decayCountElement = document.getElementById('decay-count');
-        if (decayCountElement) { // Check if element exists before trying to set textContent
-            decayCountElement.textContent = decayCount;
-        }
-
-        // Update periodically
-        setTimeout(updateDecayCount, 500);
-    }
-
-    updateDecayCount(); // Initial call after createControls has rendered the element
-
+    updateDecayCount(); 
     animate();
     
     // Return cleanup function

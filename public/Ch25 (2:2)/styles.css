@@ -245,3 +245,131 @@ button:active {
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.5);
 }
+
+/* --- New Panel Styles for the Left-Side Panel --- */
+#side-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 320px;
+    height: 100vh;
+    background: rgba(20, 20, 40, 0.8);
+    backdrop-filter: blur(5px);
+    color: #f0f0f0;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    z-index: 3;
+}
+#side-panel.collapsed {
+    width: 40px;
+}
+#panel-toggle {
+    position: absolute;
+    top: 50%;
+    right: -15px;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    background-color: #6a5acd;
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    z-index: 4;
+}
+#side-panel.collapsed #panel-toggle {
+    transform: translateY(-50%) rotate(180deg);
+}
+#panel-content {
+    padding: 20px;
+    height: 100%;
+    overflow-y: auto;
+}
+/* Chapter Title */
+#chapter-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    text-align: center;
+    color: #6a5acd;
+    margin-bottom: 15px;
+}
+/* Verse Navigation */
+#verse-navigation {
+    margin-bottom: 15px;
+}
+.nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.nav-timeline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+.nav-timeline .verse-marker {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid #6a5acd;
+    color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-size: 0.8rem;
+}
+.nav-timeline .verse-marker.active {
+    background-color: #6a5acd;
+    font-weight: bold;
+}
+/* Collapsible Sections */
+.collapsible {
+    margin-bottom: 15px;
+}
+.collapsible-header {
+    background-color: transparent;
+    border-bottom: 1px solid #6a5acd;
+    cursor: pointer;
+    color: #6a5acd;
+    font-size: 1rem;
+    padding: 8px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.collapsible-content {
+    padding: 10px 0;
+    display: block;
+    transition: max-height 0.3s ease;
+}
+/* Custom Scrollbar within Panel Content */
+#panel-content::-webkit-scrollbar {
+    width: 8px;
+}
+#panel-content::-webkit-scrollbar-track {
+    background: rgba(106, 90, 205, 0.3);
+    border-radius: 10px;
+}
+#panel-content::-webkit-scrollbar-thumb {
+    background: rgba(106, 90, 205, 0.7);
+    border-radius: 10px;
+}
+/* Responsive Adjustments for Mobile */
+@media (max-width: 768px) {
+    #side-panel {
+        width: 300px;
+    }
+    #chapter-title {
+        font-size: 1.1rem;
+    }
+    .collapsible-header {
+        font-size: 0.9rem;
+    }
+    .nav-buttons, .nav-timeline, #verse-number {
+        font-size: 0.9rem;
+    }
+}

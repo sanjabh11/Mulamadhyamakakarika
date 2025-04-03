@@ -13,27 +13,13 @@ class Application {
         this.setupDOM();
         this.setupBaseScene();
         this.setupEventListeners();
+        this.setupLeftPanel();
         
         // Initialize all scenes (but only activate the first one)
         this.initScenes();
         
-        // Check URL for verse parameter
-        this.checkURLForVerse();
-        
         // Start animation loop
         this.animate();
-    }
-    
-    checkURLForVerse() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const verseParam = urlParams.get('verse');
-        
-        if (verseParam) {
-            const verseIndex = parseInt(verseParam) - 1; // Convert to 0-based index
-            if (verseIndex >= 0 && verseIndex < config.verses.length) {
-                this.setActiveVerse(verseIndex);
-            }
-        }
     }
     
     setupDOM() {
@@ -44,6 +30,58 @@ class Application {
         this.nextButton = document.getElementById('next-verse');
         this.explanationContent = document.getElementById('explanation-content');
         this.toggleExplanationButton = document.getElementById('toggle-explanation');
+        
+        // New panel elements
+        this.leftPanel = document.getElementById('left-panel');
+        this.panelToggle = document.getElementById('panel-toggle');
+        this.verseNavigation = document.getElementById('verse-navigation');
+        this.verseExplanationContent = document.getElementById('verse-explanation-content');
+        this.animationControlsContent = document.getElementById('animation-controls-content');
+    }
+    
+    setupLeftPanel() {
+        // Setup verse navigation buttons
+        for (let i = 0; i < config.verses.length; i++) {
+            const verseBtn = document.createElement('button');
+            verseBtn.className = 'verse-btn';
+            verseBtn.textContent = i + 1;
+            verseBtn.addEventListener('click', () => this.setActiveVerse(i));
+            this.verseNavigation.appendChild(verseBtn);
+        }
+        
+        // Highlight first verse
+        this.verseNavigation.children[0].classList.add('active');
+        
+        // Setup panel toggle
+        this.panelToggle.addEventListener('click', () => {
+            this.leftPanel.classList.toggle('collapsed');
+        });
+        
+        // Setup collapsible sections
+        document.querySelectorAll('.section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const icon = header.querySelector('.toggle-icon');
+                content.classList.toggle('expanded');
+                icon.textContent = content.classList.contains('expanded') ? '▼' : '►';
+            });
+        });
+        
+        // Set default states for desktop
+        if (window.innerWidth >= 768) {
+            document.getElementById('verse-explanation-content').classList.add('expanded');
+            document.querySelector('#verse-explanation-section .toggle-icon').textContent = '▼';
+            
+            document.getElementById('animation-controls-content').classList.remove('expanded');
+            document.querySelector('#animation-controls-section .toggle-icon').textContent = '►';
+        } else {
+            // Mobile defaults - both collapsed
+            document.getElementById('verse-explanation-content').classList.remove('expanded');
+            document.querySelector('#verse-explanation-section .toggle-icon').textContent = '►';
+            
+            document.getElementById('animation-controls-content').classList.remove('expanded');
+            document.querySelector('#animation-controls-section .toggle-icon').textContent = '►';
+        }
     }
     
     setupBaseScene() {
@@ -102,6 +140,12 @@ class Application {
         this.prevButton.disabled = (index === 0);
         this.nextButton.disabled = (index === config.verses.length - 1);
         
+        // Update verse buttons in navigation
+        const verseButtons = this.verseNavigation.querySelectorAll('.verse-btn');
+        verseButtons.forEach((btn, i) => {
+            btn.classList.toggle('active', i === index);
+        });
+        
         // Update verse display
         this.updateVerseDisplay();
         
@@ -115,6 +159,7 @@ class Application {
     updateVerseDisplay() {
         const verse = config.verses[this.currentVerseIndex];
         
+        // Update original containers (for backward compatibility)
         this.verseDisplay.innerHTML = `
             <div class="verse-number">Verse ${verse.number}</div>
             <div class="verse-text">${verse.text}</div>
@@ -133,10 +178,29 @@ class Application {
         this.explanationContent.innerHTML = `
             <div class="concept-content">${verse.concepts.accessible}</div>
         `;
+        
+        // Update new panel
+        this.verseExplanationContent.innerHTML = `
+            <div class="verse-text-display">${verse.text}</div>
+            
+            <div class="subsection-title">Madhyamaka Concept</div>
+            <div class="subsection-content">${verse.concepts.madhyamaka}</div>
+            
+            <div class="subsection-title">Quantum Physics Parallel</div>
+            <div class="subsection-content">${verse.concepts.quantum}</div>
+            
+            <div class="subsection-title">Accessible Explanation</div>
+            <div class="subsection-content">${verse.concepts.accessible}</div>
+        `;
     }
     
     updateSceneControls() {
+        // Update original container (for backward compatibility)
         this.sceneControls.innerHTML = '';
+        
+        // Create new container for our panel
+        const newControlsContainer = document.createElement('div');
+        
         const verse = config.verses[this.currentVerseIndex];
         
         verse.controls.forEach(control => {
@@ -157,11 +221,27 @@ class Application {
                         >
                     `;
                     this.sceneControls.appendChild(controlItem);
+                    newControlsContainer.appendChild(controlItem.cloneNode(true));
                     
-                    // Add event listener
+                    // Add event listener to original control
                     document.getElementById(control.id).addEventListener('input', (e) => {
                         if (this.currentScene && this.currentScene.onControlChange) {
                             this.currentScene.onControlChange(control.id, parseFloat(e.target.value));
+                            
+                            // Update new panel control to match
+                            const newControl = newControlsContainer.querySelector(`#${control.id}`);
+                            if (newControl) newControl.value = e.target.value;
+                        }
+                    });
+                    
+                    // Add event listener to new panel control
+                    newControlsContainer.querySelector(`#${control.id}`).addEventListener('input', (e) => {
+                        if (this.currentScene && this.currentScene.onControlChange) {
+                            this.currentScene.onControlChange(control.id, parseFloat(e.target.value));
+                            
+                            // Update original control to match
+                            const originalControl = document.getElementById(control.id);
+                            if (originalControl) originalControl.value = e.target.value;
                         }
                     });
                     break;
@@ -171,9 +251,17 @@ class Application {
                         <button id="${control.id}" class="control-button">${control.label}</button>
                     `;
                     this.sceneControls.appendChild(controlItem);
+                    newControlsContainer.appendChild(controlItem.cloneNode(true));
                     
-                    // Add event listener
+                    // Add event listener to original control
                     document.getElementById(control.id).addEventListener('click', () => {
+                        if (this.currentScene && this.currentScene.onControlChange) {
+                            this.currentScene.onControlChange(control.id);
+                        }
+                    });
+                    
+                    // Add event listener to new panel control
+                    newControlsContainer.querySelector(`#${control.id}`).addEventListener('click', () => {
                         if (this.currentScene && this.currentScene.onControlChange) {
                             this.currentScene.onControlChange(control.id);
                         }
@@ -193,16 +281,46 @@ class Application {
                         </select>
                     `;
                     this.sceneControls.appendChild(controlItem);
+                    newControlsContainer.appendChild(controlItem.cloneNode(true));
                     
-                    // Add event listener
+                    // Add event listener to original control
                     document.getElementById(control.id).addEventListener('change', (e) => {
                         if (this.currentScene && this.currentScene.onControlChange) {
                             this.currentScene.onControlChange(control.id, e.target.value);
+                            
+                            // Update new panel control to match
+                            const newControl = newControlsContainer.querySelector(`#${control.id}`);
+                            if (newControl) newControl.value = e.target.value;
+                        }
+                    });
+                    
+                    // Add event listener to new panel control
+                    newControlsContainer.querySelector(`#${control.id}`).addEventListener('change', (e) => {
+                        if (this.currentScene && this.currentScene.onControlChange) {
+                            this.currentScene.onControlChange(control.id, e.target.value);
+                            
+                            // Update original control to match
+                            const originalControl = document.getElementById(control.id);
+                            if (originalControl) originalControl.value = e.target.value;
                         }
                     });
                     break;
             }
         });
+        
+        // Replace the content of our new panel
+        document.getElementById('scene-controls').innerHTML = '';
+        document.getElementById('scene-controls').appendChild(newControlsContainer);
+        
+        // Update navigation buttons in the new panel
+        document.getElementById('navigation-controls').innerHTML = `
+            <button id="prev-verse-panel" ${this.prevButton.disabled ? 'disabled' : ''}>Previous Verse</button>
+            <button id="next-verse-panel" ${this.nextButton.disabled ? 'disabled' : ''}>Next Verse</button>
+        `;
+        
+        // Add event listeners to new navigation buttons
+        document.getElementById('prev-verse-panel').addEventListener('click', this.goToPreviousVerse.bind(this));
+        document.getElementById('next-verse-panel').addEventListener('click', this.goToNextVerse.bind(this));
     }
     
     goToPreviousVerse() {

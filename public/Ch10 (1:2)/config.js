@@ -67,73 +67,50 @@ export const verses = [
     }
 ];
 
-// Animation settings with enhanced parameters
+// Animation settings
 export const animationSettings = {
     entanglement: {
         particleSize: 0.5,
         particleSpeed: 0.01,
         particleDistance: 3,
-        rotationSpeed: 0.01,
-        connectionStrength: 0.7,
-        particleGlow: true
+        rotationSpeed: 0.01
     },
     particleCreation: {
         energyLevel: 50,
-        particleCount: 30,
+        particleCount: 20,
         waveAmplitude: 30,
-        waveFrequency: 0.05,
-        particleColors: ["#f72585", "#7209b7", "#4cc9f0", "#4361ee"],
-        glowIntensity: 0.5
+        waveFrequency: 0.05
     },
     electronJump: {
         orbitRadii: [2, 3.5, 5],
         electronSpeed: 0.01,
         jumpProbability: 0.005,
-        photonSpeed: 0.1,
-        particleTrail: true,
-        trailLength: 20
+        photonSpeed: 0.1
     },
     atomIgnition: {
         energyThreshold: 0.7,
         orbitRadius: 4,
-        electronCount: 3,
-        ignitionDelay: 0.2,
-        explosionForce: 10
+        electronCount: 3
     },
     quantumCoherence: {
         systemSize: 2,
         interactionStrength: 0.05,
-        decoherenceRate: 0.01,
-        coherenceTime: 5,
-        particleSpin: 0.5
+        decoherenceRate: 0.01
     },
     fieldInteraction: {
         particleCount: 2,
         forceStrength: 0.02,
-        exchangeRate: 0.03,
-        interactionRange: 10,
-        particleMass: 1
+        exchangeRate: 0.03
     },
     annihilation: {
         particleSpeed: 0.03,
         explosionIntensity: 2,
-        particleLifetime: 3,
-        annihilationEnergy: 100,
-        explosionSound: true
+        particleLifetime: 3
     },
     measurement: {
         uncertaintyRadius: 2,
         collapseSpeed: 0.05,
-        observerSize: 1,
-        particleCount: 150,
-        waveFunction: "sphere" 
+        observerSize: 1
     }
 };
 
-// Additional configuration for visual enhancements
-export const visualSettings = {
-    useHDR: true,
-    postProcessing: true,
-    backgroundColor: "#10002b",
-    particleTextureUrl: "https://threejs.org/examples/textures/sprites/spark1.png"
-};

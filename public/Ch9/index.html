@@ -12,48 +12,41 @@
       }
     }
     </script>
-    <!-- Ensure THREE is loaded before our script -->
-    <script async src="https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.min.js"></script>
+    <!-- Removed deprecated three.min.js script tag; module is loaded via importmap -->
 </head>
 <body>
     <div id="container">
         <div id="scene-container"></div>
         
         <div id="content-panel">
-            <div class="header">
-                <h1>Chapter 9: Investigation of the Presence of Something Prior</h1>
-                <div class="nav-controls">
-                    <button id="prev-btn">Previous</button>
-                    <span id="verse-counter">Verse 1/12</span>
-                    <button id="next-btn">Next</button>
-                </div>
-            </div>
-            
-            <div id="verse-content">
-                <!-- Verse content will be dynamically loaded here -->
-            </div>
-            
-            <div class="controls-wrapper">
-                <button id="toggle-controls" class="toggle-btn">Show Controls</button>
-                <div id="controls-panel" class="hidden">
-                    <div class="control-group">
-                        <h3>Animation Controls</h3>
-                        <div class="controls">
-                            <!-- Dynamically populated based on verse -->
+            <div class="panel-content">
+                <h1 class="chapter-title">Chapter 9: Investigation of the Presence of Something Prior</h1>
+                
+                <!-- Verse navigation will be inserted here by JS -->
+                
+                <div id="verse-explanation" class="collapsible-section">
+                    <div class="section-header">
+                        <span>Verse Explanation</span>
+                        <span class="toggle-indicator">▼</span>
+                    </div>
+                    <div class="section-content expanded">
+                        <div id="explanation-content" class="section-content-inner">
+                            <!-- Verse explanation will be dynamically loaded here -->
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="explanation-wrapper">
-                <button id="toggle-explanation" class="toggle-btn">Show Explanation</button>
-                <div id="explanation-panel" class="hidden">
-                    <!-- Explanation content will be dynamically loaded here -->
+                
+                <div id="animation-controls" class="collapsible-section">
+                    <div class="section-header">
+                        <span>Animation Controls</span>
+                        <span class="toggle-indicator">►</span>
+                    </div>
+                    <div class="section-content">
+                        <div id="controls-container" class="section-content-inner">
+                            <!-- Controls will be dynamically loaded here -->
+                        </div>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="back-link">
-                <a href="/chapter-9">← Back to Chapter Overview</a>
             </div>
         </div>
     </div>

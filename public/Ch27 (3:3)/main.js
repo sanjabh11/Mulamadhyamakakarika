@@ -9,16 +9,17 @@ const verseNumber = document.getElementById('verse-number');
 const madhyamakaText = document.getElementById('madhyamaka-text');
 const quantumText = document.getElementById('quantum-text');
 const accessibleText = document.getElementById('accessible-text');
-const explanationTitle = document.getElementById('explanation-title');
 const prevButton = document.getElementById('prev-verse');
 const nextButton = document.getElementById('next-verse');
 const togglePanelButton = document.getElementById('toggle-panel');
-const toggleExplanationButton = document.getElementById('toggle-explanation');
 const textPanel = document.getElementById('text-panel');
-const explanationBar = document.getElementById('explanation-bar');
 const verseButtonsContainer = document.getElementById('verse-buttons');
-const showPanelButton = document.getElementById('show-panel');
-const showExplanationButton = document.getElementById('show-explanation');
+
+// UI elements for new collapsible sections
+const explanationHeader = document.getElementById('explanation-header');
+const explanationContent = document.getElementById('explanation-content');
+const controlsHeader = document.getElementById('controls-header');
+const controlsContent = document.getElementById('controls-content');
 
 // Initialize scene
 let renderer, currentAnimation;
@@ -56,21 +57,27 @@ function init() {
   });
   
   togglePanelButton.addEventListener('click', () => {
-    textPanel.classList.toggle('hidden');
-    togglePanelButton.textContent = textPanel.classList.contains('hidden') ? 'Show Panel' : 'Hide Panel';
+    textPanel.classList.toggle('collapsed');
+    if (textPanel.classList.contains('collapsed')) {
+      togglePanelButton.querySelector('.arrow').textContent = '▶';
+    } else {
+      togglePanelButton.querySelector('.arrow').textContent = '◀';
+    }
   });
   
-  toggleExplanationButton.addEventListener('click', () => {
-    explanationBar.classList.toggle('hidden');
-    toggleExplanationButton.textContent = explanationBar.classList.contains('hidden') ? 'Show Explanation' : 'Hide Explanation';
+  // Add collapsible section functionality
+  explanationHeader.addEventListener('click', () => {
+    explanationContent.classList.toggle('collapsed');
+    explanationHeader.querySelector('.toggle-icon').classList.toggle('collapsed');
+    explanationHeader.querySelector('.toggle-icon').textContent = 
+      explanationContent.classList.contains('collapsed') ? '▶' : '▼';
   });
   
-  showPanelButton.addEventListener('click', () => {
-    textPanel.classList.remove('hidden');
-  });
-
-  showExplanationButton.addEventListener('click', () => {
-    explanationBar.classList.remove('hidden');
+  controlsHeader.addEventListener('click', () => {
+    controlsContent.classList.toggle('collapsed');
+    controlsHeader.querySelector('.toggle-icon').classList.toggle('collapsed');
+    controlsHeader.querySelector('.toggle-icon').textContent = 
+      controlsContent.classList.contains('collapsed') ? '▶' : '▼';
   });
   
   // Add verse buttons
@@ -111,7 +118,6 @@ function updateVerse(index) {
   madhyamakaText.textContent = verse.madhyamaka;
   quantumText.textContent = verse.quantum;
   accessibleText.textContent = verse.accessible;
-  explanationTitle.textContent = verse.title;
   
   // Update navigation buttons
   prevButton.disabled = index === 0;
@@ -127,9 +133,10 @@ function updateVerse(index) {
     }
   });
   
-  // Make sure the panels are visible when changing verses
-  if (textPanel.classList.contains('hidden')) {
-    textPanel.classList.remove('hidden');
+  // Make sure the panel is visible when changing verses
+  if (textPanel.classList.contains('collapsed') && window.innerWidth > 768) {
+    textPanel.classList.remove('collapsed');
+    togglePanelButton.querySelector('.arrow').textContent = '◀';
   }
   
   // Clean up previous animation

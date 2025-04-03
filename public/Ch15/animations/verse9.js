@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import * as p5 from 'p5';
 
 // Wave Packet Spreading Animation for Verse 9
-export function initVerse9(container, controlsContainer, options = {}) {
+export function initVerse9(container, controlsContainer, options) {
     // Create Three.js scene for 3D background
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x121212);
@@ -53,185 +54,168 @@ export function initVerse9(container, controlsContainer, options = {}) {
     let showUncertainty = true;
     
     // p5 instance
-    let sketch;
-    
-    // Function to create p5 sketch when p5 is available globally
-    function createP5Sketch() {
-        if (typeof p5 !== 'undefined') {
-            sketch = new p5((p) => {
-                p.setup = function() {
-                    p.createCanvas(container.clientWidth, container.clientHeight);
-                    p.colorMode(p.HSB, 255);
-                    p.textSize(14);
-                    p.textAlign(p.CENTER, p.CENTER);
-                };
-                
-                p.draw = function() {
-                    if (isPaused) return;
-                    
-                    p.clear();
-                    
-                    // Draw position space representation (top)
-                    if (showPosition) {
-                        drawPositionSpace(p);
-                    }
-                    
-                    // Draw momentum space representation (bottom)
-                    if (showMomentum) {
-                        drawMomentumSpace(p);
-                    }
-                    
-                    // Draw uncertainty product
-                    if (showUncertainty) {
-                        drawUncertaintyRelation(p);
-                    }
-                };
-                
-                // Draw wave packet in position space
-                function drawPositionSpace(p) {
-                    const y = p.height * 0.3;
-                    const width = p.width * 0.8;
-                    const height = p.height * 0.2;
-                    
-                    p.push();
-                    p.translate(p.width/2, y);
-                    
-                    // Draw axis
-                    p.stroke(150);
-                    p.strokeWeight(1);
-                    p.line(-width/2, 0, width/2, 0);
-                    p.line(0, -height/2, 0, height/2);
-                    
-                    // Label
-                    p.noStroke();
-                    p.fill(200);
-                    p.text("Position Space (Δx increases with time)", 0, -height/2 - 20);
-                    
-                    // Draw Gaussian wave packet
-                    p.noFill();
-                    p.stroke(150, 200, 255);
-                    p.strokeWeight(2);
-                    p.beginShape();
-                    
-                    const packetWidth = particleWidth * 100;
-                    
-                    for (let x = -width/2; x <= width/2; x += 2) {
-                        const xNorm = x / 100;
-                        const amplitude = waveAmplitude * Math.exp(-(xNorm * xNorm) / (2 * packetWidth * packetWidth)) *
-                                        Math.cos(5 * xNorm - time);
-                        p.vertex(x, -amplitude * height/3);
-                    }
-                    
-                    p.endShape();
-                    
-                    // Draw envelope
-                    p.noFill();
-                    p.stroke(150, 200, 255, 100);
-                    p.strokeWeight(1);
-                    p.beginShape();
-                    
-                    for (let x = -width/2; x <= width/2; x += 2) {
-                        const xNorm = x / 100;
-                        const envelope = waveAmplitude * Math.exp(-(xNorm * xNorm) / (2 * packetWidth * packetWidth));
-                        p.vertex(x, -envelope * height/3);
-                    }
-                    
-                    p.endShape();
-                    
-                    p.beginShape();
-                    for (let x = -width/2; x <= width/2; x += 2) {
-                        const xNorm = x / 100;
-                        const envelope = waveAmplitude * Math.exp(-(xNorm * xNorm) / (2 * packetWidth * packetWidth));
-                        p.vertex(x, envelope * height/3);
-                    }
-                    
-                    p.endShape();
-                    
-                    // Show uncertainty value
-                    p.noStroke();
-                    p.fill(150, 200, 255);
-                    p.text(`Δx = ${packetWidth.toFixed(2)}`, width/2 - 70, -height/2 + 20);
-                    
-                    p.pop();
-                }
-                
-                // Draw wave packet in momentum space
-                function drawMomentumSpace(p) {
-                    const y = p.height * 0.7;
-                    const width = p.width * 0.8;
-                    const height = p.height * 0.2;
-                    
-                    p.push();
-                    p.translate(p.width/2, y);
-                    
-                    // Draw axis
-                    p.stroke(150);
-                    p.strokeWeight(1);
-                    p.line(-width/2, 0, width/2, 0);
-                    p.line(0, -height/2, 0, height/2);
-                    
-                    // Label
-                    p.noStroke();
-                    p.fill(200);
-                    p.text("Momentum Space (Δp decreases with time)", 0, -height/2 - 20);
-                    
-                    // Draw momentum space representation (Fourier transform of position)
-                    p.noFill();
-                    p.stroke(255, 150, 200);
-                    p.strokeWeight(2);
-                    p.beginShape();
-                    
-                    // Momentum width is inversely proportional to position width
-                    const momentumWidth = 1 / (particleWidth * 4);
-                    
-                    for (let k = -width/2; k <= width/2; k += 2) {
-                        const kNorm = k / 50;
-                        const amplitude = Math.exp(-(kNorm * kNorm) / (2 * momentumWidth * momentumWidth));
-                        p.vertex(k, -amplitude * height/3);
-                    }
-                    
-                    p.endShape();
-                    
-                    // Show uncertainty value
-                    p.noStroke();
-                    p.fill(255, 150, 200);
-                    p.text(`Δp = ${momentumWidth.toFixed(4)}`, width/2 - 70, -height/2 + 20);
-                    
-                    p.pop();
-                }
-                
-                // Draw uncertainty relation
-                function drawUncertaintyRelation(p) {
-                    const x = p.width * 0.1;
-                    const y = p.height * 0.5;
-                    
-                    p.push();
-                    p.translate(x, y);
-                    
-                    p.noStroke();
-                    p.fill(255, 220, 150);
-                    
-                    // Momentum width is inversely proportional to position width
-                    const momentumWidth = 1 / (particleWidth * 4);
-                    const uncertaintyProduct = particleWidth * 100 * momentumWidth;
-                    
-                    p.text(`Uncertainty Relation: Δx · Δp = ${uncertaintyProduct.toFixed(2)} ≥ ℏ/2`, 100, 0);
-                    
-                    p.pop();
-                }
-            }, p5Container);
-        } else {
-            console.error("p5.js is not available globally");
-            // Show error message in container
-            const errorDiv = document.createElement('div');
-            errorDiv.style.color = 'red';
-            errorDiv.textContent = 'Error: p5.js library not loaded';
-            container.appendChild(errorDiv);
+    let sketch = new p5((p) => {
+        p.setup = function() {
+            p.createCanvas(container.clientWidth, container.clientHeight);
+            p.colorMode(p.HSB, 255);
+            p.textSize(14);
+            p.textAlign(p.CENTER, p.CENTER);
+        };
+        
+        p.draw = function() {
+            if (isPaused) return;
+            
+            p.clear();
+            
+            // Draw position space representation (top)
+            if (showPosition) {
+                drawPositionSpace(p);
+            }
+            
+            // Draw momentum space representation (bottom)
+            if (showMomentum) {
+                drawMomentumSpace(p);
+            }
+            
+            // Draw uncertainty product
+            if (showUncertainty) {
+                drawUncertaintyRelation(p);
+            }
+        };
+        
+        // Draw wave packet in position space
+        function drawPositionSpace(p) {
+            const y = p.height * 0.3;
+            const width = p.width * 0.8;
+            const height = p.height * 0.2;
+            
+            p.push();
+            p.translate(p.width/2, y);
+            
+            // Draw axis
+            p.stroke(150);
+            p.strokeWeight(1);
+            p.line(-width/2, 0, width/2, 0);
+            p.line(0, -height/2, 0, height/2);
+            
+            // Label
+            p.noStroke();
+            p.fill(200);
+            p.text("Position Space (Δx increases with time)", 0, -height/2 - 20);
+            
+            // Draw Gaussian wave packet
+            p.noFill();
+            p.stroke(150, 200, 255);
+            p.strokeWeight(2);
+            p.beginShape();
+            
+            const packetWidth = particleWidth * 100;
+            
+            for (let x = -width/2; x <= width/2; x += 2) {
+                const xNorm = x / 100;
+                const amplitude = waveAmplitude * Math.exp(-(xNorm * xNorm) / (2 * packetWidth * packetWidth)) *
+                                  Math.cos(5 * xNorm - time);
+                p.vertex(x, -amplitude * height/3);
+            }
+            
+            p.endShape();
+            
+            // Draw envelope
+            p.noFill();
+            p.stroke(150, 200, 255, 100);
+            p.strokeWeight(1);
+            p.beginShape();
+            
+            for (let x = -width/2; x <= width/2; x += 2) {
+                const xNorm = x / 100;
+                const envelope = waveAmplitude * Math.exp(-(xNorm * xNorm) / (2 * packetWidth * packetWidth));
+                p.vertex(x, -envelope * height/3);
+            }
+            
+            p.endShape();
+            
+            p.beginShape();
+            for (let x = -width/2; x <= width/2; x += 2) {
+                const xNorm = x / 100;
+                const envelope = waveAmplitude * Math.exp(-(xNorm * xNorm) / (2 * packetWidth * packetWidth));
+                p.vertex(x, envelope * height/3);
+            }
+            
+            p.endShape();
+            
+            // Show uncertainty value
+            p.noStroke();
+            p.fill(150, 200, 255);
+            p.text(`Δx = ${packetWidth.toFixed(2)}`, width/2 - 70, -height/2 + 20);
+            
+            p.pop();
         }
-    }
-    
-    // Initialize p5 sketch
-    createP5Sketch();
+        
+        // Draw wave packet in momentum space
+        function drawMomentumSpace(p) {
+            const y = p.height * 0.7;
+            const width = p.width * 0.8;
+            const height = p.height * 0.2;
+            
+            p.push();
+            p.translate(p.width/2, y);
+            
+            // Draw axis
+            p.stroke(150);
+            p.strokeWeight(1);
+            p.line(-width/2, 0, width/2, 0);
+            p.line(0, -height/2, 0, height/2);
+            
+            // Label
+            p.noStroke();
+            p.fill(200);
+            p.text("Momentum Space (Δp decreases with time)", 0, -height/2 - 20);
+            
+            // Draw momentum space representation (Fourier transform of position)
+            p.noFill();
+            p.stroke(255, 150, 200);
+            p.strokeWeight(2);
+            p.beginShape();
+            
+            // Momentum width is inversely proportional to position width
+            const momentumWidth = 1 / (particleWidth * 4);
+            
+            for (let k = -width/2; k <= width/2; k += 2) {
+                const kNorm = k / 50;
+                const amplitude = Math.exp(-(kNorm * kNorm) / (2 * momentumWidth * momentumWidth));
+                p.vertex(k, -amplitude * height/3);
+            }
+            
+            p.endShape();
+            
+            // Show uncertainty value
+            p.noStroke();
+            p.fill(255, 150, 200);
+            p.text(`Δp = ${momentumWidth.toFixed(4)}`, width/2 - 70, -height/2 + 20);
+            
+            p.pop();
+        }
+        
+        // Draw uncertainty relation
+        function drawUncertaintyRelation(p) {
+            const x = p.width * 0.1;
+            const y = p.height * 0.5;
+            
+            p.push();
+            p.translate(x, y);
+            
+            p.noStroke();
+            p.fill(255, 220, 150);
+            
+            // Momentum width is inversely proportional to position width
+            const momentumWidth = 1 / (particleWidth * 4);
+            const uncertaintyProduct = particleWidth * 100 * momentumWidth;
+            
+            p.text(`Uncertainty Relation: Δx · Δp = ${uncertaintyProduct.toFixed(2)} ≥ ℏ/2`, 100, 0);
+            
+            p.pop();
+        }
+    }, p5Container);
     
     // Create 3D visualization of wave packet
     function createWavePacket() {
@@ -409,9 +393,7 @@ export function initVerse9(container, controlsContainer, options = {}) {
         renderer.setSize(container.clientWidth, container.clientHeight);
         
         // Also resize p5 canvas
-        if (sketch) {
-            sketch.resizeCanvas(container.clientWidth, container.clientHeight);
-        }
+        sketch.resizeCanvas(container.clientWidth, container.clientHeight);
     }
     
     window.addEventListener('resize', onWindowResize);
@@ -429,9 +411,7 @@ export function initVerse9(container, controlsContainer, options = {}) {
         container.removeChild(p5Container);
         
         // Remove p5 instance
-        if (sketch) {
-            sketch.remove();
-        }
+        sketch.remove();
         
         // Dispose geometries and materials
         const particleGeometry = new THREE.SphereGeometry(0.05, 8, 8);

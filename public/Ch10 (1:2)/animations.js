@@ -113,68 +113,42 @@ export function createAnimation(type) {
 function createEntanglementAnimation() {
     const settings = animationSettings.entanglement;
     
-    // Create two entangled particles with more detailed geometry
-    const particleGeometry = new THREE.IcosahedronGeometry(settings.particleSize, 2);
-    const particleMaterial1 = new THREE.MeshPhysicalMaterial({ 
+    // Create two entangled particles
+    const particle1Geometry = new THREE.SphereGeometry(settings.particleSize, 32, 32);
+    const particle1Material = new THREE.MeshPhongMaterial({ 
         color: 0xf72585,
         emissive: 0xf72585,
-        emissiveIntensity: 0.5,
-        roughness: 0.2,
-        metalness: 0.7,
-        clearcoat: 0.8
+        emissiveIntensity: 0.5
     });
-    const particle1 = new THREE.Mesh(particleGeometry, particleMaterial1);
+    const particle1 = new THREE.Mesh(particle1Geometry, particle1Material);
     particle1.position.x = -settings.particleDistance/2;
     scene.add(particle1);
     animationObjects.push(particle1);
     
-    const particleMaterial2 = new THREE.MeshPhysicalMaterial({ 
+    const particle2Geometry = new THREE.SphereGeometry(settings.particleSize, 32, 32);
+    const particle2Material = new THREE.MeshPhongMaterial({ 
         color: 0x4cc9f0,
         emissive: 0x4cc9f0,
-        emissiveIntensity: 0.5,
-        roughness: 0.2,
-        metalness: 0.7,
-        clearcoat: 0.8
+        emissiveIntensity: 0.5
     });
-    const particle2 = new THREE.Mesh(particleGeometry.clone(), particleMaterial2);
+    const particle2 = new THREE.Mesh(particle2Geometry, particle2Material);
     particle2.position.x = settings.particleDistance/2;
     scene.add(particle2);
     animationObjects.push(particle2);
     
-    // Create vibrant quantum connection
-    const connectionPoints = 100;
-    const connectionGeometry = new THREE.BufferGeometry();
-    const connectionPositions = new Float32Array(connectionPoints * 3);
-    
-    for (let i = 0; i < connectionPoints; i++) {
-        const t = i / (connectionPoints - 1);
-        connectionPositions[i * 3] = THREE.MathUtils.lerp(particle1.position.x, particle2.position.x, t);
-        connectionPositions[i * 3 + 1] = 0;
-        connectionPositions[i * 3 + 2] = 0;
-    }
-    
-    connectionGeometry.setAttribute('position', new THREE.BufferAttribute(connectionPositions, 3));
-    
-    const connectionMaterial = new THREE.LineBasicMaterial({ 
+    // Create connection line
+    const lineMaterial = new THREE.LineBasicMaterial({ 
         color: 0x7209b7,
         transparent: true,
-        opacity: 0.7,
-        linewidth: 2
+        opacity: 0.6
     });
-    const connectionLine = new THREE.Line(connectionGeometry, connectionMaterial);
-    scene.add(connectionLine);
-    animationObjects.push(connectionLine);
-    
-    // Add glowing orbitals to each particle
-    const orbit1 = createGlowingOrbital(0xf72585);
-    orbit1.position.copy(particle1.position);
-    scene.add(orbit1);
-    animationObjects.push(orbit1);
-    
-    const orbit2 = createGlowingOrbital(0x4cc9f0);
-    orbit2.position.copy(particle2.position);
-    scene.add(orbit2);
-    animationObjects.push(orbit2);
+    const lineGeometry = new THREE.BufferGeometry().setFromPoints([
+        particle1.position,
+        particle2.position
+    ]);
+    const line = new THREE.Line(lineGeometry, lineMaterial);
+    scene.add(line);
+    animationObjects.push(line);
     
     // Create spinning arrows for each particle
     const arrowHelper1 = createSpinArrow(0xf72585);
@@ -187,50 +161,21 @@ function createEntanglementAnimation() {
     scene.add(arrowHelper2);
     animationObjects.push(arrowHelper2);
     
-    // Enhanced visual effects
-    const spinParticles1 = createSpinParticles(particle1.position, 0xf72585);
-    const spinParticles2 = createSpinParticles(particle2.position, 0x4cc9f0);
-    scene.add(spinParticles1);
-    scene.add(spinParticles2);
-    animationObjects.push(spinParticles1);
-    animationObjects.push(spinParticles2);
-    
     let spinDirection = 1;
     let time = 0;
     
-    // Enhanced controls interface
+    // Controls for spin direction
     const controlsDiv = document.getElementById('animation-controls');
     controlsDiv.innerHTML = `
-        <div class="control-group">
-            <button id="change-spin" class="fancy-button">
-                <span class="button-icon">↺</span>
-                Change Spin Direction
-            </button>
-        </div>
+        <button id="change-spin">Change Spin Direction</button>
         <div class="slider-control">
             <div class="slider-label">
                 <span>Rotation Speed</span>
-                <span id="speed-value">${settings.rotationSpeed.toFixed(3)}</span>
+                <span id="speed-value">0.01</span>
             </div>
             <input type="range" id="rotation-speed" min="0.001" max="0.05" step="0.001" value="${settings.rotationSpeed}">
         </div>
-        <div class="slider-control">
-            <div class="slider-label">
-                <span>Connection Strength</span>
-                <span id="connection-value">0.7</span>
-            </div>
-            <input type="range" id="connection-strength" min="0.1" max="1.0" step="0.1" value="0.7">
-        </div>
-        <div class="control-group">
-            <label class="checkbox-container">
-                <input type="checkbox" id="show-particles" checked>
-                <span class="checkmark"></span>
-                Show Particles
-            </label>
-        </div>
     `;
-    
-    // ... existing control event listeners ...
     
     document.getElementById('change-spin').addEventListener('click', () => {
         spinDirection *= -1;
@@ -241,17 +186,6 @@ function createEntanglementAnimation() {
         document.getElementById('speed-value').textContent = settings.rotationSpeed.toFixed(3);
     });
     
-    document.getElementById('connection-strength').addEventListener('input', (e) => {
-        const strength = parseFloat(e.target.value);
-        connectionMaterial.opacity = strength;
-        document.getElementById('connection-value').textContent = strength.toFixed(1);
-    });
-    
-    document.getElementById('show-particles').addEventListener('change', (e) => {
-        spinParticles1.visible = e.target.checked;
-        spinParticles2.visible = e.target.checked;
-    });
-    
     return {
         update: function() {
             time += 0.01;
@@ -260,161 +194,59 @@ function createEntanglementAnimation() {
             arrowHelper1.rotation.y += settings.rotationSpeed * spinDirection;
             arrowHelper2.rotation.y += settings.rotationSpeed * -spinDirection; // Opposite spin
             
-            // Rotate orbits
-            orbit1.rotation.z += settings.rotationSpeed * spinDirection * 0.5;
-            orbit1.rotation.x += settings.rotationSpeed * spinDirection * 0.3;
-            orbit2.rotation.z += settings.rotationSpeed * -spinDirection * 0.5;
-            orbit2.rotation.x += settings.rotationSpeed * -spinDirection * 0.3;
+            // Update connection line
+            lineGeometry.setFromPoints([
+                particle1.position,
+                particle2.position
+            ]);
+            lineGeometry.attributes.position.needsUpdate = true;
             
-            // Update quantum connection with wave effect
-            const positions = connectionGeometry.attributes.position.array;
-            for(let i = 0; i < connectionPoints; i++) {
-                const t = i / (connectionPoints - 1);
-                positions[i * 3] = THREE.MathUtils.lerp(particle1.position.x, particle2.position.x, t);
-                
-                // Add wave effect to the connection
-                const waveAmplitude = 0.2 * Math.sin(time * 2);
-                positions[i * 3 + 1] = Math.sin(t * Math.PI * 4 + time * 3) * waveAmplitude;
-                positions[i * 3 + 2] = Math.cos(t * Math.PI * 4 + time * 3) * waveAmplitude;
-            }
-            connectionGeometry.attributes.position.needsUpdate = true;
-            
-            // Update spin particles rotation
-            spinParticles1.rotation.y += settings.rotationSpeed * spinDirection;
-            spinParticles2.rotation.y += settings.rotationSpeed * -spinDirection;
-            
-            // Pulse effect on particles
-            const pulse = (Math.sin(time * 2) + 1) * 0.1 + 0.9;
-            particle1.scale.set(pulse, pulse, pulse);
-            particle2.scale.set(pulse, pulse, pulse);
-            
-            // Update connection line appearance
-            connectionMaterial.color.setHSL(
-                (Math.sin(time * 0.2) * 0.1 + 0.7) % 1.0, 
-                0.8, 
-                0.5
-            );
+            // Add subtle wave effect to the connecting line
+            lineMaterial.opacity = 0.4 + 0.3 * Math.sin(time * 5);
         },
         cleanup: function() {
-            // Additional cleanup
+            // Additional cleanup if needed
         }
     };
 }
 
-// Helper to create glowing orbital effect
-function createGlowingOrbital(color) {
-    const orbital = new THREE.Group();
-    
-    // Create orbital rings
-    for (let i = 0; i < 3; i++) {
-        const ringGeometry = new THREE.TorusGeometry(0.8 + i * 0.2, 0.02, 16, 50);
-        const ringMaterial = new THREE.MeshBasicMaterial({
-            color: color,
-            transparent: true,
-            opacity: 0.5 - i * 0.1,
-            side: THREE.DoubleSide
-        });
-        const ring = new THREE.Mesh(ringGeometry, ringMaterial);
-        ring.rotation.x = Math.PI / 2 + i * Math.PI / 4;
-        ring.rotation.y = i * Math.PI / 3;
-        orbital.add(ring);
-    }
-    
-    return orbital;
-}
-
-// Helper to create spin particles
-function createSpinParticles(position, color) {
-    const particlesGroup = new THREE.Group();
-    particlesGroup.position.copy(position);
-    
-    const particleCount = 20;
-    for (let i = 0; i < particleCount; i++) {
-        const size = 0.05 + Math.random() * 0.05;
-        const geometry = new THREE.IcosahedronGeometry(size, 0);
-        const material = new THREE.MeshBasicMaterial({
-            color: color,
-            transparent: true,
-            opacity: 0.6
-        });
-        
-        const particle = new THREE.Mesh(geometry, material);
-        
-        // Position in a sphere around the main particle
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos(2 * Math.random() - 1);
-        const radius = 0.6 + Math.random() * 0.4;
-        
-        particle.position.set(
-            radius * Math.sin(phi) * Math.cos(theta),
-            radius * Math.sin(phi) * Math.sin(theta), 
-            radius * Math.cos(phi)
-        );
-        
-        particlesGroup.add(particle);
-    }
-    
-    return particlesGroup;
+function createSpinArrow(color) {
+    const dir = new THREE.Vector3(0, 1, 0);
+    dir.normalize();
+    const origin = new THREE.Vector3(0, 0, 0);
+    const length = 1;
+    const arrowHelper = new THREE.ArrowHelper(dir, origin, length, color, 0.2, 0.1);
+    return arrowHelper;
 }
 
 // Particle Creation Animation (Verse 2)
 function createParticleCreationAnimation() {
     const settings = animationSettings.particleCreation;
     
-    // Create energy field
-    const fieldGeometry = new THREE.PlaneGeometry(20, 10, 50, 25);
-    const fieldMaterial = new THREE.ShaderMaterial({
-        uniforms: {
-            time: { value: 0 },
-            colorA: { value: new THREE.Color(0x4cc9f0) },
-            colorB: { value: new THREE.Color(0x7209b7) },
-            amplitude: { value: settings.waveAmplitude / 100 }
-        },
-        vertexShader: `
-            uniform float time;
-            uniform float amplitude;
-            varying vec2 vUv;
-            
-            void main() {
-                vUv = uv;
-                vec3 pos = position;
-                
-                // Create wave effect
-                float wave = sin(pos.x * 0.5 + time * 2.0) * cos(pos.x * 0.2 + time) * amplitude * 3.0;
-                pos.y += wave;
-                
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-            }
-        `,
-        fragmentShader: `
-            uniform vec3 colorA;
-            uniform vec3 colorB;
-            uniform float time;
-            varying vec2 vUv;
-            
-            void main() {
-                float intensity = abs(sin(vUv.y * 10.0 + time));
-                vec3 color = mix(colorA, colorB, vUv.y + sin(time * 0.5) * 0.2);
-                gl_FragColor = vec4(color, intensity * 0.8);
-            }
-        `,
+    // Create energy wave
+    const wavePoints = [];
+    const waveSegments = 50;
+    
+    for (let i = 0; i < waveSegments; i++) {
+        const x = (i / (waveSegments - 1) * 20) - 10;
+        wavePoints.push(new THREE.Vector3(x, 0, 0));
+    }
+    
+    const waveGeometry = new THREE.BufferGeometry().setFromPoints(wavePoints);
+    const waveMaterial = new THREE.LineBasicMaterial({ 
+        color: 0x4cc9f0,
         transparent: true,
-        side: THREE.DoubleSide
+        opacity: 0.8
     });
+    const waveLine = new THREE.Line(waveGeometry, waveMaterial);
+    scene.add(waveLine);
+    animationObjects.push(waveLine);
     
-    const energyField = new THREE.Mesh(fieldGeometry, fieldMaterial);
-    energyField.rotation.x = Math.PI / 2;
-    scene.add(energyField);
-    animationObjects.push(energyField);
-    
-    // Particle system with improved visuals
+    // Particle system
     const particles = [];
     const particleGroup = new THREE.Group();
     scene.add(particleGroup);
     animationObjects.push(particleGroup);
-    
-    // Enhanced particles with glow effect
-    const particleTexture = new THREE.TextureLoader().load('https://threejs.org/examples/textures/sprites/spark1.png');
     
     // Controls
     const controlsDiv = document.getElementById('animation-controls');
@@ -451,9 +283,15 @@ function createParticleCreationAnimation() {
         update: function() {
             time += 0.02;
             
-            // Update shader uniforms
-            fieldMaterial.uniforms.time.value = time;
-            fieldMaterial.uniforms.amplitude.value = settings.waveAmplitude / 100;
+            // Update wave
+            const positions = waveGeometry.attributes.position.array;
+            for (let i = 0; i < waveSegments; i++) {
+                const x = (i / (waveSegments - 1) * 20) - 10;
+                const y = Math.sin(time + i * 0.2) * (settings.waveAmplitude / 100) * 3;
+                positions[i * 3] = x;
+                positions[i * 3 + 1] = y;
+            }
+            waveGeometry.attributes.position.needsUpdate = true;
             
             // Create new particles based on energy level
             if (Math.random() < settings.energyLevel / 1000 && particles.length < settings.particleCount) {
@@ -493,9 +331,9 @@ function createParticleCreationAnimation() {
                 // Handle particle lifetime
                 if (particle.userData.lifetime <= 0) {
                     particleGroup.remove(particle);
-                    particles.splice(i, 1);
                     particle.geometry.dispose();
                     particle.material.dispose();
+                    particles.splice(i, 1);
                 } else if (particle.userData.lifetime < 1) {
                     particle.material.opacity = particle.userData.lifetime;
                 }
@@ -1459,14 +1297,7 @@ function createAnnihilationAnimation() {
         
         const trailParticle = new THREE.Mesh(trailGeometry, trailMaterial);
         trailParticle.position.copy(sourceParticle.position);
-        
-        // Random direction outward
-        const angle = Math.random() * Math.PI * 2;
-        trailParticle.userData.velocity = new THREE.Vector3(
-            Math.cos(angle) * settings.photonSpeed,
-            Math.sin(angle) * settings.photonSpeed,
-            (Math.random() - 0.5) * settings.photonSpeed * 0.5
-        );
+        trailParticle.userData.creationTime = Date.now();
         
         trailGroup.add(trailParticle);
         
@@ -1841,12 +1672,3 @@ function createMeasurementAnimation() {
     };
 }
 
-// Helper function to create spin arrow
-function createSpinArrow(color) {
-    const dir = new THREE.Vector3(0, 1, 0);
-    dir.normalize();
-    const origin = new THREE.Vector3(0, 0, 0);
-    const length = 1;
-    const arrowHelper = new THREE.ArrowHelper(dir, origin, length, color, 0.2, 0.1);
-    return arrowHelper;
-}

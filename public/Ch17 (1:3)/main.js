@@ -10,10 +10,12 @@ import { initVerse8 } from './animations/verse8.js';
 import { initVerse9 } from './animations/verse9.js';
 import { initVerse10 } from './animations/verse10.js';
 import { initVerse11 } from './animations/verse11.js';
+import { setupZoomAndPan } from './controls-utils.js';
 
 let currentVerse = 1;
 let currentAnimation = null;
 let resizeTimeout;
+let cameraControls = null;
 
 const verseInitializers = [
     initVerse1, initVerse2, initVerse3, initVerse4, initVerse5,
@@ -22,20 +24,26 @@ const verseInitializers = [
 
 function updateVerseContent(verse) {
     document.querySelector('.verse-text').textContent = `Verse ${verse.number}: ${verse.text}`;
-    document.querySelector('.madhyamaka-concept').textContent = `Madhyamaka Concept: ${verse.madhyamakaConcept}`;
-    document.querySelector('.quantum-parallel').textContent = `Quantum Physics Parallel: ${verse.quantumParallel}`;
-    document.querySelector('.accessible-explanation').textContent = `Accessible Explanation: ${verse.accessibleExplanation}`;
-    document.getElementById('verse-indicator').textContent = `Verse ${verse.number}/${verses.length}`;
+    document.querySelector('.madhyamaka-concept').textContent = verse.madhyamakaConcept;
+    document.querySelector('.quantum-parallel').textContent = verse.quantumParallel;
+    document.querySelector('.accessible-explanation').textContent = verse.accessibleExplanation;
     
-    // Update navigation buttons
-    document.getElementById('prev-verse').disabled = verse.number === 1;
-    document.getElementById('next-verse').disabled = verse.number === verses.length;
+    // Update active verse button
+    document.querySelectorAll('.verse-nav-button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`.verse-nav-button[data-verse="${verse.number}"]`).classList.add('active');
 }
 
 function loadVerse(verseNumber) {
     // Clean up current animation if exists
     if (currentAnimation && currentAnimation.cleanup) {
         currentAnimation.cleanup();
+    }
+    
+    // Clean up camera controls if exists
+    if (cameraControls && cameraControls.cleanup) {
+        cameraControls.cleanup();
     }
     
     // Clear animation container
@@ -53,6 +61,20 @@ function loadVerse(verseNumber) {
     if (verseInitializers[index]) {
         currentAnimation = verseInitializers[index](container, interactionControls);
         updateVerseContent(verses[index]);
+        
+        // Add camera controls reset button
+        const resetButton = document.createElement('button');
+        resetButton.textContent = 'Reset View';
+        resetButton.className = 'reset-view-button';
+        resetButton.addEventListener('click', () => {
+            if (cameraControls) cameraControls.reset();
+        });
+        interactionControls.appendChild(resetButton);
+        
+        // Setup zoom and pan controls
+        if (currentAnimation && currentAnimation.camera && currentAnimation.renderer) {
+            cameraControls = setupZoomAndPan(currentAnimation.camera, currentAnimation.renderer);
+        }
     }
 }
 
@@ -65,35 +87,75 @@ function handleResize() {
     }, 250);
 }
 
+function initializeVerseNavigation() {
+    const navContainer = document.getElementById('verse-nav');
+    navContainer.innerHTML = '';
+    
+    verses.forEach(verse => {
+        const button = document.createElement('button');
+        button.className = 'verse-nav-button';
+        button.dataset.verse = verse.number;
+        button.textContent = verse.number;
+        
+        if (verse.number === currentVerse) {
+            button.classList.add('active');
+        }
+        
+        button.addEventListener('click', () => {
+            loadVerse(verse.number);
+        });
+        
+        navContainer.appendChild(button);
+    });
+}
+
+function initializeSidebarPanel() {
+    const panel = document.querySelector('.sidebar-panel');
+    const toggleButton = document.getElementById('panel-toggle');
+    
+    // Toggle panel expanded/collapsed state
+    toggleButton.addEventListener('click', () => {
+        panel.classList.toggle('collapsed');
+    });
+    
+    // Section collapsing functionality
+    const sectionHeaders = document.querySelectorAll('.section-header');
+    sectionHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const content = header.nextElementSibling;
+            const toggleIcon = header.querySelector('.toggle-icon');
+            
+            content.classList.toggle('collapsed');
+            toggleIcon.textContent = content.classList.contains('collapsed') ? '►' : '▼';
+        });
+    });
+    
+    // Mobile panel functionality
+    if (window.innerWidth < 768) {
+        // Start with panel active on mobile
+        panel.classList.add('active');
+        
+        // For mobile, toggle button should show/hide panel
+        toggleButton.addEventListener('click', () => {
+            panel.classList.toggle('active');
+        });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize verse navigation buttons
+    initializeVerseNavigation();
+    
+    // Initialize sidebar panel functionality
+    initializeSidebarPanel();
+    
+    // Default state: explanation expanded, controls collapsed
+    document.getElementById('explanation-header').querySelector('.toggle-icon').textContent = '▼';
+    document.getElementById('controls-header').querySelector('.toggle-icon').textContent = '►';
+    document.getElementById('animation-controls').classList.add('collapsed');
+    
     // Initialize with first verse
     loadVerse(1);
-    
-    // Set up event listeners
-    document.getElementById('prev-verse').addEventListener('click', () => {
-        if (currentVerse > 1) {
-            loadVerse(currentVerse - 1);
-        }
-    });
-    
-    document.getElementById('next-verse').addEventListener('click', () => {
-        if (currentVerse < verses.length) {
-            loadVerse(currentVerse + 1);
-        }
-    });
-    
-    document.getElementById('toggle-text').addEventListener('click', () => {
-        const button = document.getElementById('toggle-text');
-        const container = document.querySelector('.controls-container');
-        
-        if (container.classList.contains('text-hidden')) {
-            container.classList.remove('text-hidden');
-            button.textContent = 'Hide Text';
-        } else {
-            container.classList.add('text-hidden');
-            button.textContent = 'Show Text';
-        }
-    });
     
     // Handle window resize
     window.addEventListener('resize', handleResize);

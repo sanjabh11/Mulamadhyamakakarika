@@ -5,6 +5,7 @@
 
 # Next.js build output
 /.next/
+/backup/
 /out/
 
 # Build files

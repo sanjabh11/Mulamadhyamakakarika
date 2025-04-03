@@ -17,13 +17,42 @@ const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 const interactBtn = document.getElementById('interact-btn');
 const resetBtn = document.getElementById('reset-btn');
-const toggleTextBtn = document.getElementById('toggle-text');
-const textPanel = document.getElementById('text-panel');
-const verseNumberDisplay = document.getElementById('verse-number');
 const verseTitleElement = document.getElementById('verse-title');
 const madhyamakaConceptElement = document.getElementById('madhyamaka-concept');
 const quantumPhysicsElement = document.getElementById('quantum-physics');
 const accessibleExplanationElement = document.getElementById('accessible-explanation');
+const verseNumberDisplay = document.getElementById('verse-number');
+const panelToggle = document.getElementById('panel-toggle');
+const sidePanel = document.getElementById('side-panel');
+const verseButtons = document.querySelectorAll('.verse-btn');
+const sectionHeaders = document.querySelectorAll('.section-header');
+
+// Add event listeners for panel interactions
+panelToggle.addEventListener('click', () => {
+    sidePanel.classList.toggle('collapsed');
+});
+
+sectionHeaders.forEach(header => {
+    header.addEventListener('click', () => {
+        header.classList.toggle('collapsed');
+        const content = header.nextElementSibling;
+        content.classList.toggle('collapsed');
+    });
+});
+
+verseButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const verseId = parseInt(button.getAttribute('data-verse'));
+        if (verseId !== currentVerse) {
+            currentVerse = verseId;
+            loadVerseContent(currentVerse);
+            
+            // Update active button
+            verseButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+        }
+    });
+});
 
 // Initialize three.js scene
 function initScene() {
@@ -146,6 +175,16 @@ function loadVerseContent(verseId) {
     quantumPhysicsElement.textContent = verse.quantumPhysics;
     accessibleExplanationElement.textContent = verse.explanation;
     verseNumberDisplay.textContent = `Verse ${verseId}/10`;
+    
+    // Update active verse button
+    verseButtons.forEach(btn => {
+        const btnVerseId = parseInt(btn.getAttribute('data-verse'));
+        if (btnVerseId === verseId) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
     
     // Clear previous animation
     currentAnimation = null;
@@ -392,7 +431,7 @@ function createEntangledParticles() {
         opacity: 0.8
     });
     const arrow1 = new THREE.Mesh(arrow1Geometry, arrow1Material);
-    arrow1.position.set(-particleDistance/2, 0.7, 0);
+    arrow1.position.set(0, 0.7, 0);
     arrow1.rotation.z = Math.PI;
     particle1.add(arrow1);
     
@@ -694,7 +733,7 @@ function createUncertaintyPrinciple() {
             0,
             Math.sin(angle) * 1.5
         );
-        arrow.rotation.x = Math.PI / 2;
+        arrow.rotation.x = Math.PI/2;
         arrow.rotation.y = angle;
         
         // Cone at arrow end
@@ -1977,18 +2016,35 @@ nextBtn.addEventListener('click', function() {
     }
 });
 
-// Toggle text panel
-toggleTextBtn.addEventListener('click', function() {
-    textPanel.classList.toggle('hidden');
-    toggleTextBtn.textContent = textPanel.classList.contains('hidden') ? 'Show Text' : 'Hide Text';
-});
-
 // Initialize and start
 function init() {
     initScene();
     loadVerseContent(currentVerse);
+    
+    // Set initial states
+    if (window.innerWidth < 768) {
+        // On mobile, collapse sections by default
+        sectionHeaders.forEach(header => {
+            header.classList.add('collapsed');
+            header.nextElementSibling.classList.add('collapsed');
+        });
+    } else {
+        // On desktop, expand explanation but collapse controls
+        const explanationHeader = document.querySelector('#explanation-section .section-header');
+        const controlsHeader = document.querySelector('#controls-section .section-header');
+        
+        if (controlsHeader) {
+            controlsHeader.classList.add('collapsed');
+            controlsHeader.nextElementSibling.classList.add('collapsed');
+        }
+        
+        if (explanationHeader) {
+            explanationHeader.classList.remove('collapsed');
+            explanationHeader.nextElementSibling.classList.remove('collapsed');
+        }
+    }
+    
     animate();
 }
 
 init();
-

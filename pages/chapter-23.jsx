@@ -187,7 +187,7 @@ export default function Chapter23() {
               <a href="/Ch23 (1:2)/index.html" className={styles.visualizeButton}>
                 View Interactive Animations (Part 1)
               </a>
-              <a href="/Ch 23 (2:2)/index.html" className={styles.visualizeButton}>
+              <a href="/ch23_part2/index.html" className={styles.visualizeButton}>
                 View Interactive Animations (Part 2)
               </a>
             </div>
@@ -216,7 +216,7 @@ export default function Chapter23() {
                       </Link>
                     )}
                     {verse.number > 12 && verse.number <= 24 && (
-                      <Link href={`/Ch 23 (2:2)/index.html#verse-${verse.number}`}>
+                      <Link href={`/ch23_part2/index.html#verse-${verse.number}`}>
                         View in Part 2
                       </Link>
                     )}

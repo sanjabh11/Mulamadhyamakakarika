@@ -4,6 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chapter 16 - Investigation of Bondage and Freedom</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script type="importmap">
         {
             "imports": {
@@ -16,46 +17,73 @@
 </head>
 <body>
     <div id="app">
-        <div id="canvas-container"></div>
-        
-        <div id="verse-content">
-            <h1 id="chapter-title">Chapter 16 - Investigation of Bondage and Freedom</h1>
-            <h2 id="verse-title"></h2>
-            
-            <div id="text-panel">
-                <div id="concept-container">
-                    <h3>Madhyamaka Concept</h3>
-                    <p id="madhyamaka-concept"></p>
+        <div id="side-panel">
+            <button id="panel-toggle"><i class="fas fa-chevron-left"></i></button>
+            <div id="panel-content">
+                <h1 id="chapter-title">Chapter 16 - Investigation of Bondage and Freedom</h1>
+                
+                <div id="verse-navigation">
+                    <button class="verse-btn active" data-verse="1">1</button>
+                    <button class="verse-btn" data-verse="2">2</button>
+                    <button class="verse-btn" data-verse="3">3</button>
+                    <button class="verse-btn" data-verse="4">4</button>
+                    <button class="verse-btn" data-verse="5">5</button>
+                    <button class="verse-btn" data-verse="6">6</button>
+                    <button class="verse-btn" data-verse="7">7</button>
+                    <button class="verse-btn" data-verse="8">8</button>
+                    <button class="verse-btn" data-verse="9">9</button>
+                    <button class="verse-btn" data-verse="10">10</button>
                 </div>
                 
-                <div id="physics-container">
-                    <h3>Quantum Physics Parallel</h3>
-                    <p id="quantum-physics"></p>
+                <div id="explanation-section" class="collapsible-section">
+                    <div class="section-header">
+                        <span>Verse Explanation</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="section-content">
+                        <h2 id="verse-title"></h2>
+                        
+                        <div class="subsection">
+                            <h3>Madhyamaka Concept</h3>
+                            <p id="madhyamaka-concept"></p>
+                        </div>
+                        
+                        <div class="subsection">
+                            <h3>Quantum Physics Parallel</h3>
+                            <p id="quantum-physics"></p>
+                        </div>
+                        
+                        <div class="subsection">
+                            <h3>Accessible Explanation</h3>
+                            <p id="accessible-explanation"></p>
+                        </div>
+                    </div>
                 </div>
                 
-                <div id="explanation-container">
-                    <h3>Accessible Explanation</h3>
-                    <p id="accessible-explanation"></p>
-                </div>
-            </div>
-            
-            <div id="controls-panel">
-                <div id="navigation">
-                    <button id="prev-btn">Previous Verse</button>
-                    <span id="verse-number">Verse 1/10</span>
-                    <button id="next-btn">Next Verse</button>
-                </div>
-                
-                <div id="interaction-controls">
-                    <button id="interact-btn">Interact</button>
-                    <button id="reset-btn">Reset</button>
-                </div>
-                
-                <div id="display-controls">
-                    <button id="toggle-text">Hide Text</button>
+                <div id="controls-section" class="collapsible-section">
+                    <div class="section-header">
+                        <span>Animation Controls</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="section-content">
+                        <div id="controls-panel">
+                            <div id="navigation">
+                                <button id="prev-btn">Previous Verse</button>
+                                <span id="verse-number">Verse 1/10</span>
+                                <button id="next-btn">Next Verse</button>
+                            </div>
+                            
+                            <div id="interaction-controls">
+                                <button id="interact-btn">Interact</button>
+                                <button id="reset-btn">Reset</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+        
+        <div id="canvas-container"></div>
     </div>
 
     <script type="module" src="main.js"></script>

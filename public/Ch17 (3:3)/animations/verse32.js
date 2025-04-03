@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { createCreationTree } from './verse32-tree.js';
 
 export default function verse32Animation(container) {
     // Remove any existing canvases
@@ -51,12 +50,8 @@ export default function verse32Animation(container) {
         transmission: 0.3
     });
     const agent = new THREE.Mesh(agentGeometry, agentMaterial);
-    // Initialize userData for the agent immediately
-    agent.userData = {
-        originalPosition: agent.position.clone(),
-        children: [],
-        level: 0
-    };
+    // Initialize userData for the agent, as it acts as the root parent
+    agent.userData = { children: [], originalPosition: agent.position.clone() };
     rootGroup.add(agent);
     
     // Create action wave patterns (like ripples emanating from agent)
@@ -87,11 +82,111 @@ export default function verse32Animation(container) {
         actionWavesGroup.add(wave);
     }
     
+    // Create cascade of self-referenced creations
     const creationsCascadeGroup = new THREE.Group();
     rootGroup.add(creationsCascadeGroup);
-
-    // Create the self-referential creation tree by delegating to the new module function.
-    createCreationTree(creationsCascadeGroup, agent, 3);
+    
+    // Build a tree-like structure of creations
+    function createCreationTree(parent, position, level, maxLevel, angleOffset, children) {
+        if (level > maxLevel) return;
+        
+        // Create a sphere for this creation
+        const radius = 0.5 / (level * 0.7);
+        const segments = Math.max(8, 16 - level * 2);
+        
+        const geometry = new THREE.IcosahedronGeometry(radius, 0);
+        const material = new THREE.MeshPhysicalMaterial({
+            color: level === 1 ? 0xd76d77 : (level === 2 ? 0xe17b93 : 0xffaf7b),
+            emissive: level === 1 ? 0xd76d77 : (level === 2 ? 0xe17b93 : 0xffaf7b),
+            emissiveIntensity: 0.3,
+            metalness: 0.7 - (level * 0.1),
+            roughness: 0.2 + (level * 0.1),
+            clearcoat: 1.0 - (level * 0.2),
+            clearcoatRoughness: 0.2 + (level * 0.1),
+            transparent: true,
+            opacity: 0.9 - (level * 0.1)
+        });
+        
+        const creation = new THREE.Mesh(geometry, material);
+        creation.position.copy(position);
+        
+        // Add metadata for animation
+        creation.userData = {
+            level: level,
+            parent: parent,
+            children: [],
+            originalPosition: position.clone(),
+            pulsePhase: Math.random() * Math.PI * 2,
+            orbitRadius: parent ? position.distanceTo(parent.position) : 0,
+            orbitSpeed: 0.3 / level,
+            orbitAngle: angleOffset || 0
+        };
+        
+        if (parent) {
+            parent.userData.children.push(creation);
+        }
+        
+        creationsCascadeGroup.add(creation);
+        
+        // If there's a parent, connect with line
+        if (parent) {
+            const lineGeometry = new THREE.BufferGeometry().setFromPoints([
+                parent.position,
+                position
+            ]);
+            const lineMaterial = new THREE.LineBasicMaterial({
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0.3 - (level * 0.05)
+            });
+            const line = new THREE.Line(lineGeometry, lineMaterial);
+            
+            // Add metadata for animation
+            line.userData = {
+                startObject: parent,
+                endObject: creation,
+                pulsePhase: Math.random() * Math.PI * 2
+            };
+            
+            creationsCascadeGroup.add(line);
+        }
+        
+        // Create child nodes
+        if (children > 0) {
+            for (let i = 0; i < children; i++) {
+                const angle = (i / children) * Math.PI * 2;
+                const distance = 1.2 - (level * 0.1);
+                
+                const childPosition = new THREE.Vector3(
+                    position.x + Math.cos(angle) * distance,
+                    position.y + 0.2,
+                    position.z + Math.sin(angle) * distance
+                );
+                
+                // Each level has fewer children
+                const nextChildren = Math.max(1, children - 1);
+                createCreationTree(creation, childPosition, level + 1, maxLevel, angle, nextChildren);
+            }
+        }
+        
+        return creation;
+    }
+    
+    // Create the first level of creations directly from agent
+    const firstLevelCount = 3;
+    
+    for (let i = 0; i < firstLevelCount; i++) {
+        const angle = (i / firstLevelCount) * Math.PI * 2;
+        const distance = 2;
+        
+        const position = new THREE.Vector3(
+            Math.cos(angle) * distance,
+            0,
+            Math.sin(angle) * distance
+        );
+        
+        createCreationTree(agent, position, 1, 4, angle, 3);
+    }
     
     // Create energy field connecting all creations
     const energyParticlesCount = 200;
@@ -204,14 +299,8 @@ export default function verse32Animation(container) {
                     obj.position.x = parent.position.x + Math.cos(userData.orbitAngle) * radius;
                     obj.position.z = parent.position.z + Math.sin(userData.orbitAngle) * radius;
                     
-                    // Maintain Y offset, with a check for parent's original position
-                    if (parent.userData && parent.userData.originalPosition) {
-                        obj.position.y = parent.position.y + (userData.originalPosition.y - parent.userData.originalPosition.y);
-                    } else {
-                        // Fallback or log warning if parent original position is missing
-                        obj.position.y = parent.position.y + userData.originalPosition.y;
-                        console.warn(`Parent object (level ${parent.userData?.level}) missing originalPosition in userData for child (level ${userData.level})`);
-                    }
+                    // Maintain Y offset
+                    obj.position.y = parent.position.y + (userData.originalPosition.y - parent.userData.originalPosition.y);
                 }
                 
                 // Pulse size based on level
@@ -223,23 +312,21 @@ export default function verse32Animation(container) {
                 obj.rotation.y = elapsedTime * 0.7 / userData.level;
             } else if (obj instanceof THREE.Line) {
                 // Update line connecting creations
-                if (obj.userData && obj.userData.startObject && obj.userData.endObject) {
-                    const start = obj.userData.startObject.position;
-                    const end = obj.userData.endObject.position;
-                    
-                    const positions = obj.geometry.attributes.position.array;
-                    positions[0] = start.x;
-                    positions[1] = start.y;
-                    positions[2] = start.z;
-                    positions[3] = end.x;
-                    positions[4] = end.y;
-                    positions[5] = end.z;
-                    
-                    obj.geometry.attributes.position.needsUpdate = true;
-                    
-                    // Pulse line opacity
-                    obj.material.opacity = 0.2 + 0.1 * Math.sin(elapsedTime * 2 + obj.userData.pulsePhase);
-                }
+                const start = obj.userData.startObject.position;
+                const end = obj.userData.endObject.position;
+                
+                const positions = obj.geometry.attributes.position.array;
+                positions[0] = start.x;
+                positions[1] = start.y;
+                positions[2] = start.z;
+                positions[3] = end.x;
+                positions[4] = end.y;
+                positions[5] = end.z;
+                
+                obj.geometry.attributes.position.needsUpdate = true;
+                
+                // Pulse line opacity
+                obj.material.opacity = 0.2 + 0.1 * Math.sin(elapsedTime * 2 + obj.userData.pulsePhase);
             }
         });
         

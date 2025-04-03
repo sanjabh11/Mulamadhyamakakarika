@@ -16,16 +16,68 @@
 </head>
 <body>
     <div id="app">
+        <div id="left-panel" class="panel">
+            <button class="panel-toggle">
+                <span class="toggle-icon">◀</span>
+            </button>
+            <div class="panel-content">
+                <h1 class="chapter-title">Chapter 10 Part 1 - Investigation of Fire and Firewood</h1>
+                
+                <div class="verse-nav" id="verse-navigation"></div>
+                
+                <div class="collapsible-section expanded" id="verse-explanation-section">
+                    <div class="section-header">
+                        <h3>Verse Explanation</h3>
+                        <span class="toggle-indicator">▼</span>
+                    </div>
+                    <div class="section-content">
+                        <div id="verse-text"></div>
+                        
+                        <div class="subsection">
+                            <h4 class="subsection-title">Madhyamaka Concept</h4>
+                            <div id="madhyamaka-concept" class="subsection-text"></div>
+                        </div>
+                        
+                        <div class="subsection">
+                            <h4 class="subsection-title">Quantum Physics Parallel</h4>
+                            <div id="quantum-parallel" class="subsection-text"></div>
+                        </div>
+                        
+                        <div class="subsection">
+                            <h4 class="subsection-title">Accessible Explanation</h4>
+                            <div id="accessible-explanation" class="subsection-text"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="collapsible-section" id="animation-controls-section">
+                    <div class="section-header">
+                        <h3>Animation Controls</h3>
+                        <span class="toggle-indicator">►</span>
+                    </div>
+                    <div class="section-content">
+                        <div id="animation-controls"></div>
+                        <div class="navigation">
+                            <button id="prev-verse">Previous Verse</button>
+                            <span id="verse-indicator">Verse 1/8</span>
+                            <button id="next-verse">Next Verse</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <div id="animation-container"></div>
         
+        <!-- Keep the old panels for backward compatibility -->
         <div id="controls-panel" class="panel">
             <h3>Controls</h3>
             <div class="controls-content">
-                <div id="animation-controls"></div>
+                <div id="animation-controls-legacy"></div>
                 <div class="navigation">
-                    <button id="prev-verse">Previous Verse</button>
-                    <span id="verse-indicator">Verse 1/8</span>
-                    <button id="next-verse">Next Verse</button>
+                    <button id="prev-verse-legacy">Previous Verse</button>
+                    <span id="verse-indicator-legacy">Verse 1/8</span>
+                    <button id="next-verse-legacy">Next Verse</button>
                 </div>
                 <button id="toggle-text">Hide Text</button>
                 <button id="toggle-controls">Hide Controls</button>
@@ -35,14 +87,10 @@
         <div id="text-panel" class="panel">
             <h2 id="verse-title">Chapter 10 Part 1 - Investigation of Fire and Firewood</h2>
             <div class="text-content">
-                <div id="verse-text"></div>
-                <div id="madhyamaka-concept"></div>
-                <div id="quantum-parallel"></div>
-                <div id="accessible-explanation"></div>
-            </div>
-            <div class="navigation-links">
-                <a href="/chapter-10" class="back-link">← Back to Chapter Overview</a>
-                <a href="/Ch10 (2:2)/index.html" class="forward-link">Continue to Part 2 →</a>
+                <div id="verse-text-legacy"></div>
+                <div id="madhyamaka-concept-legacy"></div>
+                <div id="quantum-parallel-legacy"></div>
+                <div id="accessible-explanation-legacy"></div>
             </div>
         </div>
         

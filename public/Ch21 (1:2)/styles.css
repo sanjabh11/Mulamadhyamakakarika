@@ -1,0 +1,287 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000;
+    color: #fff;
+}
+
+#app {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+#scene-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Panel Styling */
+#panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 320px;
+    height: 100%;
+    background-color: rgba(20, 20, 40, 0.85);
+    backdrop-filter: blur(10px);
+    z-index: 10;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 20px rgba(100, 100, 255, 0.3);
+    border-right: 1px solid rgba(100, 100, 255, 0.3);
+}
+
+#panel.collapsed {
+    width: 40px;
+}
+
+#panel-toggle {
+    position: absolute;
+    top: 50%;
+    right: -20px;
+    width: 20px;
+    height: 60px;
+    background-color: rgba(80, 80, 200, 0.9);
+    color: white;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+    transform: translateY(-50%);
+    z-index: 11;
+    transition: transform 0.3s ease;
+}
+
+#panel-content {
+    position: relative;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px;
+    padding-right: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(100, 100, 255, 0.5) rgba(20, 20, 40, 0.3);
+}
+
+#panel-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+#panel-content::-webkit-scrollbar-track {
+    background: rgba(20, 20, 40, 0.3);
+}
+
+#panel-content::-webkit-scrollbar-thumb {
+    background-color: rgba(100, 100, 255, 0.5);
+    border-radius: 4px;
+}
+
+.chapter-title {
+    color: rgb(150, 150, 255);
+    font-size: 1.3rem;
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(100, 100, 255, 0.3);
+}
+
+/* Verse Navigation */
+#verse-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+.verse-button {
+    flex: 1;
+    min-width: 60px;
+    padding: 6px;
+    background-color: transparent;
+    color: white;
+    border: 1px solid rgba(100, 100, 255, 0.7);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background-color 0.2s ease;
+}
+
+.verse-button:hover {
+    background-color: rgba(100, 100, 255, 0.3);
+}
+
+.verse-button.active {
+    background-color: rgba(100, 100, 255, 0.7);
+    font-weight: bold;
+}
+
+/* Collapsible Sections */
+.collapsible-section {
+    margin-bottom: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(100, 100, 255, 0.3);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: rgba(80, 80, 200, 0.3);
+    color: rgb(150, 150, 255);
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.section-header:hover {
+    background-color: rgba(80, 80, 200, 0.5);
+}
+
+.toggle-icon {
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+}
+
+.section-header.collapsed .toggle-icon {
+    transform: rotate(-90deg);
+}
+
+.section-content {
+    padding: 15px;
+    background-color: rgba(40, 40, 70, 0.3);
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    overflow: hidden;
+}
+
+/* Verse Text and Subsections */
+.verse-text {
+    font-style: italic;
+    padding: 10px;
+    margin-bottom: 15px;
+    background-color: rgba(60, 60, 100, 0.3);
+    border-radius: 5px;
+    border-left: 3px solid rgb(100, 100, 255);
+}
+
+.subsection {
+    margin-bottom: 15px;
+}
+
+.subsection h3 {
+    color: rgb(120, 120, 255);
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.subsection p {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Controls */
+.interaction-controls {
+    background-color: rgba(50, 50, 90, 0.3);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.slider-container {
+    margin: 10px 0;
+}
+
+.slider-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+input[type="range"] {
+    width: 100%;
+    background: rgba(70, 70, 200, 0.3);
+    height: 8px;
+    border-radius: 4px;
+    -webkit-appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgb(100, 100, 255);
+    cursor: pointer;
+}
+
+button {
+    background-color: rgba(70, 70, 200, 0.7);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 5px;
+}
+
+button:hover {
+    background-color: rgba(90, 90, 220, 0.9);
+}
+
+button:disabled {
+    background-color: rgba(60, 60, 90, 0.4);
+    cursor: not-allowed;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    #panel {
+        width: 100%;
+        transform: translateX(0);
+        transition: transform 0.3s ease;
+    }
+    
+    #panel.collapsed {
+        width: 100%;
+        transform: translateX(calc(-100% + 40px));
+    }
+    
+    #panel-toggle {
+        right: 0;
+        border-radius: 0 5px 5px 0;
+    }
+    
+    .chapter-title {
+        font-size: 1.1rem;
+    }
+    
+    .subsection h3 {
+        font-size: 0.85rem;
+    }
+    
+    .subsection p {
+        font-size: 0.85rem;
+    }
+    
+    #explanation-content {
+        display: none;
+    }
+    
+    .section-header#explanation-header .toggle-icon {
+        transform: rotate(-90deg);
+    }
+}

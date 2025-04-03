@@ -2,8 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/": "pages/index.js",
-  "/chapter-18": "pages/chapter-18.js",
-  "/chapter-4": "pages/chapter-4.js",
-  "/chapter-6": "pages/chapter-6.js"
+  "/chapter-2": "pages/chapter-2.js",
+  "/chapter-23": "pages/chapter-23.js",
+  "/": "pages/index.js"
 }

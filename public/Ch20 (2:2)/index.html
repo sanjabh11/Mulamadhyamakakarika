@@ -19,42 +19,44 @@
         <div id="sceneContainer"></div>
         
         <div id="infoPanel">
-            <div class="header">
-                <h1>Chapter 20 - Investigation of Combination (Part 2/2)</h1>
-                <button id="toggleInfo" class="toggle-btn">Hide Info</button>
-            </div>
+            <button id="togglePanel" aria-label="Toggle Panel">
+                <span class="arrow">◀</span>
+            </button>
             
-            <div id="infoPanelContent">
-                <div class="verse-info">
-                    <h2>Verse <span id="verseNumber">13</span></h2>
-                    <p id="verseText"></p>
-                    
-                    <div class="concept-container">
-                        <div class="concept">
-                            <h3>Madhyamaka Concept</h3>
-                            <p id="madhyamakaConcept"></p>
-                        </div>
+            <div class="panel-content">
+                <div class="header">
+                    <h1>Chapter 20 - Investigation of Combination (Part 2/2)</h1>
+                </div>
+                
+                <div class="verse-navigation" id="verseNavigation"></div>
+                
+                <div class="collapsible-section" id="verseExplanationSection">
+                    <div class="section-header">
+                        <span>Verse Explanation</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="verse-text" id="verseText"></div>
                         
-                        <div class="concept">
-                            <h3>Quantum Physics Parallel</h3>
-                            <p id="quantumPhysics"></p>
-                        </div>
+                        <div class="concept-subtitle">Madhyamaka Concept</div>
+                        <p class="concept-text" id="madhyamakaConcept"></p>
                         
-                        <div class="concept">
-                            <h3>Accessible Explanation</h3>
-                            <p id="accessibleExplanation"></p>
-                        </div>
+                        <div class="concept-subtitle">Quantum Physics Parallel</div>
+                        <p class="concept-text" id="quantumPhysics"></p>
+                        
+                        <div class="concept-subtitle">Accessible Explanation</div>
+                        <p class="concept-text" id="accessibleExplanation"></p>
                     </div>
                 </div>
                 
-                <div class="controls">
-                    <h3>Interaction Controls</h3>
-                    <div id="controlPanel"></div>
-                </div>
-                
-                <div class="navigation">
-                    <button id="prevVerse" class="nav-btn">Previous Verse</button>
-                    <button id="nextVerse" class="nav-btn">Next Verse</button>
+                <div class="collapsible-section" id="controlsSection">
+                    <div class="section-header collapsed">
+                        <span>Animation Controls</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="section-content collapsed">
+                        <div id="controlPanel"></div>
+                    </div>
                 </div>
             </div>
         </div>

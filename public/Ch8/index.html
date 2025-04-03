@@ -17,34 +17,63 @@
 <body>
     <div id="scene-container"></div>
     
+    <!-- New Panel Layout -->
     <div id="content-panel">
-        <div id="verse-content">
-            <h1>Chapter 8 - Investigation of Act and Actor Verse Madhyamaka</h1>
-            <div id="verse-text"></div>
-        </div>
+        <button id="panel-toggle" aria-label="Toggle Panel">
+            <span class="icon">◀</span>
+        </button>
         
-        <div id="explanation-panel">
-            <div class="explanation-header">
-                <h3>Explanation</h3>
-                <button id="toggle-explanation">Hide</button>
-            </div>
-            <div id="explanation-content"></div>
-        </div>
-        
-        <div id="control-panel">
-            <div class="control-header">
-                <h3>Interactive Controls</h3>
-                <button id="toggle-controls">Hide</button>
-            </div>
-            <div id="controls-content"></div>
+        <div class="panel-content">
+            <h1 class="chapter-title">Chapter 8 - Investigation of Act and Actor</h1>
+            
             <div id="verse-navigation">
                 <button id="prev-verse" disabled>Previous</button>
                 <span id="verse-indicator">Verse 1/13</span>
                 <button id="next-verse">Next</button>
             </div>
-            <div class="back-link">
-                <a href="/chapter-8">← Back to Chapter Overview</a>
+            
+            <div class="collapsible-section" id="explanation-section">
+                <div class="section-header" aria-expanded="true">
+                    <h3>Verse Explanation</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content expanded">
+                    <div id="verse-text"></div>
+                    <div id="explanation-content"></div>
+                </div>
             </div>
+            
+            <div class="collapsible-section" id="controls-section">
+                <div class="section-header" aria-expanded="false">
+                    <h3>Animation Controls</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <div id="controls-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Original panels (hidden but kept for JS compatibility) -->
+    <div id="explanation-panel">
+        <div class="explanation-header">
+            <h3>Explanation</h3>
+            <button id="toggle-explanation">Hide</button>
+        </div>
+        <div id="explanation-content-original"></div>
+    </div>
+    
+    <div id="control-panel">
+        <div class="control-header">
+            <h3>Interactive Controls</h3>
+            <button id="toggle-controls">Hide</button>
+        </div>
+        <div id="controls-content-original"></div>
+        <div id="verse-indicator-original">Verse 1/13</div>
+        <div id="verse-navigation-original">
+            <button id="prev-verse-original" disabled>Previous</button>
+            <button id="next-verse-original">Next</button>
         </div>
     </div>
     

@@ -19,43 +19,50 @@
         <div id="animation-container"></div>
         
         <div id="controls-panel">
+            <button id="panel-toggle">◀</button>
             <div class="controls-header">
                 <h3>Chapter 22 - Investigation of Tathagata</h3>
-                <div class="toggle-buttons">
-                    <button id="toggle-text-btn" class="toggle-btn">Hide Text</button>
-                    <button id="toggle-controls-btn" class="toggle-btn">Hide Controls</button>
-                </div>
             </div>
             
             <div id="controls-content">
-                <div class="verse-navigation">
-                    <button id="prev-verse">Previous</button>
-                    <span id="current-verse">Verse 1/16</span>
-                    <button id="next-verse">Next</button>
+                <div class="verse-navigation" id="verse-navigation">
+                    <!-- Verse buttons will be dynamically inserted here -->
                 </div>
                 
-                <div class="animation-controls">
-                    <button id="restart-animation">Restart Animation</button>
-                    <button id="pause-animation">Pause</button>
-                    <div class="slider-container">
-                        <label for="animation-speed">Speed:</label>
-                        <input type="range" id="animation-speed" min="0.1" max="2" step="0.1" value="1">
+                <div class="section-wrapper" id="verse-explanation-section">
+                    <div class="section-header">
+                        <h4>Verse Explanation</h4>
+                        <div class="section-toggle">▼</div>
+                    </div>
+                    <div class="collapsible-content expanded">
+                        <div class="verse-content" id="verse-content">
+                            <!-- Verse content will be loaded here -->
+                        </div>
+                        
+                        <div id="explanation-content">
+                            <!-- Explanation content will be loaded here -->
+                        </div>
                     </div>
                 </div>
                 
-                <div class="explanation-toggle">
-                    <button id="toggle-explanation">Show Explanation</button>
+                <div class="section-wrapper" id="animation-controls-section">
+                    <div class="section-header">
+                        <h4>Animation Controls</h4>
+                        <div class="section-toggle collapsed">▶</div>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="animation-controls">
+                            <div class="btn-row">
+                                <button id="restart-animation">Restart</button>
+                                <button id="pause-animation">Pause</button>
+                            </div>
+                            <div class="slider-container">
+                                <label for="animation-speed">Speed:</label>
+                                <input type="range" id="animation-speed" min="0.1" max="2" step="0.1" value="1">
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        
-        <div id="text-panel">
-            <div class="verse-content" id="verse-content">
-                <!-- Verse content will be loaded here -->
-            </div>
-            
-            <div class="explanation-content" id="explanation-content">
-                <!-- Explanation content will be loaded here -->
             </div>
         </div>
     </div>

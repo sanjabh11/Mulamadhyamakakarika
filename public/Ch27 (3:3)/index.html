@@ -18,45 +18,56 @@
   <div id="container">
     <canvas id="canvas"></canvas>
     
-    <div id="verse-buttons" class="verse-buttons">
-      <!-- Will be populated with verse buttons via JavaScript -->
-    </div>
-    
-    <div id="text-panel" class="hidden">
-      <h2 id="verse-number">Verse 20</h2>
-      <div id="verse-text"></div>
+    <div id="text-panel">
+      <button id="toggle-panel">
+        <span class="arrow">◀</span>
+      </button>
       
-      <div class="controls">
-        <button id="prev-verse" disabled>Previous</button>
-        <button id="next-verse">Next</button>
-        <button id="toggle-panel">Hide Panel</button>
+      <div id="text-panel-content">
+        <h2 class="chapter-title">Investigation of Views - Chapter 27</h2>
+        
+        <div id="verse-buttons" class="verse-buttons">
+          <!-- Will be populated with verse buttons via JavaScript -->
+        </div>
+        
+        <h3 id="verse-number">Verse 20</h3>
+        <div id="verse-text"></div>
+        
+        <div class="collapsible-section" id="explanation-section">
+          <div class="section-header" id="explanation-header">
+            <span>Verse Explanation</span>
+            <span class="toggle-icon">▼</span>
+          </div>
+          <div class="section-content" id="explanation-content">
+            <div class="explanation-column">
+              <h4>Madhyamaka Concept</h4>
+              <p id="madhyamaka-text"></p>
+            </div>
+            <div class="explanation-column">
+              <h4>Quantum Physics Parallel</h4>
+              <p id="quantum-text"></p>
+            </div>
+            <div class="explanation-column">
+              <h4>Accessible Explanation</h4>
+              <p id="accessible-text"></p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="collapsible-section" id="controls-section">
+          <div class="section-header" id="controls-header">
+            <span>Animation Controls</span>
+            <span class="toggle-icon collapsed">▶</span>
+          </div>
+          <div class="section-content collapsed" id="controls-content">
+            <div class="controls">
+              <button id="prev-verse" disabled>Previous</button>
+              <button id="next-verse">Next</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    
-    <button id="show-panel">Show</button>
-    
-    <div id="explanation-bar" class="hidden">
-      <div class="explanation-header">
-        <h3 id="explanation-title">Continuity in Change</h3>
-        <button id="toggle-explanation">Hide Explanation</button>
-      </div>
-      <div id="explanation-content">
-        <div class="explanation-column">
-          <h4>Madhyamaka Concept</h4>
-          <p id="madhyamaka-text"></p>
-        </div>
-        <div class="explanation-column">
-          <h4>Quantum Physics Parallel</h4>
-          <p id="quantum-text"></p>
-        </div>
-        <div class="explanation-column">
-          <h4>Accessible Explanation</h4>
-          <p id="accessible-text"></p>
-        </div>
-      </div>
-    </div>
-    
-    <button id="show-explanation">Show Explanation</button>
   </div>
   
   <script type="module" src="config.js"></script>

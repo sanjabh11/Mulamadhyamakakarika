@@ -17,11 +17,13 @@ class EmptinessVisualization {
         this.setupControlPanel();
         // Create mobile toggle buttons before attaching event listeners
         this.createMobileControls();
+        // Setup the new left panel
+        this.setupLeftPanel();
         // Now add event listeners that target elements created by the control panel and mobile toggles
         this.setupEventListeners();
         this.displayVerse(this.currentVerseIndex);
     }
-
+    
     initialize() {
         // Create the scene
         this.scene = new THREE.Scene();
@@ -175,6 +177,15 @@ class EmptinessVisualization {
         
         // Handle window scroll for parallax effects
         window.addEventListener('scroll', this.handleScroll.bind(this), { passive: true });
+        
+        // Add mobile panel toggle
+        const mobileToggle = document.getElementById('toggle-info-btn');
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', () => {
+                const panel = document.getElementById('left-panel');
+                panel.classList.toggle('mobile-visible');
+            });
+        }
     }
     
     handleTouchStart(event) {
@@ -339,8 +350,12 @@ class EmptinessVisualization {
     }
 
     createPaginationDots() {
-        // Target top-navigation instead of the removed bottom navigation
-        const paginationContainer = document.getElementById('pagination');
+        // Target the verse navigation container in the side panel
+        const paginationContainer = document.getElementById('verse-navigation');
+        if (!paginationContainer) {
+            console.error("Pagination container '#verse-navigation' not found!");
+            return; // Exit if container doesn't exist
+        }
         verses.forEach((_, index) => {
             const dot = document.createElement('div');
             dot.className = 'page-dot';
@@ -375,39 +390,78 @@ class EmptinessVisualization {
             this.currentVerseIndex = index;
             this.displayVerse(index);
             this.updatePaginationDots();
+            this.updateVerseNavButtons();
         }
     }
 
+    setupLeftPanel() {
+        // Create verse navigation buttons
+        const navGrid = document.getElementById('verse-navigation');
+        verses.forEach((verse, index) => {
+            const button = document.createElement('button');
+            button.className = 'verse-nav-btn';
+            button.textContent = verse.number;
+            button.addEventListener('click', () => {
+                this.goToVerse(index);
+                this.updateVerseNavButtons();
+            });
+            navGrid.appendChild(button);
+        });
+        this.updateVerseNavButtons();
+        
+        // Move controls into the left panel
+        const controlsPanel = document.getElementById('controls-panel');
+        document.getElementById('panel-animation-controls').appendChild(controlsPanel);
+        
+        // Setup collapsible sections
+        const sections = document.querySelectorAll('.section-header');
+        sections.forEach(header => {
+            header.addEventListener('click', () => {
+                header.classList.toggle('collapsed');
+                const content = header.nextElementSibling;
+                content.classList.toggle('collapsed');
+            });
+        });
+        
+        // Setup panel toggle
+        document.getElementById('left-panel-toggle').addEventListener('click', this.toggleLeftPanel.bind(this));
+    }
+    
+    toggleLeftPanel() {
+        const panel = document.getElementById('left-panel');
+        const content = document.getElementById('content');
+        panel.classList.toggle('collapsed');
+        content.classList.toggle('panel-collapsed');
+    }
+    
+    updateVerseNavButtons() {
+        const buttons = document.querySelectorAll('.verse-nav-btn');
+        buttons.forEach((button, index) => {
+            if (index === this.currentVerseIndex) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+        });
+    }
+    
     displayVerse(index) {
         const verse = verses[index];
         
-        // Fade out current content
-        gsap.to('#verse-display', { 
-            opacity: 0, 
-            y: 20, 
-            duration: 0.5, 
-            onComplete: () => {
-                // Update content
-                document.getElementById('verse-number').textContent = `Verse ${verse.number}`;
-                document.getElementById('verse-text').textContent = verse.text;
-                document.getElementById('madhyamaka-concept').textContent = verse.madhyamakaConcept;
-                document.getElementById('quantum-parallel').textContent = verse.quantumParallel;
-                document.getElementById('accessible-explanation').textContent = verse.accessibleExplanation;
-                
-                // Update floating indicator
-                document.getElementById('indicator-number').textContent = verse.number;
-                
-                // Fade in new content
-                gsap.to('#verse-display', { 
-                    opacity: 1, 
-                    y: 0, 
-                    duration: 0.5 
-                });
-                
-                // Change the animation
-                this.animationManager.changeAnimation(verse.animation);
-            }
-        });
+        // Update in left panel only since main display is removed
+        document.getElementById('panel-verse-text').textContent = verse.text;
+        document.getElementById('panel-madhyamaka-concept').textContent = verse.madhyamakaConcept;
+        document.getElementById('panel-quantum-parallel').textContent = verse.quantumParallel;
+        document.getElementById('panel-accessible-explanation').textContent = verse.accessibleExplanation;
+        
+        // Update floating indicator
+        document.getElementById('indicator-number').textContent = verse.number;
+        
+        // Update verse navigation
+        this.updateVerseNavButtons();
+        
+        // Change the animation
+        this.animationManager.changeAnimation(verse.animation);
     }
 
     onWindowResize() {

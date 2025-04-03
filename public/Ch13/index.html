@@ -7,9 +7,9 @@
     <script type="importmap">
     {
         "imports": {
-            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
-            "gsap": "https://unpkg.com/gsap@3.12.4/index.js"
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+            "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.4/index.js"
         }
     }
     </script>
@@ -18,6 +18,58 @@
     <div id="main-container">
         <div id="scene-container"></div>
         
+        <!-- New panel structure -->
+        <div id="left-panel">
+            <div id="panel-content">
+                <div id="chapter-title">Chapter 13: Investigation of Samskaras</div>
+                
+                <div id="verse-navigation">
+                    <!-- Verse buttons will be populated by JS -->
+                </div>
+                
+                <div class="collapsible-section" id="explanation-section">
+                    <div class="section-header">
+                        <span>Verse Explanation</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="section-content expanded">
+                        <div id="verse-number"></div>
+                        <div id="verse-text"></div>
+                        
+                        <div class="explanation-subsection">
+                            <div class="explanation-title">Madhyamaka Concept</div>
+                            <div class="explanation-content" id="madhyamaka-concept"></div>
+                        </div>
+                        
+                        <div class="explanation-subsection">
+                            <div class="explanation-title">Quantum Physics Parallel</div>
+                            <div class="explanation-content" id="quantum-parallel"></div>
+                        </div>
+                        
+                        <div class="explanation-subsection">
+                            <div class="explanation-title">Accessible Explanation</div>
+                            <div class="explanation-content" id="accessible-explanation"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="collapsible-section" id="controls-section">
+                    <div class="section-header">
+                        <span>Animation Controls</span>
+                        <span class="toggle-icon">▶</span>
+                    </div>
+                    <div class="section-content">
+                        <div id="animation-controls"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="panel-toggle">
+                <span id="panel-toggle-icon">◀</span>
+            </button>
+        </div>
+        
+        <!-- Keep the old structure for backward compatibility but hidden -->
         <div id="verse-container">
             <div id="verse-title">Chapter 13: Investigation of Samskaras</div>
             <div id="verse-number"></div>
@@ -43,7 +95,6 @@
             <div id="navigation">
                 <button id="prev-verse">Previous Verse</button>
                 <button id="next-verse">Next Verse</button>
-                <a href="/" class="home-link">Back to Home</a>
             </div>
             <div id="animation-controls"></div>
         </div>

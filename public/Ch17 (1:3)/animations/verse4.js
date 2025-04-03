@@ -69,7 +69,7 @@ export function initVerse4(container, controlsContainer) {
     const particleCount = 2000;
     const particleGeometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
-    const colors = new Float32Array(particleCount * 3);
+    const particleColors = new Float32Array(particleCount * 3); // Renamed to avoid conflict with imported 'colors'
     
     // Create initial coherent state (particles in a spherical shape)
     for (let i = 0; i < particleCount; i++) {
@@ -84,17 +84,17 @@ export function initVerse4(container, controlsContainer) {
         positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
         positions[i3 + 2] = radius * Math.cos(phi);
         
+        
         // Color gradient from purple to teal
-        colors[i3] = 0.6 + Math.random() * 0.4; // R
-        colors[i3 + 1] = 0.3 + Math.random() * 0.3; // G
-        colors[i3 + 2] = 0.8 + Math.random() * 0.2; // B
+        particleColors[i3] = 0.6 + Math.random() * 0.4; // R
+        particleColors[i3 + 1] = 0.3 + Math.random() * 0.3; // G
+        particleColors[i3 + 2] = 0.8 + Math.random() * 0.2; // B
     }
     
     particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    particleGeometry.setAttribute('color', new THREE.BufferAttribute(particleColors, 3)); // Use renamed variable
     
     const particleMaterial = new THREE.PointsMaterial({
-        size: 0.1,
         vertexColors: true,
         transparent: true,
         opacity: 0.8
@@ -221,14 +221,14 @@ export function initVerse4(container, controlsContainer) {
             positions[i + 1] = yOrig * coherenceFactor + (Math.random() - 0.5) * noise;
             positions[i + 2] = zOrig * coherenceFactor + (Math.random() - 0.5) * noise;
             
+            
             // Change color based on coherence
-            const colors = particles.geometry.attributes.color.array;
-            colors[i] = 0.6 + (1 - coherence) * 0.4; // More red as decoherence increases
-            colors[i + 1] = 0.3 - (1 - coherence) * 0.2; // Less green
-            colors[i + 2] = 0.8 - (1 - coherence) * 0.6; // Less blue
+            const particleColors = particles.geometry.attributes.color.array; // Use renamed variable
+            particleColors[i] = 0.6 + (1 - coherence) * 0.4; // More red as decoherence increases
+            particleColors[i + 1] = 0.3 - (1 - coherence) * 0.2; // Less green
+            particleColors[i + 2] = 0.8 - (1 - coherence) * 0.6; // Less blue
         }
         
-        particles.geometry.attributes.position.needsUpdate = true;
         particles.geometry.attributes.color.needsUpdate = true;
         
         // Animate impulses

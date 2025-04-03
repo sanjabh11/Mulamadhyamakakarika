@@ -8,21 +8,8 @@ let wave = [];
 let observer;
 let isObserved = false;
 let animationFrameId;
-// Variables to hold timer IDs
-let collapseTimerIds = [];
-let shrinkTimerIds = [];
-let particleChangeTimeoutId = null;
-let observerMoveIntervalId = null;
 
 export function initVerse16(container) {
-    // Reset state variables for re-initialization
-    isObserved = false;
-    wave = [];
-    collapseTimerIds = [];
-    shrinkTimerIds = [];
-    particleChangeTimeoutId = null;
-    observerMoveIntervalId = null;
-
     // Create scene
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x000000);
@@ -54,8 +41,8 @@ export function initVerse16(container) {
     directionalLight.castShadow = true;
     scene.add(directionalLight);
     
-    // Use theme colors - Assuming verse 16 is the 4th in the 13-24 sequence (index 3)
-    const theme = colorThemes[3]; 
+    // Use theme colors
+    const theme = colorThemes[3];
     
     // Create a ground plane
     const groundGeometry = new THREE.PlaneGeometry(50, 50);
@@ -236,15 +223,12 @@ function createObserver(theme) {
 }
 
 function createText(text, position, color) {
-    // Simple check if scene exists before adding text
-    if (!scene) return null; 
-
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     canvas.width = 512;
     canvas.height = 128;
     
-    context.fillStyle = 'rgba(0, 0, 0, 0)'; // Transparent background
+    context.fillStyle = 'rgba(0, 0, 0, 0)';
     context.fillRect(0, 0, canvas.width, canvas.height);
     
     context.font = 'Bold 40px Arial';
@@ -254,14 +238,13 @@ function createText(text, position, color) {
     if (color instanceof THREE.Color) {
         context.fillStyle = `rgb(${Math.floor(color.r*255)}, ${Math.floor(color.g*255)}, ${Math.floor(color.b*255)})`;
     } else {
-        // Assuming hex color like 0xffffff
         context.fillStyle = `#${color.toString(16).padStart(6, '0')}`;
     }
     
     context.fillText(text, canvas.width / 2, canvas.height / 2);
     
     const texture = new THREE.CanvasTexture(canvas);
-    const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+    const material = new THREE.SpriteMaterial({ map: texture });
     const sprite = new THREE.Sprite(material);
     sprite.position.copy(position);
     sprite.scale.set(10, 2.5, 1);
@@ -288,7 +271,7 @@ function createStars() {
         size: 0.1,
         transparent: true,
         opacity: 0.8,
-        sizeAttenuation: true // Keep size consistent regardless of distance
+        sizeAttenuation: true
     });
     
     const stars = new THREE.Points(starsGeometry, starsMaterial);
@@ -296,7 +279,7 @@ function createStars() {
 }
 
 function observeParticle() {
-    if (isObserved || !observationRay || !wave.length) return; // Add checks
+    if (isObserved) return;
     
     // Show observation ray
     observationRay.visible = true;
@@ -306,39 +289,24 @@ function observeParticle() {
     
     // Simulate the collapse by shrinking the wave
     wave.forEach(ring => {
-        if (!ring) return; // Check if ring exists
-
         if (ring.userData.isParticles) {
             // For probability cloud particles, make them converge
-            if (!ring.geometry || !ring.geometry.attributes || !ring.geometry.attributes.position) return; // Check geometry
-            
             const positions = ring.geometry.attributes.position.array;
             const collapseSpeed = 0.1;
             
-            // Store collapse timer ID
-            const collapseTimerId = setInterval(() => {
-                // Check if ring still exists (might have been cleaned up)
-                if (!ring || !ring.geometry || !ring.geometry.attributes || !ring.geometry.attributes.position) {
-                    clearInterval(collapseTimerId);
-                    // Remove ID if it exists
-                    const index = collapseTimerIds.indexOf(collapseTimerId);
-                    if (index > -1) collapseTimerIds.splice(index, 1);
-                    return;
-                }
-                
-                const currentPositions = ring.geometry.attributes.position.array; // Use current positions
+            let collapseTimerId = setInterval(() => {
                 let allCollapsed = true;
                 
-                for (let i = 0; i < currentPositions.length; i += 3) {
+                for (let i = 0; i < positions.length; i += 3) {
                     // Move particles toward the center
-                    currentPositions[i] *= (1 - collapseSpeed);    // x
-                    currentPositions[i + 1] *= (1 - collapseSpeed); // y
-                    currentPositions[i + 2] *= (1 - collapseSpeed); // z
+                    positions[i] *= (1 - collapseSpeed);    // x
+                    positions[i + 1] *= (1 - collapseSpeed); // y
+                    positions[i + 2] *= (1 - collapseSpeed); // z
                     
                     // Check if this particle is still not fully collapsed
-                    if (Math.abs(currentPositions[i]) > 0.1 || 
-                        Math.abs(currentPositions[i + 1]) > 0.1 || 
-                        Math.abs(currentPositions[i + 2]) > 0.1) {
+                    if (Math.abs(positions[i]) > 0.1 || 
+                        Math.abs(positions[i + 1]) > 0.1 || 
+                        Math.abs(positions[i + 2]) > 0.1) {
                         allCollapsed = false;
                     }
                 }
@@ -347,117 +315,68 @@ function observeParticle() {
                 
                 if (allCollapsed) {
                     clearInterval(collapseTimerId);
-                    if (ring) ring.visible = false; // Check ring existence
-                    // Remove ID from list
-                    const index = collapseTimerIds.indexOf(collapseTimerId);
-                    if (index > -1) collapseTimerIds.splice(index, 1);
+                    ring.visible = false;
                 }
             }, 50);
-            collapseTimerIds.push(collapseTimerId); // Add ID to list
-
         } else {
             // For wave rings, shrink them
-            if (!ring.scale) return; // Check scale property
-
             let scale = 1.0;
             const shrinkSpeed = 0.05;
             
-            // Store shrink timer ID
-            const shrinkTimerId = setInterval(() => {
-                 // Check if ring still exists
-                if (!ring || !ring.scale) {
-                    clearInterval(shrinkTimerId);
-                     // Remove ID if it exists
-                    const index = shrinkTimerIds.indexOf(shrinkTimerId);
-                    if (index > -1) shrinkTimerIds.splice(index, 1);
-                    return;
-                }
+            let shrinkTimerId = setInterval(() => {
                 scale -= shrinkSpeed;
                 ring.scale.set(scale, scale, scale);
                 
                 if (scale <= 0.1) {
                     clearInterval(shrinkTimerId);
-                    if (ring) ring.visible = false; // Check ring existence
-                    // Remove ID from list
-                    const index = shrinkTimerIds.indexOf(shrinkTimerId);
-                    if (index > -1) shrinkTimerIds.splice(index, 1);
+                    ring.visible = false;
                 }
             }, 50);
-            shrinkTimerIds.push(shrinkTimerId); // Add ID to list
         }
     });
     
     // Change the particle appearance to a definite state
-    // Store timeout ID
-    particleChangeTimeoutId = setTimeout(() => {
-        // Add null check for quantum
-        if (quantum && quantum.material) { 
-            quantum.material = new THREE.MeshPhongMaterial({
-                color: 0xff0000,
-                emissive: 0x440000,
-                shininess: 30
-            });
-        }
+    setTimeout(() => {
+        quantum.material = new THREE.MeshPhongMaterial({
+            color: 0xff0000,
+            emissive: 0x440000,
+            shininess: 30
+        });
         
         // Update the text to show collapse state
-        // Note: Need to handle potential cleanup of text sprite as well if needed, 
-        // but focusing on the reported error first.
         createText("Superposition collapsed to a definite state", new THREE.Vector3(0, -5, 0), 0xff0000);
-        particleChangeTimeoutId = null; // Clear ID after execution
-    }, 1000); // End of setTimeout
+    }, 1000);
     
     // Move observer closer after observation
-    if (!observer || !observer.position) return; // Check observer
-
     const duration = 2000; // ms
     const startTime = Date.now();
     const startPosition = observer.position.clone();
     const targetPosition = new THREE.Vector3(5, 0, 0);
     
-    // Store interval ID and rename variable
-    observerMoveIntervalId = setInterval(() => {
+    const moveInterval = setInterval(() => {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
         
-        // Add null check for observer
-        if (observer && observer.position) {
-            observer.position.lerpVectors(startPosition, targetPosition, progress);
-        } else {
-             // If observer is null, stop the interval
-             if (observerMoveIntervalId) clearInterval(observerMoveIntervalId);
-             observerMoveIntervalId = null; // Clear stored ID
-             return;
-        }
+        observer.position.lerpVectors(startPosition, targetPosition, progress);
         
         if (progress === 1) {
-            if (observerMoveIntervalId) clearInterval(observerMoveIntervalId);
-            observerMoveIntervalId = null; // Clear stored ID
+            clearInterval(moveInterval);
         }
     }, 16);
 }
 
 function onWindowResize() {
-    if (!camera || !renderer) return; // Check existence
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 function animate() {
-    // Ensure cleanup hasn't nulled essential variables
-    if (!renderer || !scene || !camera) {
-         if (animationFrameId) cancelAnimationFrame(animationFrameId);
-         animationFrameId = null;
-         return;
-    }
-
     animationFrameId = requestAnimationFrame(animate);
     
     if (!isObserved) {
         // Animate wave rings when in superposition
         wave.forEach(ring => {
-             if (!ring || !ring.userData || !ring.userData.initialRotation) return; // Check ring and userData
-
             if (!ring.userData.isParticles) {
                 // Rotate rings continuously
                 ring.rotation.x = ring.userData.initialRotation.x + Math.sin(Date.now() * 0.001) * 0.2;
@@ -466,10 +385,9 @@ function animate() {
                 // Pulsate rings
                 const t = Date.now() * 0.001 * ring.userData.pulseSpeed + ring.userData.pulsePhase;
                 const scale = 1.0 + 0.1 * Math.sin(t);
-                if (ring.scale) ring.scale.set(scale, scale, scale);
+                ring.scale.set(scale, scale, scale);
             } else {
                 // Animate probability cloud particles
-                if (!ring.geometry || !ring.geometry.attributes || !ring.geometry.attributes.position) return; // Check geometry
                 const positions = ring.geometry.attributes.position.array;
                 const time = Date.now() * 0.0005;
                 
@@ -492,23 +410,21 @@ function animate() {
         });
         
         // Make the quantum particle shimmer in superposition
-        if (quantum && quantum.material && quantum.scale) { // Check quantum properties
-            quantum.material.emissiveIntensity = 0.5 + 0.2 * Math.sin(Date.now() * 0.002);
-            quantum.scale.set(
-                1.0 + 0.05 * Math.sin(Date.now() * 0.003),
-                1.0 + 0.05 * Math.sin(Date.now() * 0.004),
-                1.0 + 0.05 * Math.sin(Date.now() * 0.005)
-            );
-        }
+        quantum.material.emissiveIntensity = 0.5 + 0.2 * Math.sin(Date.now() * 0.002);
+        quantum.scale.set(
+            1.0 + 0.05 * Math.sin(Date.now() * 0.003),
+            1.0 + 0.05 * Math.sin(Date.now() * 0.004),
+            1.0 + 0.05 * Math.sin(Date.now() * 0.005)
+        );
     } else {
         // Animate observation ray
-        if (observationRay && observationRay.visible && observationRay.material) { // Check observationRay properties
+        if (observationRay.visible) {
             observationRay.material.opacity = 0.3 + 0.3 * Math.sin(Date.now() * 0.01);
         }
     }
     
     // Update controls
-    if (controls) controls.update();
+    controls.update();
     
     // Render scene
     renderer.render(scene, camera);
@@ -516,50 +432,23 @@ function animate() {
 
 export function cleanupVerse16() {
     // Stop animation loop
-    if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-        animationFrameId = null;
-    }
+    cancelAnimationFrame(animationFrameId);
     
     // Remove event listeners
     window.removeEventListener('click', observeParticle);
     window.removeEventListener('resize', onWindowResize);
-
-    // Clear any running timers/intervals from observeParticle
-    if (particleChangeTimeoutId) {
-        clearTimeout(particleChangeTimeoutId);
-        particleChangeTimeoutId = null;
-    }
-    if (observerMoveIntervalId) {
-        clearInterval(observerMoveIntervalId);
-        observerMoveIntervalId = null;
-    }
-    collapseTimerIds.forEach(id => clearInterval(id));
-    collapseTimerIds = [];
-    shrinkTimerIds.forEach(id => clearInterval(id));
-    shrinkTimerIds = [];
     
     // Dispose of resources
-    if (scene) {
-        scene.traverse((object) => {
-            if (object.geometry) {
-                object.geometry.dispose();
+    scene.traverse((object) => {
+        if (object instanceof THREE.Mesh) {
+            object.geometry.dispose();
+            
+            if (object.material.map) {
+                object.material.map.dispose();
             }
-            if (object.material) {
-                // If material is an array, dispose each element
-                if (Array.isArray(object.material)) {
-                    object.material.forEach(material => {
-                        if (material.map) material.map.dispose();
-                        material.dispose();
-                    });
-                } else {
-                    // Otherwise, dispose the single material
-                    if (object.material.map) object.material.map.dispose();
-                    object.material.dispose();
-                }
-            }
-        });
-    }
+            object.material.dispose();
+        }
+    });
     
     // Remove renderer from DOM
     if (renderer && renderer.domElement && renderer.domElement.parentNode) {
@@ -567,9 +456,7 @@ export function cleanupVerse16() {
     }
     
     // Dispose of renderer
-    if (renderer) {
-        renderer.dispose();
-    }
+    renderer.dispose();
     
     // Clear references
     scene = null;
@@ -581,5 +468,6 @@ export function cleanupVerse16() {
     observationRay = null;
     wave = [];
     observer = null;
-    isObserved = false; // Reset observation state
+    isObserved = false;
 }
+
