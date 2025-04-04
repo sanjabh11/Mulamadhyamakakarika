@@ -3,8 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Madhyamaka & Quantum Physics</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- Corrected import map to use three/addons/ prefix and include gsap -->
+    <link rel="stylesheet" href="style.css">
     <script type="importmap">
     {
         "imports": {
@@ -16,36 +15,63 @@
     </script>
 </head>
 <body>
-    <div id="app">
-        <div id="animation-container"></div>
-        
-        <div id="control-panel">
-            <div id="verse-nav">
-                <button id="prev-btn">Previous</button>
-                <div id="verse-indicator"></div>
-                <button id="next-btn">Next</button>
+    <div id="scene-container"></div>
+    
+    <div id="side-panel">
+        <div class="panel-content">
+            <h1 class="chapter-title">Examination of Motion</h1>
+            
+            <div class="verse-navigation" id="verse-navigation">
+                <!-- Will be populated with verse buttons -->
             </div>
             
-            <div id="verse-content">
-                <h2 id="verse-title"></h2>
-                <div id="verse-text"></div>
-                
-                <div class="tabs">
-                    <button class="tab-btn active" data-tab="madhyamaka">Madhyamaka</button>
-                    <button class="tab-btn" data-tab="quantum">Quantum Physics</button>
-                    <button class="tab-btn" data-tab="explanation">Explanation</button>
+            <div class="collapsible-section expanded" id="verse-explanation-section">
+                <div class="section-header">
+                    <h2>Verse Explanation</h2>
+                    <span class="toggle-icon">▼</span>
                 </div>
-                
-                <div class="tab-content active" id="madhyamaka-content"></div>
-                <div class="tab-content" id="quantum-content"></div>
-                <div class="tab-content" id="explanation-content"></div>
+                <div class="section-content">
+                    <div class="verse-text">
+                        <p id="verse-content">"Since the beginning of motion Cannot be conceived in any way, What gone thing, what going thing, And what non-going thing can be posited?"</p>
+                    </div>
+                    <div class="concept">
+                        <h3>Madhyamaka Concept</h3>
+                        <p id="madhyamaka-concept">If motion's start is empty, then past, present, and future states of motion are also empty. This extends emptiness to all temporal categories, a Madhyamaka hallmark.</p>
+                    </div>
+                    <div class="concept">
+                        <h3>Quantum Physics Parallel</h3>
+                        <p id="quantum-parallel">Superposition allows a particle to occupy multiple temporal states simultaneously, defying fixed labels like "gone" or "going," as in the verse.</p>
+                    </div>
+                    <div class="concept">
+                        <h3>Accessible Explanation</h3>
+                        <p id="accessible-explanation">Imagine a clock with hands pointing everywhere at once. In quantum physics, particles can blur past, present, and future until you check them.</p>
+                    </div>
+                </div>
             </div>
             
-            <div id="controls">
-                <button id="toggle-panel">Hide Panel</button>
-                <div id="verse-specific-controls"></div>
+            <div class="collapsible-section" id="animation-controls-section">
+                <div class="section-header">
+                    <h2>Animation Controls</h2>
+                    <span class="toggle-icon">►</span>
+                </div>
+                <div class="section-content">
+                    <div id="animation-controls">
+                        <!-- Will be populated with animation-specific controls -->
+                        <div class="control-group">
+                            <label for="zoom-slider">Zoom Level</label>
+                            <input type="range" id="zoom-slider" min="1" max="10" value="5">
+                        </div>
+                        <div class="control-group">
+                            <label for="speed-slider">Animation Speed</label>
+                            <input type="range" id="speed-slider" min="0.1" max="2" step="0.1" value="1">
+                        </div>
+                        <button id="reset-camera">Reset Camera</button>
+                    </div>
+                </div>
             </div>
         </div>
+        
+        <button id="panel-toggle">◀</button>
     </div>
     
     <script type="module" src="config.js"></script>

@@ -10,11 +10,13 @@ class App {
         this.isTextVisible = true;
         this.isExplanationVisible = false;
         this.transitionActive = false;
+        this.isPanelExpanded = true;
         
         this.initElements();
         this.initTransitionEffects();
         this.attachEventListeners();
         this.setupEnhancedControls();
+        this.createVerseNavigation();
         this.loadVerse(this.currentVerseIndex);
     }
     
@@ -26,8 +28,7 @@ class App {
         this.quantumParallel = document.getElementById('quantum-parallel');
         this.accessibleExplanation = document.getElementById('accessible-explanation');
         this.verseIndicator = document.getElementById('verse-indicator');
-        this.textOverlay = document.getElementById('text-overlay');
-        this.explanationOverlay = document.getElementById('explanation-overlay');
+        this.sidePanel = document.getElementById('side-panel');
         
         // Create transition element
         this.transitionElement = document.createElement('div');
@@ -133,11 +134,50 @@ class App {
         this.animationControls = controlsDiv;
     }
     
+    createVerseNavigation() {
+        const navContainer = document.querySelector('.verse-navigation');
+        
+        verseData.forEach((verse, index) => {
+            const button = document.createElement('button');
+            button.className = 'verse-btn';
+            button.textContent = verse.id;
+            button.addEventListener('click', () => this.loadVerse(index));
+            
+            navContainer.appendChild(button);
+        });
+        
+        // Update active verse button
+        this.updateActiveVerseButton();
+    }
+    
+    updateActiveVerseButton() {
+        const buttons = document.querySelectorAll('.verse-btn');
+        buttons.forEach((btn, index) => {
+            if (index === this.currentVerseIndex) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+    
     attachEventListeners() {
         document.getElementById('prev-verse').addEventListener('click', () => this.navigateVerse(-1));
         document.getElementById('next-verse').addEventListener('click', () => this.navigateVerse(1));
-        document.getElementById('toggle-text').addEventListener('click', () => this.toggleTextVisibility());
-        document.getElementById('toggle-explanation').addEventListener('click', () => this.toggleExplanation());
+        document.getElementById('toggle-panel').addEventListener('click', () => this.togglePanelVisibility());
+        document.getElementById('panel-toggle-btn').addEventListener('click', () => this.togglePanelExpansion());
+        
+        // Add section toggle listeners
+        document.querySelectorAll('.section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const section = header.parentElement;
+                section.classList.toggle('collapsed');
+                section.classList.toggle('expanded');
+                
+                const toggleIcon = header.querySelector('.toggle-icon');
+                toggleIcon.textContent = section.classList.contains('expanded') ? '▼' : '►';
+            });
+        });
         
         // Handle window resize
         window.addEventListener('resize', () => {
@@ -153,13 +193,35 @@ class App {
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft') this.navigateVerse(-1);
             if (e.key === 'ArrowRight') this.navigateVerse(1);
-            if (e.key === 't') this.toggleTextVisibility();
-            if (e.key === 'e') this.toggleExplanation();
+            if (e.key === 'p') this.togglePanelExpansion();
             if (e.key === ' ') {
                 // Trigger pause/play
-                document.querySelector('.animation-control-btn:nth-child(2)').click();
+                document.querySelector('.animation-control-btn:nth-child(2)')?.click();
             }
         });
+    }
+    
+    togglePanelVisibility() {
+        this.isTextVisible = !this.isTextVisible;
+        if (this.isTextVisible) {
+            this.sidePanel.style.display = 'block';
+            document.getElementById('toggle-panel').textContent = 'Hide Panel';
+        } else {
+            this.sidePanel.style.display = 'none';
+            document.getElementById('toggle-panel').textContent = 'Show Panel';
+        }
+    }
+    
+    togglePanelExpansion() {
+        this.isPanelExpanded = !this.isPanelExpanded;
+        
+        if (this.isPanelExpanded) {
+            this.sidePanel.classList.remove('collapsed');
+            this.sidePanel.classList.add('expanded');
+        } else {
+            this.sidePanel.classList.remove('expanded');
+            this.sidePanel.classList.add('collapsed');
+        }
     }
     
     loadVerse(index) {
@@ -178,8 +240,12 @@ class App {
             this.accessibleExplanation.textContent = verse.accessibleExplanation;
             this.verseIndicator.textContent = `Verse ${verse.id}/22`;
             
+            // Update active verse in navigation
+            this.currentVerseIndex = index;
+            this.updateActiveVerseButton();
+            
             // Add glow effect to headings
-            document.querySelectorAll('h2, h3').forEach(el => el.classList.add('glow-text'));
+            document.querySelectorAll('h2, h3, h4').forEach(el => el.classList.add('glow-text'));
             
             // Clear previous animation
             if (this.currentAnimation) {
@@ -212,9 +278,6 @@ class App {
                     };
                 }
             }
-            
-            // Update current index
-            this.currentVerseIndex = index;
             
             // Add d3.js visualization enhancement for certain verses
             this.enhanceWithD3Visualization(verse);
@@ -396,25 +459,16 @@ class App {
         const newIndex = (this.currentVerseIndex + direction + verseData.length) % verseData.length;
         this.loadVerse(newIndex);
     }
-    
-    toggleTextVisibility() {
-        this.isTextVisible = !this.isTextVisible;
-        this.textOverlay.classList.toggle('hidden', !this.isTextVisible);
-        
-        const toggleButton = document.getElementById('toggle-text');
-        toggleButton.textContent = this.isTextVisible ? 'Hide Text' : 'Show Text';
-    }
-    
-    toggleExplanation() {
-        this.isExplanationVisible = !this.isExplanationVisible;
-        this.explanationOverlay.classList.toggle('hidden', !this.isExplanationVisible);
-        
-        const toggleButton = document.getElementById('toggle-explanation');
-        toggleButton.textContent = this.isExplanationVisible ? 'Hide Explanation' : 'Show Explanation';
-    }
 }
 
 // Initialize the app when the DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     const app = new App();
+    
+    // Set initial states for mobile
+    if (window.innerWidth < 768) {
+        document.getElementById('explanation-section').classList.add('collapsed');
+        document.getElementById('explanation-section').classList.remove('expanded');
+        document.getElementById('explanation-section').querySelector('.toggle-icon').textContent = '►';
+    }
 });

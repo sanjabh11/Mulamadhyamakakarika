@@ -12,24 +12,206 @@ const showTextBtns = document.querySelectorAll('.show-text');
 const hidePanelBtns = document.querySelectorAll('.hide-panel');
 const showPanelBtns = document.querySelectorAll('.show-panel');
 
+// Side Panel Elements
+const sidePanel = document.querySelector('.side-panel');
+const panelToggle = document.querySelector('.panel-toggle');
+const verseNavigation = document.getElementById('verse-nav');
+const verseExplanationSection = document.getElementById('verse-explanation-section');
+const verseExplanationContent = document.getElementById('verse-explanation-content');
+const animationControlsSection = document.getElementById('animation-controls-section');
+const animationControlsContent = document.getElementById('animation-controls-content');
+
 // Current verse state
 let currentVerse = 1;
+let activeAnimationKey = null; // Keep track of the currently active animation
 
 // Initialize animations objects
-const animations = {
-    verse1: null,
-    verse2: null,
-    verse3: null,
-    verse4: null,
-    verse5: null,
-    verse6: null,
-    verse7: null,
-    verse8: null,
-    verse9: null,
-    verse10: null,
-    verse11: null,
-    verse12: null
-};
+const animations = {}; // Simpler initialization, will be populated dynamically
+
+// Initialize side panel
+function initSidePanel() {
+    // Create verse navigation buttons
+    for (let i = 1; i <= 12; i++) {
+        const button = document.createElement('button');
+        button.textContent = i;
+        button.dataset.verse = i;
+        button.addEventListener('click', () => {
+            showVerse(i);
+        });
+        verseNavigation.appendChild(button);
+    }
+    
+    // Set up panel toggle button
+    panelToggle.addEventListener('click', () => {
+        sidePanel.classList.toggle('collapsed');
+        
+        // Also toggle margin on verse content
+        allVerseContents.forEach(content => {
+            content.classList.toggle('panel-collapsed');
+        });
+    });
+    
+    // Set up collapsible sections
+    const sections = document.querySelectorAll('.collapsible-section');
+    sections.forEach(section => {
+        const header = section.querySelector('.section-header');
+        const content = section.querySelector('.section-content');
+        const icon = header.querySelector('i');
+        
+        header.addEventListener('click', () => {
+            content.classList.toggle('expanded');
+            
+            // Toggle icon
+            if (content.classList.contains('expanded')) {
+                icon.classList.remove('fa-chevron-right');
+                icon.classList.add('fa-chevron-down');
+            } else {
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-right');
+            }
+        });
+    });
+    
+    // Initial state - verse explanation expanded, animation controls collapsed
+    verseExplanationContent.classList.add('expanded');
+    verseExplanationSection.querySelector('i').classList.add('fa-chevron-down');
+    
+    animationControlsContent.classList.remove('expanded');
+    animationControlsSection.querySelector('i').classList.remove('fa-chevron-down');
+    animationControlsSection.querySelector('i').classList.add('fa-chevron-right');
+    
+    // Set mobile defaults
+    if (window.innerWidth < 768) {
+        verseExplanationContent.classList.remove('expanded');
+        verseExplanationSection.querySelector('i').classList.remove('fa-chevron-down');
+        verseExplanationSection.querySelector('i').classList.add('fa-chevron-right');
+    }
+    
+    // Update active verse button
+    updateActiveVerseButton(currentVerse);
+}
+
+// Function to update active verse button
+function updateActiveVerseButton(verseNum) {
+    const buttons = verseNavigation.querySelectorAll('button');
+    buttons.forEach(button => {
+        if (parseInt(button.dataset.verse) === verseNum) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    });
+}
+
+// Function to update verse explanation content
+function updateVerseExplanation(verseNum) {
+    // Get content from original verse div
+    const verseContent = document.getElementById(`verse${verseNum}`);
+    const verseText = verseContent.querySelector('.verse-text p').textContent;
+    const madhyamakaConcept = verseContent.querySelector('.concept p').textContent;
+    const physicsParallel = verseContent.querySelector('.physics p').textContent;
+    const accessibleExplanation = verseContent.querySelector('.accessible p').textContent;
+    
+    // Clear previous content
+    verseExplanationContent.innerHTML = '';
+    
+    // Create verse text container
+    const verseTextContainer = document.createElement('div');
+    verseTextContainer.className = 'verse-text-container';
+    verseTextContainer.textContent = verseText;
+    
+    // Create explanation sections
+    const explanationSection = document.createElement('div');
+    explanationSection.className = 'explanation-section';
+    
+    // Madhyamaka concept
+    const madhyamakaHeader = document.createElement('h3');
+    madhyamakaHeader.textContent = 'Madhyamaka Concept';
+    const madhyamakaPara = document.createElement('p');
+    madhyamakaPara.textContent = madhyamakaConcept;
+    
+    // Physics parallel
+    const physicsHeader = document.createElement('h3');
+    physicsHeader.textContent = 'Quantum Physics Parallel';
+    const physicsPara = document.createElement('p');
+    physicsPara.textContent = physicsParallel;
+    
+    // Accessible explanation
+    const accessibleHeader = document.createElement('h3');
+    accessibleHeader.textContent = 'Accessible Explanation';
+    const accessiblePara = document.createElement('p');
+    accessiblePara.textContent = accessibleExplanation;
+    
+    // Append all elements
+    explanationSection.appendChild(madhyamakaHeader);
+    explanationSection.appendChild(madhyamakaPara);
+    explanationSection.appendChild(physicsHeader);
+    explanationSection.appendChild(physicsPara);
+    explanationSection.appendChild(accessibleHeader);
+    explanationSection.appendChild(accessiblePara);
+    
+    verseExplanationContent.appendChild(verseTextContainer);
+    verseExplanationContent.appendChild(explanationSection);
+}
+
+// Function to update animation controls
+function updateAnimationControls(verseNum) {
+    // Clear previous content
+    animationControlsContent.innerHTML = '';
+    
+    // Get control panel from original verse div
+    const verseContent = document.getElementById(`verse${verseNum}`);
+    const controlPanel = verseContent.querySelector('.control-panel');
+    
+    if (controlPanel) {
+        // Clone the controls (not the panel toggle buttons)
+        const controls = controlPanel.querySelector('.controls');
+        const clonedControls = controls.cloneNode(true);
+        
+        // Update IDs to avoid duplicates
+        const buttons = clonedControls.querySelectorAll('button');
+        buttons.forEach(button => {
+            const originalId = button.id;
+            button.id = `panel-${originalId}`;
+            
+            // Add event listener that triggers the original button
+            button.addEventListener('click', () => {
+                const originalButton = document.getElementById(originalId);
+                if (originalButton) {
+                    originalButton.click();
+                }
+            });
+        });
+        
+        // Do the same for sliders
+        const sliders = clonedControls.querySelectorAll('input[type="range"]');
+        sliders.forEach(slider => {
+            const originalId = slider.id;
+            slider.id = `panel-${originalId}`;
+            
+            // Add event listener to sync with original slider
+            slider.addEventListener('input', () => {
+                const originalSlider = document.getElementById(originalId);
+                if (originalSlider) {
+                    originalSlider.value = slider.value;
+                    
+                    // Create and dispatch input event
+                    const event = new Event('input', { bubbles: true });
+                    originalSlider.dispatchEvent(event);
+                }
+            });
+        });
+        
+        // Add title from control panel
+        const title = document.createElement('h3');
+        title.className = 'control-title';
+        title.textContent = controlPanel.querySelector('h3').textContent;
+        
+        // Append to animation controls content
+        animationControlsContent.appendChild(title);
+        animationControlsContent.appendChild(clonedControls);
+    }
+}
 
 // Event listeners
 verseSelector.addEventListener('change', () => {
@@ -48,7 +230,7 @@ nextVerseBtn.addEventListener('click', () => {
     }
 });
 
-// Add event listeners for hide/show text buttons
+// Add event listeners for hide/show text buttons 
 hideTextBtns.forEach(btn => {
     btn.addEventListener('click', function() {
         const textSection = this.closest('.text-section');
@@ -130,382 +312,332 @@ showPanelBtns.forEach(btn => {
 
 // Function to show the specified verse
 function showVerse(verseNum) {
-    // Hide all verses
-    allVerseContents.forEach(content => {
-        content.classList.add('hidden');
-    });
-    
-    // Show the selected verse
-    const verseToShow = document.getElementById(`verse${verseNum}`);
-    verseToShow.classList.remove('hidden');
-    verseToShow.classList.add('fade-in');
-    
+    // Hide all verses (This hides the original containers, not strictly needed now maybe?)
+    // allVerseContents.forEach(content => {
+    //     content.classList.add('hidden');
+    // });
+
+    // Show the selected verse container (again, maybe not needed if animation fills space)
+    // const verseToShow = document.getElementById(`verse${verseNum}`);
+    // verseToShow.classList.remove('hidden');
+    // verseToShow.classList.add('fade-in');
+
     // Update current verse
     currentVerse = verseNum;
-    verseSelector.value = verseNum;
-    
-    // Initialize or update the corresponding animation
+    // verseSelector.value = verseNum; // Original selector is hidden
+
+    // Initialize or update the corresponding animation FIRST
+    // This ensures cleanup happens before UI updates for the new verse
     initOrUpdateAnimation(verseNum);
+
+    // Update side panel content AFTER animation setup
+    updateVerseExplanation(verseNum);
+    updateAnimationControls(verseNum);
+    updateActiveVerseButton(verseNum);
 }
 
 // Initialize or update animation based on verse number
 function initOrUpdateAnimation(verseNum) {
     const animationContainer = document.getElementById(`animation${verseNum}`);
-    
-    // Clear any existing content
+    if (!animationContainer) {
+        console.error(`Animation container for verse ${verseNum} not found!`);
+        return;
+    }
+
+    const newAnimationKey = `verse${verseNum}`;
+
+    // 1. Cleanup the previous animation if it exists and is different
+    if (activeAnimationKey && activeAnimationKey !== newAnimationKey && animations[activeAnimationKey] && typeof animations[activeAnimationKey].cleanup === 'function') {
+        try {
+            console.log(`Cleaning up animation: ${activeAnimationKey}`);
+            animations[activeAnimationKey].cleanup();
+        } catch (error) {
+            console.error(`Error cleaning up animation ${activeAnimationKey}:`, error);
+        }
+        // Clear the reference to the old animation object
+        delete animations[activeAnimationKey];
+    }
+
+    // If the requested animation is already active, do nothing further
+    if (activeAnimationKey === newAnimationKey) {
+        console.log(`Animation ${newAnimationKey} is already active.`);
+        return;
+    }
+
+    // 2. Clear any existing DOM content in the target container
+    // This is crucial if cleanup didn't remove everything or if switching failsafe
     while (animationContainer.firstChild) {
         animationContainer.removeChild(animationContainer.firstChild);
     }
-    
-    // Initialize the appropriate animation
-    switch(verseNum) {
-        case 1:
-            initializeVerse1Animation(animationContainer);
-            break;
-        case 2:
-            initializeVerse2Animation(animationContainer);
-            break;
-        case 3:
-            initializeVerse3Animation(animationContainer);
-            break;
-        case 4:
-            initializeVerse4Animation(animationContainer);
-            break;
-        case 5:
-            initializeVerse5Animation(animationContainer);
-            break;
-        case 6:
-            initializeVerse6Animation(animationContainer);
-            break;
-        case 7:
-            initializeVerse7Animation(animationContainer);
-            break;
-        case 8:
-            initializeVerse8Animation(animationContainer);
-            break;
-        case 9:
-            initializeVerse9Animation(animationContainer);
-            break;
-        case 10:
-            initializeVerse10Animation(animationContainer);
-            break;
-        case 11:
-            initializeVerse11Animation(animationContainer);
-            break;
-        case 12:
-            initializeVerse12Animation(animationContainer);
-            break;
+
+    // 3. Initialize the new animation
+    console.log(`Initializing animation: ${newAnimationKey}`);
+    try {
+        // Ensure the specific container is visible (it's nested inside verse-content)
+        const verseContentDiv = document.getElementById(`verse${verseNum}`);
+        if (verseContentDiv) {
+             // Make sure *only* the current verse's main container is visible
+             allVerseContents.forEach(content => {
+                content.classList.add('hidden');
+            });
+            verseContentDiv.classList.remove('hidden');
+            verseContentDiv.classList.add('fade-in'); // Add fade-in effect
+        } else {
+             console.error(`Verse content div for verse ${verseNum} not found!`);
+        }
+
+
+        switch(verseNum) {
+            case 1:
+                initializeVerse1Animation(animationContainer);
+                break;
+            case 2:
+                initializeVerse2Animation(animationContainer);
+                break;
+            case 3:
+                initializeVerse3Animation(animationContainer);
+                break;
+            case 4:
+                initializeVerse4Animation(animationContainer);
+                break;
+            case 5:
+                initializeVerse5Animation(animationContainer);
+                break;
+            case 6:
+                initializeVerse6Animation(animationContainer);
+                break;
+            case 7:
+                initializeVerse7Animation(animationContainer);
+                break;
+            case 8:
+                initializeVerse8Animation(animationContainer);
+                break;
+            case 9:
+                initializeVerse9Animation(animationContainer);
+                break;
+            case 10:
+                initializeVerse10Animation(animationContainer);
+                break;
+            case 11:
+                initializeVerse11Animation(animationContainer);
+                break;
+            case 12:
+                initializeVerse12Animation(animationContainer);
+                break;
+            default:
+                console.warn(`No animation defined for verse ${verseNum}`);
+                animationContainer.innerHTML = `<p>Animation for verse ${verseNum} not implemented.</p>`;
+        }
+
+        // 4. Update the active animation key
+        activeAnimationKey = newAnimationKey;
+
+    } catch (error) {
+        console.error(`Error initializing animation ${newAnimationKey}:`, error);
+        animationContainer.innerHTML = `<p style="color: red; padding: 20px;">Error loading animation for verse ${verseNum}. Check console.</p>`;
+        // Reset active key if initialization failed
+        activeAnimationKey = null;
     }
 }
 
-// Verse 1: Double Slit Experiment
+// Function to initialize animation for Verse 1 (Double Slit Experiment)
 function initializeVerse1Animation(container) {
-    // Set up THREE.js scene
+    // Create a scene
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    scene.background = new THREE.Color(0x1a1a2e);
     
+    // Create a camera
+    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 5;
+    
+    // Create a renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setClearColor(0x1a1a2e, 1);
     container.appendChild(renderer.domElement);
     
-    // Add lights
-    const ambientLight = new THREE.AmbientLight(0x404040);
-    scene.add(ambientLight);
+    // Add orbit controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
     
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(0, 1, 1);
-    scene.add(directionalLight);
+    // Create the double slit setup
+    const slitWidth = 0.1;
+    const slitHeight = 1;
+    const slitDepth = 0.1;
+    const slitSeparation = 0.5;
     
-    // Create double slit barrier
-    const barrierGeometry = new THREE.BoxGeometry(10, 8, 0.5);
-    const barrierMaterial = new THREE.MeshPhongMaterial({ color: 0x2a2a4a });
+    // Create a barrier with two slits
+    const barrierGeometry = new THREE.BoxGeometry(3, 2, slitDepth);
+    const barrierMaterial = new THREE.MeshPhongMaterial({ color: 0x444466 });
     const barrier = new THREE.Mesh(barrierGeometry, barrierMaterial);
     scene.add(barrier);
     
-    // Create slits
-    const slitHeight = 1.5;
-    const slitWidth = 0.8;
-    const slitSeparation = 2;
+    // Create cutouts for the slits
+    const slitGeometry = new THREE.BoxGeometry(slitWidth, slitHeight, slitDepth + 0.01);
+    const slitMaterial = new THREE.MeshBasicMaterial({ color: 0x1a1a2e });
     
-    const slit1Geometry = new THREE.BoxGeometry(slitWidth, slitHeight, 0.6);
-    const slit1Material = new THREE.MeshPhongMaterial({ color: 0x000000 });
-    const slit1 = new THREE.Mesh(slit1Geometry, slit1Material);
-    slit1.position.set(0, slitSeparation/2, 0);
+    // First slit
+    const slit1 = new THREE.Mesh(slitGeometry, slitMaterial);
+    slit1.position.x = -slitSeparation / 2;
     barrier.add(slit1);
     
-    const slit2Geometry = new THREE.BoxGeometry(slitWidth, slitHeight, 0.6);
-    const slit2Material = new THREE.MeshPhongMaterial({ color: 0x000000 });
-    const slit2 = new THREE.Mesh(slit2Geometry, slit2Material);
-    slit2.position.set(0, -slitSeparation/2, 0);
+    // Second slit
+    const slit2 = new THREE.Mesh(slitGeometry, slitMaterial);
+    slit2.position.x = slitSeparation / 2;
     barrier.add(slit2);
     
-    // Create detector screen
-    const screenGeometry = new THREE.PlaneGeometry(15, 8);
-    const screenMaterial = new THREE.MeshPhongMaterial({ 
-        color: 0x202040, 
-        side: THREE.DoubleSide,
-        transparent: true,
-        opacity: 0.8
-    });
-    const screen = new THREE.Mesh(screenGeometry, screenMaterial);
-    screen.position.set(7, 0, 0);
-    screen.rotation.y = Math.PI / 2;
-    scene.add(screen);
-    
-    // Create pattern on detector screen
-    const patternCanvas = document.createElement('canvas');
-    patternCanvas.width = 1024;
-    patternCanvas.height = 1024;
-    const patternContext = patternCanvas.getContext('2d');
-    const patternTexture = new THREE.CanvasTexture(patternCanvas);
-    screen.material.map = patternTexture;
-    
-    // Create electron source
-    const sourceGeometry = new THREE.SphereGeometry(0.7, 32, 32);
-    const sourceMaterial = new THREE.MeshPhongMaterial({ 
-        color: 0x6060c0,
-        emissive: 0x3030a0,
-        transparent: true,
-        opacity: 0.9
-    });
+    // Create the source
+    const sourceGeometry = new THREE.SphereGeometry(0.15, 16, 16);
+    const sourceMaterial = new THREE.MeshBasicMaterial({ color: 0x8080ff });
     const source = new THREE.Mesh(sourceGeometry, sourceMaterial);
-    source.position.set(-7, 0, 0);
+    source.position.z = -2;
     scene.add(source);
     
-    // Add glow to source
-    const glowGeometry = new THREE.SphereGeometry(1, 32, 32);
-    const glowMaterial = new THREE.MeshBasicMaterial({
-        color: 0x8080ff,
+    // Create detection screen
+    const screenGeometry = new THREE.PlaneGeometry(4, 3);
+    const screenMaterial = new THREE.MeshBasicMaterial({ color: 0x222244, side: THREE.DoubleSide });
+    const screen = new THREE.Mesh(screenGeometry, screenMaterial);
+    screen.position.z = 2;
+    scene.add(screen);
+    
+    // Add interference pattern to the screen
+    const patternTexture = createInterferencePatternTexture();
+    const patternMaterial = new THREE.MeshBasicMaterial({
+        map: patternTexture,
         transparent: true,
-        opacity: 0.3
+        opacity: 0.7,
+        side: THREE.DoubleSide
     });
-    const glow = new THREE.Mesh(glowGeometry, glowMaterial);
-    source.add(glow);
+    const patternPlane = new THREE.Mesh(screenGeometry, patternMaterial);
+    patternPlane.position.z = 2.01;
+    scene.add(patternPlane);
     
-    // Create electrons
-    const electrons = [];
-    const electronGeometry = new THREE.SphereGeometry(0.15, 16, 16);
-    const electronMaterial = new THREE.MeshPhongMaterial({ 
-        color: config.verse1.particleColor,
-        emissive: 0x3030a0
-    });
+    // Add detection points (particle mode)
+    const detectionPoints = [];
+    const particleGeometry = new THREE.SphereGeometry(0.02, 8, 8);
+    const particleMaterial = new THREE.MeshBasicMaterial({ color: 0xff8080 });
     
-    // Wave visualization for unobserved state
-    const waveGeometry = new THREE.PlaneGeometry(14, 8, 100, 1);
-    const waveMaterial = new THREE.MeshBasicMaterial({
-        color: config.verse1.waveColor,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.7
-    });
-    const wave = new THREE.Mesh(waveGeometry, waveMaterial);
-    wave.position.set(0, 0, 0);
-    wave.rotation.y = Math.PI / 2;
-    scene.add(wave);
+    // Add lighting
+    const ambientLight = new THREE.AmbientLight(0x404040);
+    scene.add(ambientLight);
     
-    // Controls for interaction
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.screenSpacePanning = false;
-    controls.minDistance = 5;
-    controls.maxDistance = 20;
-    controls.maxPolarAngle = Math.PI / 1.5;
-    controls.target.set(0, 0, 0);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(1, 1, 2);
+    scene.add(directionalLight);
     
-    // Set camera position
-    camera.position.set(-5, 4, 10);
+    // Animation variables
+    let particles = [];
+    let observationMode = config.verse1.observationActive;
+    let electronRate = config.verse1.electronRate;
     
-    // Add observation toggle button functionality
+    // Create a toggle button inside the container
     const toggleObservationBtn = document.getElementById('toggle-observation');
-    toggleObservationBtn.addEventListener('click', () => {
-        config.verse1.observationActive = !config.verse1.observationActive;
-        toggleObservationBtn.textContent = config.verse1.observationActive ? 
-            'Toggle to Wave Mode' : 'Toggle to Particle Mode';
-        
-        // Clear pattern when switching modes
-        clearPattern();
-    });
+    if (toggleObservationBtn) {
+        toggleObservationBtn.addEventListener('click', () => {
+            observationMode = !observationMode;
+            config.verse1.observationActive = observationMode;
+            updateVisualization();
+        });
+    }
     
-    // Add electron rate slider functionality
+    // Create a slider for electron rate
     const electronRateSlider = document.getElementById('electron-rate');
-    electronRateSlider.addEventListener('input', () => {
-        config.verse1.electronRate = electronRateSlider.value;
-    });
-    
-    // Function to clear pattern
-    function clearPattern() {
-        patternContext.clearRect(0, 0, patternCanvas.width, patternCanvas.height);
-        patternTexture.needsUpdate = true;
+    if (electronRateSlider) {
+        electronRateSlider.value = electronRate;
+        electronRateSlider.addEventListener('input', () => {
+            electronRate = parseInt(electronRateSlider.value);
+            config.verse1.electronRate = electronRate;
+        });
     }
     
-    // Add electron when timer triggers
-    let lastElectronTime = 0;
-    
-    // Animation loop
-    function animate(time) {
-        requestAnimationFrame(animate);
+    // Function to create a random electron particle
+    function createElectron() {
+        const particleGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+        const particleMaterial = new THREE.MeshBasicMaterial({ 
+            color: config.verse1.particleColor,
+            transparent: true,
+            opacity: 0.8
+        });
+        const particle = new THREE.Mesh(particleGeometry, particleMaterial);
         
-        const delta = time - lastElectronTime;
-        if (delta > (5000 / config.verse1.electronRate)) {
-            addElectron();
-            lastElectronTime = time;
-        }
-        
-        // Update electrons
-        updateElectrons();
-        
-        // Update wave visualization
-        if (!config.verse1.observationActive) {
-            updateWave(time);
-        } else {
-            wave.visible = false;
-        }
-        
-        // Update glow effect
-        glow.scale.set(
-            1 + 0.1 * Math.sin(time * 0.002),
-            1 + 0.1 * Math.sin(time * 0.002),
-            1 + 0.1 * Math.sin(time * 0.002)
-        );
-        
-        controls.update();
-        renderer.render(scene, camera);
-    }
-    
-    // Start animation
-    animate(0);
-    
-    // Add electron function
-    function addElectron() {
-        const electron = new THREE.Mesh(electronGeometry, electronMaterial.clone());
-        electron.position.copy(source.position);
-        electron.velocity = new THREE.Vector3(
-            (Math.random() * 0.04) + 0.08,  // X velocity (towards barrier)
-            (Math.random() - 0.5) * 0.02,   // Small Y jitter
-            (Math.random() - 0.5) * 0.02    // Small Z jitter
-        );
-        electron.userData = {
-            passed: false,
-            path: Math.random() > 0.5 ? 1 : 2, // Which slit to pass through
-            wavelike: !config.verse1.observationActive, // Whether electron behaves as wave
-            phase: Math.random() * Math.PI * 2 // Random phase for interference
+        particle.position.set(source.position.x, source.position.y, source.position.z);
+        particle.userData = {
+            velocity: new THREE.Vector3(
+                (Math.random() - 0.5) * 0.01,
+                (Math.random() - 0.5) * 0.01,
+                0.05
+            ),
+            age: 0,
+            maxAge: 200
         };
-        
-        scene.add(electron);
-        electrons.push(electron);
+        scene.add(particle);
+        particles.push(particle);
     }
     
-    // Update electrons function
-    function updateElectrons() {
-        for (let i = electrons.length - 1; i >= 0; i--) {
-            const electron = electrons[i];
-            electron.position.add(electron.velocity);
-            
-            // Check if electron has reached the barrier
-            if (!electron.userData.passed && electron.position.x >= barrier.position.x) {
-                electron.userData.passed = true;
-                
-                // Handle electrons based on observation state
-                if (config.verse1.observationActive) {
-                    // Particle behavior: pass through specific slit
-                    if (electron.userData.path === 1) {
-                        electron.position.y = slit1.position.y + barrier.position.y + (Math.random() - 0.5) * slitHeight;
-                    } else {
-                        electron.position.y = slit2.position.y + barrier.position.y + (Math.random() - 0.5) * slitHeight;
-                    }
-                    
-                    // Add some random deflection after passing through slit
-                    electron.velocity.y += (Math.random() - 0.5) * 0.01;
-                    electron.velocity.z += (Math.random() - 0.5) * 0.01;
-                } else {
-                    // Wave behavior: apply interference pattern math
-                    // Just pass through, actual interference is handled at detection
-                    const deflection = (Math.random() - 0.5) * 0.08;
-                    electron.velocity.y += deflection;
-                }
-            }
-            
-            // Check if electron has reached the screen
-            if (electron.position.x >= screen.position.x) {
-                // Record hit on the screen pattern
-                const screenY = (electron.position.y + 4) / 8; // Normalize to 0-1
-                const screenZ = (electron.position.z + 4) / 8; // Normalize to 0-1
-                
-                // Calculate position on canvas
-                const canvasX = Math.floor(screenZ * patternCanvas.width);
-                const canvasY = Math.floor((1 - screenY) * patternCanvas.height);
-                
-                if (canvasX >= 0 && canvasX < patternCanvas.width && 
-                    canvasY >= 0 && canvasY < patternCanvas.height) {
-                    
-                    if (config.verse1.observationActive) {
-                        // Particle pattern: just dots
-                        patternContext.fillStyle = config.verse1.detectionColor;
-                        patternContext.globalAlpha = 0.5;
-                        patternContext.beginPath();
-                        patternContext.arc(canvasX, canvasY, 4, 0, Math.PI * 2);
-                        patternContext.fill();
-                    } else {
-                        // Wave pattern: interference
-                        const y = electron.position.y;
-                        // Calculate distance from each slit
-                        const d1 = Math.sqrt(Math.pow(y - slit1.position.y, 2));
-                        const d2 = Math.sqrt(Math.pow(y - slit2.position.y, 2));
-                        
-                        // Simple interference calculation
-                        const phase = (d1 - d2) * 10 + electron.userData.phase;
-                        const intensity = Math.pow(Math.cos(phase), 2);
-                        
-                        patternContext.fillStyle = config.verse1.waveColor;
-                        patternContext.globalAlpha = intensity * 0.7;
-                        patternContext.beginPath();
-                        patternContext.arc(canvasX, canvasY, 3, 0, Math.PI * 2);
-                        patternContext.fill();
-                    }
-                    
-                    patternTexture.needsUpdate = true;
-                }
-                
-                // Remove electron
-                scene.remove(electron);
-                electrons.splice(i, 1);
-            }
-        }
-    }
-    
-    // Update wave visualization
-    function updateWave(time) {
-        wave.visible = !config.verse1.observationActive;
-        if (!wave.visible) return;
+    // Function to create an interference pattern texture
+    function createInterferencePatternTexture() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const context = canvas.getContext('2d');
         
-        const positions = wave.geometry.attributes.position;
+        // Fill with background color
+        context.fillStyle = 'black';
+        context.fillRect(0, 0, canvas.width, canvas.height);
         
-        for (let i = 0; i < positions.count; i++) {
-            const x = positions.getX(i);
-            const y = positions.getY(i);
-            
-            // Only modify vertices in front of the barrier
-            if (x > 0) {
-                // Calculate distance from slits
-                const d1 = Math.sqrt(Math.pow(y - slitSeparation/2, 2) + Math.pow(x, 2));
-                const d2 = Math.sqrt(Math.pow(y + slitSeparation/2, 2) + Math.pow(x, 2));
+        // Create interference pattern
+        for (let y = 0; y < canvas.height; y++) {
+            for (let x = 0; x < canvas.width; x++) {
+                // Calculate normalized coordinates
+                const nx = (x / canvas.width) * 2 - 1;
+                const ny = (y / canvas.height) * 2 - 1;
                 
-                // Wave equation with interference
-                const frequency = 0.3;
-                const wavelength = 2;
-                const wave1 = Math.sin(time * frequency - d1 / wavelength);
-                const wave2 = Math.sin(time * frequency - d2 / wavelength);
-                const interference = (wave1 + wave2) * 0.2;
+                // Apply interference formula
+                const d1 = Math.sqrt(Math.pow(nx - slitSeparation/3, 2) + Math.pow(ny, 2));
+                const d2 = Math.sqrt(Math.pow(nx + slitSeparation/3, 2) + Math.pow(ny, 2));
                 
-                // Apply interference pattern
-                positions.setZ(i, interference);
+                // Double slit interference
+                const wavelength = 0.1;
+                const intensity = Math.pow(Math.cos((d1 - d2) * Math.PI / wavelength), 2);
+                
+                // Set pixel color based on intensity
+                const color = Math.floor(intensity * 100);
+                context.fillStyle = `rgb(${color}, ${color}, ${color + 80})`;
+                context.fillRect(x, y, 1, 1);
             }
         }
         
-        wave.geometry.attributes.position.needsUpdate = true;
+        const texture = new THREE.CanvasTexture(canvas);
+        return texture;
     }
+    
+    // Function to create a simple particle detection pattern
+    function addDetectionPoint(x, y) {
+        const point = new THREE.Mesh(particleGeometry, particleMaterial);
+        point.position.set(x, y, 2.02);
+        scene.add(point);
+        detectionPoints.push(point);
+        
+        // Remove old points if too many
+        if (detectionPoints.length > 100) {
+            const oldPoint = detectionPoints.shift();
+            scene.remove(oldPoint);
+        }
+    }
+    
+    // Function to update visualization based on observation mode
+    function updateVisualization() {
+        patternPlane.visible = !observationMode;
+        
+        // Change source color based on mode
+        if (observationMode) {
+            sourceMaterial.color.set(config.verse1.detectionColor);
+        } else {
+            sourceMaterial.color.set(config.verse1.particleColor);
+        }
+    }
+    
+    // Call initially
+    updateVisualization();
     
     // Handle window resize
     function onWindowResize() {
@@ -513,445 +645,224 @@ function initializeVerse1Animation(container) {
         camera.updateProjectionMatrix();
         renderer.setSize(container.clientWidth, container.clientHeight);
     }
-    
     window.addEventListener('resize', onWindowResize);
-    
-    // Store animation objects for cleanup
-    animations.verse1 = {
-        renderer,
-        controls,
-        cleanup: () => {
-            window.removeEventListener('resize', onWindowResize);
-            controls.dispose();
-            renderer.dispose();
-        }
-    };
-}
-
-// Verse 2: Quantum Superposition - P5.js
-function initializeVerse2Animation(container) {
-    // Create canvas directly without p5.js
-    const canvas = document.createElement('canvas');
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
-    container.appendChild(canvas);
-    const ctx = canvas.getContext('2d');
-    
-    // Particle properties
-    let particle = {
-        x: canvas.width / 2,
-        y: canvas.height / 2,
-        size: config.verse2.particleSize * 5,
-        measured: false,
-        opacity: 1.0
-    };
-    
-    let superposition = config.verse2.superpositionActive;
-    let wavePoints = [];
-    let wavePhase = 0;
-    
-    // Generate wave points for probability cloud
-    generateWavePoints();
-    
-    // Add button event listeners
-    const measureBtn = document.getElementById('measure-particle');
-    measureBtn.addEventListener('click', measureParticle);
-    
-    const resetBtn = document.getElementById('reset-superposition');
-    resetBtn.addEventListener('click', resetSuperposition);
-    
-    function generateWavePoints() {
-        wavePoints = [];
-        const numPoints = 300;
-        
-        for (let i = 0; i < numPoints; i++) {
-            // Create a probability cloud with gaussian-like distribution
-            const r = gaussianRandom() * (canvas.width / 6);
-            const theta = Math.random() * Math.PI * 2;
-            
-            wavePoints.push({
-                x: particle.x + r * Math.cos(theta),
-                y: particle.y + r * Math.sin(theta),
-                size: Math.random() * 4 + 2,
-                angle: Math.random() * Math.PI * 2,
-                speed: Math.random() * 0.02 + 0.01,
-                opacity: Math.random() * 0.5 + 0.3
-            });
-        }
-    }
-    
-    function gaussianRandom() {
-        let u = 0, v = 0;
-        while(u === 0) u = Math.random();
-        while(v === 0) v = Math.random();
-        return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
-    }
-    
-    function drawSuperposition() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Draw probability cloud
-        wavePhase += config.verse2.waveSpeed;
-        
-        // Draw wave points
-        for (let point of wavePoints) {
-            point.angle += point.speed;
-            
-            // Make points orbit slightly
-            const wobble = 5 * Math.sin(point.angle);
-            
-            const color = hexToRgb(config.verse2.probabilityColor);
-            ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${point.opacity * (0.5 + 0.5 * Math.sin(wavePhase + point.angle))})`;
-            
-            ctx.beginPath();
-            ctx.arc(
-                point.x + wobble * Math.cos(point.angle),
-                point.y + wobble * Math.sin(point.angle),
-                point.size,
-                0,
-                Math.PI * 2
-            );
-            ctx.fill();
-        }
-        
-        // Draw central particle with glow
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = config.verse2.particleColor;
-        ctx.fillStyle = config.verse2.particleColor;
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size * 0.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-    }
-    
-    function drawMeasuredParticle() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // Draw particle at measured position
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = config.verse2.particleColor;
-        
-        const color = hexToRgb(config.verse2.particleColor);
-        ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${particle.opacity})`;
-        
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-    }
-    
-    function measureParticle() {
-        if (superposition) {
-            superposition = false;
-            
-            // Select a random point from the probability cloud
-            const randomPoint = wavePoints[Math.floor(Math.random() * wavePoints.length)];
-            particle.x = randomPoint.x;
-            particle.y = randomPoint.y;
-            particle.measured = true;
-            
-            // Create collapse effect
-            createCollapseEffect();
-        }
-    }
-    
-    function resetSuperposition() {
-        if (!superposition) {
-            superposition = true;
-            particle.x = canvas.width / 2;
-            particle.y = canvas.height / 2;
-            particle.measured = false;
-            particle.opacity = 1.0;
-            
-            // Regenerate wave points
-            generateWavePoints();
-        }
-    }
-    
-    function createCollapseEffect() {
-        // Create a quick collapse animation
-        const collapsePoints = [];
-        const numPoints = 50;
-        
-        for (let i = 0; i < numPoints; i++) {
-            collapsePoints.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                targetX: particle.x,
-                targetY: particle.y,
-                size: Math.random() * 6 + 2,
-                speed: Math.random() * 0.08 + 0.02
-            });
-        }
-        
-        let frame = 0;
-        const maxFrames = 30;
-        
-        const collapseInterval = setInterval(() => {
-            frame++;
-            
-            if (frame >= maxFrames) {
-                clearInterval(collapseInterval);
-            }
-        }, 16);
-    }
-    
-    function hexToRgb(hex) {
-        // Remove # if present
-        hex = hex.replace(/^#/, '');
-        
-        // Parse hex values
-        const bigint = parseInt(hex, 16);
-        const r = (bigint >> 16) & 255;
-        const g = (bigint >> 8) & 255;
-        const b = bigint & 255;
-        
-        return { r, g, b };
-    }
     
     // Animation loop
     function animate() {
-        if (superposition) {
-            drawSuperposition();
-        } else {
-            drawMeasuredParticle();
+        requestAnimationFrame(animate);
+        
+        // Spawn new particles
+        if (Math.random() < electronRate / 1000) {
+            createElectron();
         }
         
-        requestAnimationFrame(animate);
+        // Update particles
+        particles.forEach((particle, index) => {
+            particle.position.add(particle.userData.velocity);
+            
+            // Handle particle passing through barrier
+            if (particle.position.z > barrier.position.z && 
+                particle.position.z < barrier.position.z + slitDepth + 0.1) {
+                
+                // Check if particle passes through either slit
+                const passesThroughSlit1 = Math.abs(particle.position.x - (-slitSeparation/2)) < slitWidth/2 && 
+                                           Math.abs(particle.position.y) < slitHeight/2;
+                                           
+                const passesThroughSlit2 = Math.abs(particle.position.x - (slitSeparation/2)) < slitWidth/2 && 
+                                           Math.abs(particle.position.y) < slitHeight/2;
+                
+                // Quantum behavior depends on observation mode
+                if (observationMode) {
+                    // Particle behavior - passes through only one slit
+                    if (!passesThroughSlit1 && !passesThroughSlit2) {
+                        // Hit barrier
+                        scene.remove(particle);
+                        particles.splice(index, 1);
+                    } else {
+                        // Slightly randomize direction after going through slit
+                        particle.userData.velocity.x += (Math.random() - 0.5) * 0.005;
+                        particle.userData.velocity.y += (Math.random() - 0.5) * 0.005;
+                    }
+                } else {
+                    // Wave behavior - affected by both slits regardless of which it passes through
+                    if (!passesThroughSlit1 && !passesThroughSlit2) {
+                        // Hit barrier
+                        scene.remove(particle);
+                        particles.splice(index, 1);
+                    }
+                }
+            }
+            
+            // Handle particle hitting screen
+            if (particle.position.z >= screen.position.z) {
+                if (observationMode) {
+                    // Add a detection point in particle mode
+                    addDetectionPoint(particle.position.x, particle.position.y);
+                }
+                
+                // Remove particle
+                scene.remove(particle);
+                particles.splice(index, 1);
+            }
+            
+            // Age the particle
+            particle.userData.age++;
+            if (particle.userData.age > particle.userData.maxAge) {
+                scene.remove(particle);
+                particles.splice(index, 1);
+            }
+        });
+        
+        controls.update();
+        renderer.render(scene, camera);
     }
     
     // Start animation
     animate();
     
-    // Handle window resize
-    function handleResize() {
-        canvas.width = container.clientWidth;
-        canvas.height = container.clientHeight;
-        
-        if (superposition) {
-            particle.x = canvas.width / 2;
-            particle.y = canvas.height / 2;
-            generateWavePoints();
-        }
-    }
-    
-    window.addEventListener('resize', handleResize);
-    
-    // Store for cleanup
-    animations.verse2 = {
-        cleanup: () => {
-            window.removeEventListener('resize', handleResize);
-            container.removeChild(canvas);
+    // Store cleanup function
+    animations[`verse1`] = {
+        cleanup: function() {
+            // Remove event listeners
+            window.removeEventListener('resize', onWindowResize);
+            
+            // Stop animation loop (though this is not really possible with requestAnimationFrame)
+            // Remove all particles
+            particles.forEach(particle => scene.remove(particle));
+            particles = [];
+            
+            // Remove all detection points
+            detectionPoints.forEach(point => scene.remove(point));
+            
+            // Dispose of geometries, materials, textures
+            sourceGeometry.dispose();
+            sourceMaterial.dispose();
+            barrierGeometry.dispose();
+            barrierMaterial.dispose();
+            slitGeometry.dispose();
+            slitMaterial.dispose();
+            screenGeometry.dispose();
+            screenMaterial.dispose();
+            patternMaterial.dispose();
+            particleGeometry.dispose();
+            particleMaterial.dispose();
+            
+            // Dispose of renderer
+            renderer.dispose();
+            
+            // Remove renderer element from DOM
+            if (renderer.domElement.parentNode) {
+                renderer.domElement.parentNode.removeChild(renderer.domElement);
+            }
         }
     };
 }
 
-// Verse 3: Wave Function Collapse
-function initializeVerse3Animation(container) {
-    // Set up THREE.js scene
+// Function to initialize animation for Verse 2 (Quantum Superposition)
+function initializeVerse2Animation(container) {
+    // Create a scene
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    scene.background = new THREE.Color(0x1a1a2e);
     
+    // Create a camera
+    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 5;
+    
+    // Create a renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setClearColor(0x1a1a2e, 1);
     container.appendChild(renderer.domElement);
     
-    // Add lights
-    const ambientLight = new THREE.AmbientLight(0x404040);
-    scene.add(ambientLight);
+    // Add orbit controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
     
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(0, 1, 1);
-    scene.add(directionalLight);
-    
-    // Create wave function visualization
-    const waveGeometry = new THREE.PlaneGeometry(20, 10, 100, 50);
-    const waveMaterial = new THREE.MeshBasicMaterial({
-        color: config.verse3.waveColor,
-        wireframe: true,
+    // Create central particle in superposition
+    const particleGeometry = new THREE.SphereGeometry(config.verse2.particleSize / 100, 32, 32);
+    const particleMaterial = new THREE.MeshPhongMaterial({ 
+        color: config.verse2.particleColor,
         transparent: true,
         opacity: 0.7
     });
-    const wave = new THREE.Mesh(waveGeometry, waveMaterial);
-    scene.add(wave);
+    const particle = new THREE.Mesh(particleGeometry, particleMaterial);
+    scene.add(particle);
     
-    // Create point for collapsed state
-    const pointGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-    const pointMaterial = new THREE.MeshPhongMaterial({
-        color: config.verse3.pointColor,
-        emissive: 0x802020,
-        shininess: 100
+    // Probability cloud visualization
+    const cloudGeometry = new THREE.TorusGeometry(1, 0.3, 16, 100);
+    const cloudMaterial = new THREE.MeshPhongMaterial({ 
+        color: config.verse2.probabilityColor,
+        transparent: true,
+        opacity: 0.5,
+        wireframe: false
     });
-    const point = new THREE.Mesh(pointGeometry, pointMaterial);
-    point.position.set(0, 0, 0);
-    point.visible = false;
-    scene.add(point);
+    const cloud = new THREE.Mesh(cloudGeometry, cloudMaterial);
+    scene.add(cloud);
     
-    // Controls for interaction
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.screenSpacePanning = false;
-    controls.minDistance = 5;
-    controls.maxDistance = 20;
-    controls.target.set(0, 0, 0);
-    
-    // Set camera position
-    camera.position.set(0, 5, 10);
-    
-    // Add measurement toggle button functionality
-    const toggleMeasurementBtn = document.getElementById('toggle-measurement');
-    toggleMeasurementBtn.addEventListener('click', () => {
-        config.verse3.measurementActive = !config.verse3.measurementActive;
-        toggleMeasurementBtn.textContent = config.verse3.measurementActive ? 
-            'Return to Wave Function' : 'Collapse Wave Function';
-        
-        if (config.verse3.measurementActive) {
-            // Collapse to a random point
-            collapseWaveFunction();
-        } else {
-            // Return to wave function state
-            expandWaveFunction();
-        }
+    // Add a second torus for more complex visualization
+    const cloud2Geometry = new THREE.TorusGeometry(1, 0.15, 16, 100);
+    cloud2Geometry.rotateY(Math.PI / 2);
+    const cloud2Material = new THREE.MeshPhongMaterial({ 
+        color: config.verse2.probabilityColor,
+        transparent: true,
+        opacity: 0.3,
+        wireframe: false
     });
+    const cloud2 = new THREE.Mesh(cloud2Geometry, cloud2Material);
+    scene.add(cloud2);
     
-    // Add wave spread slider functionality
-    const waveSpreadSlider = document.getElementById('wave-spread');
-    waveSpreadSlider.value = config.verse3.waveSpread;
-    waveSpreadSlider.addEventListener('input', () => {
-        config.verse3.waveSpread = waveSpreadSlider.value;
-    });
+    // Add lighting
+    const ambientLight = new THREE.AmbientLight(0x404040);
+    scene.add(ambientLight);
     
-    // Function to collapse wave function
-    function collapseWaveFunction() {
-        // Choose a random point on the wave
-        const positions = wave.geometry.attributes.position;
-        const index = Math.floor(Math.random() * positions.count);
-        const x = positions.getX(index);
-        const y = positions.getY(index);
-        const z = positions.getZ(index);
-        
-        // Move the point to that position
-        point.position.set(x, y, z);
-        
-        // Create collapse animation
-        const duration = 1000; // ms
-        const startTime = Date.now();
-        
-        function animateCollapse() {
-            const elapsed = Date.now() - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            // Fade out wave
-            wave.material.opacity = 0.7 * (1 - progress);
-            
-            // Shrink wave
-            wave.scale.set(
-                1 - progress * 0.9,
-                1 - progress * 0.9,
-                1
-            );
-            
-            if (progress < 1) {
-                requestAnimationFrame(animateCollapse);
-            } else {
-                // Show point, hide wave
-                point.visible = true;
-                wave.visible = false;
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(1, 1, 2);
+    scene.add(directionalLight);
+    
+    // Animation state
+    let inSuperposition = config.verse2.superpositionActive;
+    let measurementPoint = new THREE.Vector3();
+    let waveSpeed = config.verse2.waveSpeed;
+    let measurementTime = 0;
+    let measured = false;
+    
+    // Event listeners for controls
+    const measureBtn = document.getElementById('measure-particle');
+    if (measureBtn) {
+        measureBtn.addEventListener('click', () => {
+            if (inSuperposition) {
+                measured = true;
+                measurementTime = 0;
+                
+                // Pick a random point on the torus
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 1;
+                measurementPoint.set(
+                    Math.cos(angle) * distance,
+                    Math.sin(angle) * distance,
+                    0
+                );
+                
+                inSuperposition = false;
+                config.verse2.superpositionActive = false;
             }
-        }
-        
-        animateCollapse();
+        });
     }
     
-    // Function to expand wave function
-    function expandWaveFunction() {
-        // Create expand animation
-        const duration = 1000; // ms
-        const startTime = Date.now();
-        
-        // Show wave
-        wave.visible = true;
-        wave.material.opacity = 0;
-        wave.scale.set(0.1, 0.1, 1);
-        
-        function animateExpand() {
-            const elapsed = Date.now() - startTime;
-            const progress = Math.min(elapsed / duration, 1);
+    const resetBtn = document.getElementById('reset-superposition');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            inSuperposition = true;
+            measured = false;
+            config.verse2.superpositionActive = true;
             
-            // Fade in wave
-            wave.material.opacity = 0.7 * progress;
+            // Reset particle to center
+            particle.position.set(0, 0, 0);
+            particle.scale.set(1, 1, 1);
             
-            // Expand wave
-            wave.scale.set(
-                progress,
-                progress,
-                1
-            );
-            
-            // Fade out point
-            if (point.visible) {
-                pointMaterial.opacity = 1 - progress;
-                if (progress >= 1) {
-                    point.visible = false;
-                    pointMaterial.opacity = 1;
-                }
-            }
-            
-            if (progress < 1) {
-                requestAnimationFrame(animateExpand);
-            }
-        }
-        
-        animateExpand();
-    }
-    
-    // Animation loop
-    function animate(time) {
-        requestAnimationFrame(animate);
-        
-        // Update wave based on measurement state
-        if (!config.verse3.measurementActive) {
-            updateWave(time);
-        }
-        
-        // Rotate point if visible
-        if (point.visible) {
-            point.rotation.y += 0.01;
-            
-            // Add pulsing effect
-            const pulse = 1 + 0.1 * Math.sin(time * 0.002);
-            point.scale.set(pulse, pulse, pulse);
-        }
-        
-        controls.update();
-        renderer.render(scene, camera);
-    }
-    
-    // Start animation
-    animate(0);
-    
-    // Update wave function visualization
-    function updateWave(time) {
-        const positions = wave.geometry.attributes.position;
-        const spread = config.verse3.waveSpread / 100;
-        
-        for (let i = 0; i < positions.count; i++) {
-            const x = positions.getX(i);
-            const y = positions.getY(i);
-            
-            // Calculate a Gaussian-like probability distribution
-            const r = Math.sqrt(x*x + y*y);
-            const amplitude = Math.exp(-r*r / (8 * spread)) * spread * 2;
-            
-            // Add wave-like motion
-            const zOffset = amplitude * Math.sin(r - time * 0.001 * config.verse3.animationSpeed);
-            
-            positions.setZ(i, zOffset);
-        }
-        
-        wave.geometry.attributes.position.needsUpdate = true;
+            // Make cloud visible again
+            cloud.visible = true;
+            cloud2.visible = true;
+        });
     }
     
     // Handle window resize
@@ -960,1189 +871,799 @@ function initializeVerse3Animation(container) {
         camera.updateProjectionMatrix();
         renderer.setSize(container.clientWidth, container.clientHeight);
     }
-    
     window.addEventListener('resize', onWindowResize);
     
-    // Store animation objects for cleanup
-    animations.verse3 = {
-        renderer,
-        controls,
-        cleanup: () => {
+    // Animation loop
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        const time = Date.now() * 0.001;
+        
+        if (inSuperposition) {
+            // Animate probability cloud
+            cloud.rotation.x = time * waveSpeed;
+            cloud.rotation.y = time * waveSpeed * 0.5;
+            
+            cloud2.rotation.x = time * waveSpeed * 0.7;
+            cloud2.rotation.z = time * waveSpeed * 0.3;
+            
+            // Make particle pulsate slightly
+            const scale = 1 + 0.1 * Math.sin(time * 3);
+            particle.scale.set(scale, scale, scale);
+            
+            // Slight movement in center
+            particle.position.x = Math.sin(time) * 0.07;
+            particle.position.y = Math.cos(time * 1.3) * 0.05;
+        } else if (measured) {
+            // Collapse animation
+            measurementTime += 0.015;
+            
+            if (measurementTime < 1) {
+                // Move particle toward measured position
+                particle.position.x = THREE.MathUtils.lerp(particle.position.x, measurementPoint.x, measurementTime);
+                particle.position.y = THREE.MathUtils.lerp(particle.position.y, measurementPoint.y, measurementTime);
+                particle.position.z = THREE.MathUtils.lerp(particle.position.z, measurementPoint.z, measurementTime);
+                
+                // Fade out cloud
+                cloud.material.opacity = 0.5 * (1 - measurementTime);
+                cloud2.material.opacity = 0.3 * (1 - measurementTime);
+            } else {
+                // Complete collapse
+                particle.position.copy(measurementPoint);
+                cloud.visible = false;
+                cloud2.visible = false;
+                measured = false;
+            }
+        }
+        
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    
+    // Start animation
+    animate();
+    
+    // Store cleanup function
+    animations[`verse2`] = {
+        cleanup: function() {
+            // Remove event listeners
             window.removeEventListener('resize', onWindowResize);
-            controls.dispose();
+            
+            // Dispose of geometries, materials
+            particleGeometry.dispose();
+            particleMaterial.dispose();
+            cloudGeometry.dispose();
+            cloudMaterial.dispose();
+            cloud2Geometry.dispose();
+            cloud2Material.dispose();
+            
+            // Dispose of renderer
             renderer.dispose();
+            
+            // Remove renderer element from DOM
+            if (renderer.domElement.parentNode) {
+                renderer.domElement.parentNode.removeChild(renderer.domElement);
+            }
         }
     };
 }
 
-// Verse 4: Quantum Erasure - Double Slit with Path Info
-function initializeVerse4Animation(container) {
-    // Create canvas directly without d3.js
-    const canvas = document.createElement('canvas');
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
-    container.appendChild(canvas);
-    const ctx = canvas.getContext('2d');
+// Function to initialize animation for Verse 3 (Wave Function)
+function initializeVerse3Animation(container) {
+    // Create a scene
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x1a1a2e);
     
-    // Setup experiment components
-    const width = canvas.width;
-    const height = canvas.height;
-    const centerX = width / 2;
-    const centerY = height / 2;
+    // Create a camera
+    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 5;
     
-    const experimentWidth = Math.min(width * 0.8, 800);
-    const experimentHeight = Math.min(height * 0.7, 400);
+    // Create a renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
     
-    // Source position
-    const sourceX = centerX - experimentWidth/2 + 40;
-    const sourceY = centerY;
-    const sourceRadius = 15;
+    // Add orbit controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
     
-    // Barrier dimensions
-    const barrierWidth = 20;
-    const barrierHeight = experimentHeight;
-    const barrierX = centerX - barrierWidth/2;
-    const barrierY = centerY - barrierHeight/2;
+    // Animation variables
+    let waveSpread = config.verse3.waveSpread / 100; // Convert to 0-1 range
+    let measurementActive = config.verse3.measurementActive;
+    const waveSpeed = config.verse3.waveSpeed;
+    const animationSpeed = config.verse3.animationSpeed;
     
-    // Slits
-    const slitWidth = config.verse4.slitWidth;
-    const slitGap = 60;
+    // Create wave function visualization
+    const waveResolution = 100;
+    const waveWidth = 4;
+    const waveHeight = 2;
     
-    // Screen position
-    const screenX = centerX + experimentWidth/2 - 40;
-    const screenWidth = 20;
-    const screenY = centerY - experimentHeight/2;
-    const screenHeight = experimentHeight;
+    const waveGeometry = new THREE.PlaneGeometry(waveWidth, waveHeight, waveResolution, 1);
+    const waveMaterial = new THREE.MeshBasicMaterial({
+        color: config.verse3.waveColor,
+        transparent: true,
+        opacity: 0.7,
+        wireframe: true
+    });
+    const wave = new THREE.Mesh(waveGeometry, waveMaterial);
+    scene.add(wave);
     
-    // Detectors
-    const detector1X = barrierX + barrierWidth;
-    const detector1Y = centerY - slitGap/2 - slitWidth/2;
-    const detector2X = barrierX + barrierWidth;
-    const detector2Y = centerY + slitGap/2 + slitWidth/2;
-    const detectorRadius = 10;
+    // Create a filled wave with same geometry but solid material
+    const filledWaveGeometry = new THREE.PlaneGeometry(waveWidth, waveHeight, waveResolution, 1);
+    const filledWaveMaterial = new THREE.MeshBasicMaterial({
+        color: config.verse3.waveColor,
+        transparent: true,
+        opacity: 0.2,
+        side: THREE.DoubleSide
+    });
+    const filledWave = new THREE.Mesh(filledWaveGeometry, filledWaveMaterial);
+    filledWave.position.z = -0.01; // Slightly behind the wireframe
+    scene.add(filledWave);
     
-    // State variables
-    let pathInfoActive = config.verse4.pathInfoActive;
-    let particles = [];
-    let patternPoints = [];
-    let experimentActive = true;
+    // Create a point that represents the measured state
+    const pointGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+    const pointMaterial = new THREE.MeshBasicMaterial({ 
+        color: config.verse3.pointColor,
+        transparent: true,
+        opacity: 0.8
+    });
+    const point = new THREE.Mesh(pointGeometry, pointMaterial);
+    point.visible = false;
+    scene.add(point);
     
-    // Interface for path info toggle
-    const togglePathInfoBtn = document.getElementById('toggle-path-info');
-    const resetExperimentBtn = document.getElementById('reset-experiment');
-    
-    togglePathInfoBtn.addEventListener('click', togglePathInfo);
-    resetExperimentBtn.addEventListener('click', resetExperiment);
-    
-    // Function to toggle path information
-    function togglePathInfo() {
-        pathInfoActive = !pathInfoActive;
-        config.verse4.pathInfoActive = pathInfoActive;
-        
-        togglePathInfoBtn.textContent = pathInfoActive ? 
-            'Erase Path Information' : 'Add Path Information';
-        
-        clearPattern();
+    // Event listeners for controls
+    const toggleMeasurement = document.getElementById('toggle-measurement');
+    if (toggleMeasurement) {
+        toggleMeasurement.addEventListener('click', () => {
+            measurementActive = !measurementActive;
+            config.verse3.measurementActive = measurementActive;
+            
+            // Show/hide point
+            point.visible = measurementActive;
+            
+            // Update button text
+            if (toggleMeasurement.textContent) {
+                toggleMeasurement.textContent = measurementActive ? 'Hide Measurement' : 'Show Measurement';
+            }
+        });
     }
     
-    // Reset experiment
-    function resetExperiment() {
-        clearPattern();
-        particles = [];
+    const waveSpreadSlider = document.getElementById('wave-spread');
+    if (waveSpreadSlider) {
+        waveSpreadSlider.value = config.verse3.waveSpread;
+        waveSpreadSlider.addEventListener('input', () => {
+            waveSpread = waveSpreadSlider.value / 100;
+            config.verse3.waveSpread = waveSpreadSlider.value;
+        });
     }
     
-    // Clear pattern on detector screen
-    function clearPattern() {
-        patternPoints = [];
+    // Function to update wave vertices
+    function updateWave(time) {
+        const vertices = waveGeometry.attributes.position.array;
+        const filledVertices = filledWaveGeometry.attributes.position.array;
+        
+        // Function to calculate Gaussian wave packet
+        function gaussianWavePacket(x, center, width, k, t) {
+            const gaussianEnvelope = Math.exp(-Math.pow(x - center, 2) / (2 * width * width));
+            const oscillation = Math.cos(k * x - t);
+            return gaussianEnvelope * oscillation;
+        }
+        
+        // Update vertices of both waves
+        for (let i = 0; i <= waveResolution; i++) {
+            const x = (i / waveResolution) * waveWidth - waveWidth / 2;
+            
+            // Calculate wave height based on Gaussian wave packet
+            const center = 0;
+            const width = 0.5 + waveSpread * 1.5; // Adjustable spread
+            const k = 10; // Wave number (oscillation frequency)
+            const amplitude = 0.7; // Wave amplitude
+            
+            const y = amplitude * gaussianWavePacket(x, center, width, k, time * animationSpeed);
+            
+            // Update wireframe
+            vertices[i * 3 + 1] = y;
+            
+            // Update filled wave
+            filledVertices[i * 3 + 1] = y;
+        }
+        
+        waveGeometry.attributes.position.needsUpdate = true;
+        filledWaveGeometry.attributes.position.needsUpdate = true;
     }
     
-    // Create a new particle
-    function createParticle() {
-        if (!experimentActive) return;
-        
-        const particle = {
-            id: Date.now() + Math.random(),
-            x: sourceX,
-            y: sourceY,
-            vx: Math.random() * 2 + 3,
-            vy: (Math.random() - 0.5) * 0.5,
-            r: 4,
-            slit: null,
-            detected: false,
-            phase: Math.random() * Math.PI * 2
-        };
-        
-        particles.push(particle);
+    // Function to measure wave at random position
+    function measureWave(time) {
+        if (measurementActive) {
+            // Use probability distribution to determine measurement
+            const distributionWidth = 0.5 + waveSpread * 1.5;
+            
+            // Generate random position weighted by probability
+            let measurePosition;
+            do {
+                measurePosition = (Math.random() * 2 - 1) * waveWidth / 2;
+            } while (Math.random() > Math.exp(-Math.pow(measurePosition, 2) / (2 * distributionWidth * distributionWidth)));
+            
+            // Position the measurement point
+            const y = 0.7 * Math.exp(-Math.pow(measurePosition, 2) / (2 * distributionWidth * distributionWidth)) 
+                      * Math.cos(10 * measurePosition - time * animationSpeed);
+            
+            point.position.set(measurePosition, y, 0);
+        }
     }
+    
+    // Handle window resize
+    function onWindowResize() {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+    window.addEventListener('resize', onWindowResize);
     
     // Animation loop
     function animate() {
-        // Clear canvas
-        ctx.fillStyle = 'rgba(26, 26, 46, 0.2)';
-        ctx.fillRect(0, 0, width, height);
+        requestAnimationFrame(animate);
         
-        // Create new particles based on rate
-        if (Math.random() < config.verse4.particleRate / 1000) {
+        const time = Date.now() * 0.001;
+        
+        // Update wave
+        updateWave(time);
+        
+        // Update measurement
+        measureWave(time);
+        
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    
+    // Start animation
+    animate();
+    
+    // Store cleanup function
+    animations[`verse3`] = {
+        cleanup: function() {
+            // Remove event listeners
+            window.removeEventListener('resize', onWindowResize);
+            
+            // Dispose of geometries, materials
+            waveGeometry.dispose();
+            waveMaterial.dispose();
+            filledWaveGeometry.dispose();
+            filledWaveMaterial.dispose();
+            pointGeometry.dispose();
+            pointMaterial.dispose();
+            
+            // Dispose of renderer
+            renderer.dispose();
+            
+            // Remove renderer element from DOM
+            if (renderer.domElement.parentNode) {
+                renderer.domElement.parentNode.removeChild(renderer.domElement);
+            }
+        }
+    };
+}
+
+// Function to initialize animation for Verse 4 (Quantum Erasure)
+function initializeVerse4Animation(container) {
+    // Create a scene
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x1a1a2e);
+    
+    // Create a camera
+    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 5;
+    
+    // Create a renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+    
+    // Add orbit controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    
+    // Configuration variables
+    let pathInfoActive = config.verse4.pathInfoActive;
+    const slitWidth = config.verse4.slitWidth / 100; // Convert to appropriate scale
+    const particleRate = config.verse4.particleRate;
+    const resetSpeed = config.verse4.resetSpeed;
+    
+    // Create source
+    const sourceGeometry = new THREE.SphereGeometry(0.2, 16, 16);
+    const sourceMaterial = new THREE.MeshBasicMaterial({ color: config.verse4.particleColor });
+    const source = new THREE.Mesh(sourceGeometry, sourceMaterial);
+    source.position.z = -3;
+    scene.add(source);
+    
+    // Create double-slit barrier
+    const barrierGeometry = new THREE.BoxGeometry(4, 2, 0.2);
+    const barrierMaterial = new THREE.MeshPhongMaterial({ color: 0x333355 });
+    const barrier = new THREE.Mesh(barrierGeometry, barrierMaterial);
+    barrier.position.z = -1;
+    scene.add(barrier);
+    
+    // Create slits
+    const slitGeometry1 = new THREE.BoxGeometry(slitWidth, 1, 0.3);
+    const slitGeometry2 = new THREE.BoxGeometry(slitWidth, 1, 0.3);
+    const slitMaterial = new THREE.MeshBasicMaterial({ color: 0x1a1a2e });
+    
+    const slit1 = new THREE.Mesh(slitGeometry1, slitMaterial);
+    slit1.position.set(-0.5, 0, -1);
+    scene.add(slit1);
+    
+    const slit2 = new THREE.Mesh(slitGeometry2, slitMaterial);
+    slit2.position.set(0.5, 0, -1);
+    scene.add(slit2);
+    
+    // Create detector screen
+    const screenGeometry = new THREE.PlaneGeometry(4, 2);
+    const screenMaterial = new THREE.MeshBasicMaterial({ 
+        color: 0x222244, 
+        side: THREE.DoubleSide 
+    });
+    const screen = new THREE.Mesh(screenGeometry, screenMaterial);
+    screen.position.z = 2;
+    scene.add(screen);
+    
+    // Create interference pattern texture
+    const patternTexture = createInterferencePattern();
+    const noPatternTexture = createNoInterferencePattern();
+    
+    // Add pattern to screen
+    const patternGeometry = new THREE.PlaneGeometry(3.9, 1.9);
+    const patternMaterial = new THREE.MeshBasicMaterial({ 
+        map: pathInfoActive ? noPatternTexture : patternTexture,
+        transparent: true,
+        opacity: 0.7,
+        side: THREE.DoubleSide
+    });
+    const pattern = new THREE.Mesh(patternGeometry, patternMaterial);
+    pattern.position.z = 2.01;
+    scene.add(pattern);
+    
+    // Create which-path detectors
+    const detectorGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+    const detectorMaterial = new THREE.MeshBasicMaterial({ 
+        color: 0xff5555,
+        transparent: true,
+        opacity: pathInfoActive ? 0.8 : 0.2
+    });
+    
+    const detector1 = new THREE.Mesh(detectorGeometry, detectorMaterial);
+    detector1.position.set(-0.5, 0, -0.8);
+    scene.add(detector1);
+    
+    const detector2 = new THREE.Mesh(detectorGeometry, detectorMaterial);
+    detector2.position.set(0.5, 0, -0.8);
+    scene.add(detector2);
+    
+    // Add text labels for detectors
+    function createTextSprite(text) {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = 256;
+        canvas.height = 128;
+        
+        context.fillStyle = 'rgba(0, 0, 0, 0)';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        
+        context.font = '24px Arial';
+        context.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        context.fillText(text, 10, 64);
+        
+        const texture = new THREE.CanvasTexture(canvas);
+        const material = new THREE.SpriteMaterial({ map: texture });
+        
+        return new THREE.Sprite(material);
+    }
+    
+    const label1 = createTextSprite('Detector 1');
+    label1.position.set(-0.9, 0.3, -0.8);
+    label1.scale.set(0.5, 0.25, 1);
+    scene.add(label1);
+    
+    const label2 = createTextSprite('Detector 2');
+    label2.position.set(0.9, 0.3, -0.8);
+    label2.scale.set(0.5, 0.25, 1);
+    scene.add(label2);
+    
+    // Add lighting
+    const ambientLight = new THREE.AmbientLight(0x404040);
+    scene.add(ambientLight);
+    
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(1, 1, 2);
+    scene.add(directionalLight);
+    
+    // Particles for visualization
+    let particles = [];
+    
+    // Event listeners for controls
+    const togglePathBtn = document.getElementById('toggle-path-info');
+    if (togglePathBtn) {
+        togglePathBtn.addEventListener('click', () => {
+            pathInfoActive = !pathInfoActive;
+            config.verse4.pathInfoActive = pathInfoActive;
+            
+            // Update visualization
+            updateVisualization();
+        });
+    }
+    
+    const resetBtn = document.getElementById('reset-experiment');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            // Clear all particles
+            particles.forEach(p => scene.remove(p));
+            particles = [];
+        });
+    }
+    
+    // Function to create interference pattern texture
+    function createInterferencePattern() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 256;
+        const context = canvas.getContext('2d');
+        
+        // Fill with background color
+        context.fillStyle = 'black';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Create interference pattern
+        for (let y = 0; y < canvas.height; y++) {
+            for (let x = 0; x < canvas.width; x++) {
+                // Calculate normalized coordinates
+                const nx = (x / canvas.width) * 2 - 1;
+                const ny = (y / canvas.height) * 2 - 1;
+                
+                // Apply interference formula
+                const d1 = Math.sqrt(Math.pow(nx - 0.5/4, 2) + Math.pow(ny, 2));
+                const d2 = Math.sqrt(Math.pow(nx + 0.5/4, 2) + Math.pow(ny, 2));
+                
+                // Double slit interference
+                const wavelength = 0.05;
+                const intensity = Math.pow(Math.cos((d1 - d2) * Math.PI / wavelength), 2);
+                
+                // Set pixel color based on intensity
+                const color = Math.floor(intensity * 80);
+                context.fillStyle = `rgb(${color}, ${color}, ${color + 100})`;
+                context.fillRect(x, y, 1, 1);
+            }
+        }
+        
+        const texture = new THREE.CanvasTexture(canvas);
+        return texture;
+    }
+    
+    // Function to create pattern without interference
+    function createNoInterferencePattern() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 256;
+        const context = canvas.getContext('2d');
+        
+        // Fill with background color
+        context.fillStyle = 'black';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Create two separate distributions
+        for (let y = 0; y < canvas.height; y++) {
+            for (let x = 0; x < canvas.width; x++) {
+                // Calculate normalized coordinates
+                const nx = (x / canvas.width) * 2 - 1;
+                const ny = (y / canvas.height) * 2 - 1;
+                
+                // Apply two separate Gaussian distributions
+                const sigma = 0.2;
+                const intensity1 = Math.exp(-Math.pow(nx - 0.5/2, 2) / (2 * sigma * sigma));
+                const intensity2 = Math.exp(-Math.pow(nx + 0.5/2, 2) / (2 * sigma * sigma));
+                
+                // Sum the intensities
+                const intensity = (intensity1 + intensity2) / 2;
+                
+                // Set pixel color based on intensity
+                const color = Math.floor(intensity * 80);
+                context.fillStyle = `rgb(${color}, ${color}, ${color + 100})`;
+                context.fillRect(x, y, 1, 1);
+            }
+        }
+        
+        const texture = new THREE.CanvasTexture(canvas);
+        return texture;
+    }
+    
+    // Update visualization based on path info mode
+    function updateVisualization() {
+        // Update pattern
+        patternMaterial.map = pathInfoActive ? noPatternTexture : patternTexture;
+        patternMaterial.needsUpdate = true;
+        
+        // Update detector visibility
+        detectorMaterial.opacity = pathInfoActive ? 0.8 : 0.2;
+        detectorMaterial.needsUpdate = true;
+    }
+    
+    // Create a particle
+    function createParticle() {
+        const particleGeometry = new THREE.SphereGeometry(0.03, 8, 8);
+        const particleMaterial = new THREE.MeshBasicMaterial({ 
+            color: config.verse4.particleColor,
+            transparent: true,
+            opacity: 0.7
+        });
+        
+        const particle = new THREE.Mesh(particleGeometry, particleMaterial);
+        particle.position.copy(source.position);
+        
+        // Initial velocity towards barrier
+        particle.userData = {
+            velocity: new THREE.Vector3(
+                (Math.random() - 0.5) * 0.02,
+                (Math.random() - 0.5) * 0.02,
+                0.05
+            ),
+            age: 0,
+            maxAge: 300,
+            throughSlit: null
+        };
+        
+        scene.add(particle);
+        particles.push(particle);
+    }
+    
+    // Handle window resize
+    function onWindowResize() {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+    window.addEventListener('resize', onWindowResize);
+    
+    // Animation loop
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        // Generate new particles
+        if (Math.random() < particleRate / 1000) {
             createParticle();
         }
         
-        // Draw experiment components
-        drawExperiment();
-        
-        // Update and draw particles
-        updateParticles();
-        
-        requestAnimationFrame(animate);
-    }
-    
-    function drawExperiment() {
-        // Draw background gradient
-        const gradient = ctx.createLinearGradient(0, 0, width, 0);
-        gradient.addColorStop(0, '#1a1a2e');
-        gradient.addColorStop(1, '#2a2a4a');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, width, height);
-        
-        // Draw source
-        ctx.fillStyle = config.verse4.particleColor;
-        ctx.beginPath();
-        ctx.arc(sourceX, sourceY, sourceRadius, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Add glow to source
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = config.verse4.particleColor;
-        ctx.beginPath();
-        ctx.arc(sourceX, sourceY, sourceRadius * 0.7, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-        
-        // Draw barrier
-        ctx.fillStyle = '#2a2a4a';
-        ctx.fillRect(barrierX, barrierY, barrierWidth, barrierHeight);
-        
-        // Draw slits (holes in the barrier)
-        ctx.fillStyle = '#1a1a2e';
-        ctx.fillRect(barrierX, centerY - slitGap/2 - slitWidth, barrierWidth, slitWidth);
-        ctx.fillRect(barrierX, centerY + slitGap/2, barrierWidth, slitWidth);
-        
-        // Draw screen
-        ctx.fillStyle = '#2a2a4a';
-        ctx.fillRect(screenX - screenWidth/2, screenY, screenWidth, screenHeight);
-        ctx.strokeStyle = '#3a3a6a';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(screenX - screenWidth/2, screenY, screenWidth, screenHeight);
-        
-        // Draw path detectors if active
-        if (pathInfoActive) {
-            ctx.fillStyle = '#ff6060';
-            ctx.globalAlpha = 0.8;
-            ctx.beginPath();
-            ctx.arc(detector1X, detector1Y, detectorRadius, 0, Math.PI * 2);
-            ctx.fill();
-            
-            ctx.beginPath();
-            ctx.arc(detector2X, detector2Y, detectorRadius, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.globalAlpha = 1;
-        }
-        
-        // Draw pattern points on screen
-        for (const point of patternPoints) {
-            ctx.fillStyle = point.color;
-            ctx.globalAlpha = 0.5;
-            ctx.beginPath();
-            ctx.arc(screenX, point.y, point.size, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.globalAlpha = 1;
-        }
-    }
-    
-    function updateParticles() {
+        // Update existing particles
         for (let i = particles.length - 1; i >= 0; i--) {
             const particle = particles[i];
             
-            // Update position
-            particle.x += particle.vx;
-            particle.y += particle.vy;
+            // Move particle
+            particle.position.add(particle.userData.velocity);
             
-            // Check for barrier interaction
-            if (!particle.slit && particle.x >= barrierX && particle.x <= barrierX + barrierWidth) {
-                // Check if it passes through top slit
-                if (particle.y >= centerY - slitGap/2 - slitWidth && particle.y <= centerY - slitGap/2) {
-                    particle.slit = "top";
+            // Check if particle is reaching the barrier with slits
+            if (particle.position.z >= barrier.position.z - 0.2 && 
+                particle.position.z <= barrier.position.z + 0.2 && 
+                particle.userData.throughSlit === null) {
+                
+                // Check if it goes through either slit
+                const throughSlit1 = Math.abs(particle.position.x - slit1.position.x) < slitWidth/2;
+                const throughSlit2 = Math.abs(particle.position.x - slit2.position.x) < slitWidth/2;
+                
+                if (throughSlit1) {
+                    particle.userData.throughSlit = 1;
                     
-                    // If path info is active, slightly modify trajectory (measurement effect)
+                    // If being observed, adjust trajectory accordingly
                     if (pathInfoActive) {
-                        particle.vy += (Math.random() - 0.5) * 0.5;
+                        particle.userData.velocity.x = (Math.random() - 0.5) * 0.01;
+                        particle.userData.velocity.y = (Math.random() - 0.5) * 0.01;
                         
-                        // Flash the detector
-                        ctx.fillStyle = '#ff8080';
-                        ctx.beginPath();
-                        ctx.arc(detector1X, detector1Y, detectorRadius * 1.5, 0, Math.PI * 2);
-                        ctx.fill();
+                        // Flash detector
+                        detector1.material.color.set(0xff0000);
+                        setTimeout(() => {
+                            detector1.material.color.set(0xff5555);
+                        }, 100);
                     }
-                }
-                // Check if it passes through bottom slit
-                else if (particle.y >= centerY + slitGap/2 && particle.y <= centerY + slitGap/2 + slitWidth) {
-                    particle.slit = "bottom";
+                } else if (throughSlit2) {
+                    particle.userData.throughSlit = 2;
                     
-                    // If path info is active, slightly modify trajectory (measurement effect)
+                    // If being observed, adjust trajectory accordingly
                     if (pathInfoActive) {
-                        particle.vy += (Math.random() - 0.5) * 0.5;
+                        particle.userData.velocity.x = (Math.random() - 0.5) * 0.01;
+                        particle.userData.velocity.y = (Math.random() - 0.5) * 0.01;
                         
-                        // Flash the detector
-                        ctx.fillStyle = '#ff8080';
-                        ctx.beginPath();
-                        ctx.arc(detector2X, detector2Y, detectorRadius * 1.5, 0, Math.PI * 2);
-                        ctx.fill();
+                        // Flash detector
+                        detector2.material.color.set(0xff0000);
+                        setTimeout(() => {
+                            detector2.material.color.set(0xff5555);
+                        }, 100);
                     }
-                }
-                // If it hits the barrier, remove it
-                else if (particle.x >= barrierX && particle.x <= barrierX + barrierWidth) {
+                } else {
+                    // Hit the barrier
+                    scene.remove(particle);
                     particles.splice(i, 1);
                     continue;
                 }
             }
             
-            // Check for screen detection
-            if (!particle.detected && particle.x >= screenX - screenWidth/2 && particle.x <= screenX + screenWidth/2) {
-                particle.detected = true;
+            // Check if particle reaches the screen
+            if (particle.position.z >= screen.position.z) {
+                particle.userData.velocity.set(0, 0, 0);
                 
-                // Record hit on pattern
-                recordPatternHit(particle);
-                
-                // Remove particle
-                particles.splice(i, 1);
-                continue;
+                // Fade out over time
+                particle.userData.age += 5;
+                particle.material.opacity = Math.max(0, 0.7 - (particle.userData.age / particle.userData.maxAge) * 0.7);
             }
             
-            // Draw particle
-            ctx.fillStyle = config.verse4.particleColor;
-            ctx.globalAlpha = 0.8;
-            ctx.beginPath();
-            ctx.arc(particle.x, particle.y, particle.r, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.globalAlpha = 1;
-            
-            // Remove particles that go off-screen
-            if (
-                particle.x < centerX - experimentWidth/2 || 
-                particle.x > centerX + experimentWidth/2 || 
-                particle.y < centerY - experimentHeight/2 || 
-                particle.y > centerY + experimentHeight/2
-            ) {
+            // Remove old particles
+            particle.userData.age++;
+            if (particle.userData.age > particle.userData.maxAge) {
+                scene.remove(particle);
                 particles.splice(i, 1);
             }
         }
-    }
-    
-    // Record a hit on the detector pattern
-    function recordPatternHit(particle) {
-        const y = particle.y;
         
-        // Different pattern based on whether path info is active
-        if (!pathInfoActive) {
-            // Interference pattern (no path info)
-            
-            // Calculate interference based on path differences
-            const topSlitY = centerY - slitGap/2 - slitWidth/2;
-            const bottomSlitY = centerY + slitGap/2 + slitWidth/2;
-            
-            // Calculate distances from slits to hit position
-            const d1 = Math.sqrt(Math.pow(screenX - barrierX, 2) + Math.pow(y - topSlitY, 2));
-            const d2 = Math.sqrt(Math.pow(screenX - barrierX, 2) + Math.pow(y - bottomSlitY, 2));
-            
-            // Calculate interference based on path difference
-            const wavelength = 20;
-            const pathDiff = Math.abs(d1 - d2);
-            const phase = (pathDiff / wavelength) * Math.PI * 2 + particle.phase;
-            const interference = Math.pow(Math.cos(phase), 2);
-            
-            // Create a point at the hit location
-            const point = {
-                y: y,
-                intensity: interference,
-                color: interpolateColor('rgb(10, 10, 50)', config.verse4.interferenceColor, interference),
-                size: 3 + interference * 3
-            };
-            
-            patternPoints.push(point);
-        } else {
-            // No interference, just recording which path
-            const color = particle.slit === "top" ? "#8080ff" : "#a080ff";
-            
-            const point = {
-                y: y,
-                color: color,
-                size: 3
-            };
-            
-            patternPoints.push(point);
-        }
-    }
-    
-    function interpolateColor(color1, color2, factor) {
-        // Simple RGB interpolation
-        function getRGB(str) {
-            if (str.startsWith('#')) {
-                // Convert hex to RGB
-                const hex = str.substring(1);
-                return {
-                    r: parseInt(hex.substring(0, 2), 16),
-                    g: parseInt(hex.substring(2, 4), 16),
-                    b: parseInt(hex.substring(4, 6), 16)
-                };
-            } else if (str.startsWith('rgb')) {
-                // Parse RGB format
-                const parts = str.match(/\d+/g);
-                return {
-                    r: parseInt(parts[0]),
-                    g: parseInt(parts[1]),
-                    b: parseInt(parts[2])
-                };
-            }
-            return { r: 0, g: 0, b: 0 };
-        }
-        
-        const c1 = getRGB(color1);
-        const c2 = getRGB(color2);
-        
-        const r = Math.round(c1.r + factor * (c2.r - c1.r));
-        const g = Math.round(c1.g + factor * (c2.g - c1.g));
-        const b = Math.round(c1.b + factor * (c2.b - c1.b));
-        
-        return `rgb(${r}, ${g}, ${b})`;
+        controls.update();
+        renderer.render(scene, camera);
     }
     
     // Start animation
     animate();
     
-    // Handle window resize
-    function handleResize() {
-        canvas.width = container.clientWidth;
-        canvas.height = container.clientHeight;
-    }
-    
-    window.addEventListener("resize", handleResize);
-    
-    // Store for cleanup
-    animations.verse4 = {
-        cleanup: () => {
-            window.removeEventListener("resize", handleResize);
-            container.removeChild(canvas);
+    // Store cleanup function
+    animations[`verse4`] = {
+        cleanup: function() {
+            // Remove event listeners
+            window.removeEventListener('resize', onWindowResize);
+            
+            // Remove all particles
+            particles.forEach(p => scene.remove(p));
+            
+            // Dispose of geometries, materials, textures
+            sourceGeometry.dispose();
+            sourceMaterial.dispose();
+            barrierGeometry.dispose();
+            barrierMaterial.dispose();
+            slitGeometry1.dispose();
+            slitGeometry2.dispose();
+            slitMaterial.dispose();
+            screenGeometry.dispose();
+            screenMaterial.dispose();
+            patternGeometry.dispose();
+            patternMaterial.dispose();
+            detectorGeometry.dispose();
+            detectorMaterial.dispose();
+            
+            if (patternTexture) patternTexture.dispose();
+            if (noPatternTexture) noPatternTexture.dispose();
+            
+            // Dispose of renderer
+            renderer.dispose();
+            
+            // Remove renderer element from DOM
+            if (renderer.domElement.parentNode) {
+                renderer.domElement.parentNode.removeChild(renderer.domElement);
+            }
         }
     };
 }
 
-// Verse 5: Fixations and Emptiness
 function initializeVerse5Animation(container) {
-    // Set up THREE.js scene
+    // Create a scene
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    scene.background = new THREE.Color(0x1a1a2e);
     
+    // Create a camera
+    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 5;
+    
+    // Create a renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setClearColor(0x1a1a2e, 1);
     container.appendChild(renderer.domElement);
     
-    // Add lights
-    const ambientLight = new THREE.AmbientLight(0x404040);
-    scene.add(ambientLight);
+    // Add orbit controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
     
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(0, 1, 1);
-    scene.add(directionalLight);
+    // Configuration variables
+    let fixationActive = config.verse5.fixationActive;
+    let probabilityDensity = config.verse5.probabilityDensity / 100; // Convert to 0-1 range
     
-    // Create particle in superposition
-    const particleGeometry = new THREE.SphereGeometry(1, 32, 32);
-    const particleMaterial = new THREE.MeshPhongMaterial({
+    // Create central particle
+    const particleGeometry = new THREE.SphereGeometry(0.15, 32, 32);
+    const particleMaterial = new THREE.MeshPhongMaterial({ 
         color: config.verse5.particleColor,
-        emissive: 0x3030a0,
         transparent: true,
         opacity: 0.8
     });
     const particle = new THREE.Mesh(particleGeometry, particleMaterial);
     scene.add(particle);
     
-    // Create wave visualization
-    const waveGeometry = new THREE.SphereGeometry(10, 32, 32);
-    const waveMaterial = new THREE.MeshBasicMaterial({
+    // Create probability wave visualization
+    const wavePoints = [];
+    const waveSegments = 64;
+    const waveRadius = 1.5;
+    
+    for (let i = 0; i <= waveSegments; i++) {
+        const angle = (i / waveSegments) * Math.PI * 2;
+        const x = Math.cos(angle) * waveRadius;
+        const y = Math.sin(angle) * waveRadius;
+        wavePoints.push(new THREE.Vector3(x, y, 0));
+    }
+    
+    const waveGeometry = new THREE.BufferGeometry().setFromPoints(wavePoints);
+    const waveMaterial = new THREE.LineBasicMaterial({ 
         color: config.verse5.waveColor,
-        wireframe: true,
         transparent: true,
-        opacity: 0.5
+        opacity: 0.6
     });
-    const wave = new THREE.Mesh(waveGeometry, waveMaterial);
+    const wave = new THREE.LineLoop(waveGeometry, waveMaterial);
     scene.add(wave);
     
-    // Create fixation visualization (a network of thoughts)
-    const fixationGroup = new THREE.Group();
-    scene.add(fixationGroup);
-    
-    const thoughtCount = 8;
-    const thoughts = [];
-    const connections = [];
-    
-    // Create thought nodes
-    for (let i = 0; i < thoughtCount; i++) {
-        const angle = (i / thoughtCount) * Math.PI * 2;
-        const radius = 5;
-        
-        const thoughtGeometry = new THREE.SphereGeometry(0.5, 16, 16);
-        const thoughtMaterial = new THREE.MeshPhongMaterial({
-            color: config.verse5.fixationColor,
-            emissive: 0x602020,
-            transparent: true,
-            opacity: 0.7
-        });
-        
-        const thought = new THREE.Mesh(thoughtGeometry, thoughtMaterial);
-        thought.position.set(
-            Math.cos(angle) * radius,
-            (Math.random() - 0.5) * 3,
-            Math.sin(angle) * radius
-        );
-        
-        fixationGroup.add(thought);
-        thoughts.push(thought);
-    }
-    
-    // Create connections between thoughts
-    for (let i = 0; i < thoughtCount; i++) {
-        const start = thoughts[i];
-        const end = thoughts[(i + 1) % thoughtCount];
-        
-        const connectionGeometry = new THREE.BufferGeometry();
-        const vertices = new Float32Array([
-            start.position.x, start.position.y, start.position.z,
-            end.position.x, end.position.y, end.position.z
-        ]);
-        
-        connectionGeometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-        
-        const connectionMaterial = new THREE.LineBasicMaterial({
-            color: config.verse5.fixationColor,
-            transparent: true,
-            opacity: 0.5
-        });
-        
-        const connection = new THREE.Line(connectionGeometry, connectionMaterial);
-        fixationGroup.add(connection);
-        connections.push(connection);
-    }
-    
-    // Toggle visibility based on initial state
-    fixationGroup.visible = config.verse5.fixationActive;
-    wave.visible = !config.verse5.fixationActive;
-    
-    // Controls for interaction
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.screenSpacePanning = false;
-    controls.minDistance = 5;
-    controls.maxDistance = 20;
-    controls.target.set(0, 0, 0);
-    
-    // Set camera position
-    camera.position.set(0, 5, 15);
-    
-    // Add fixation toggle button functionality
-    const toggleFixationBtn = document.getElementById('toggle-fixation');
-    toggleFixationBtn.addEventListener('click', () => {
-        config.verse5.fixationActive = !config.verse5.fixationActive;
-        toggleFixationBtn.textContent = config.verse5.fixationActive ? 
-            'Release Fixations' : 'Add Fixations';
-        
-        // Animate the transition
-        if (config.verse5.fixationActive) {
-            activateFixations();
-        } else {
-            releaseFixations();
-        }
-    });
-    
-    // Add probability density slider functionality
-    const probabilityDensitySlider = document.getElementById('probability-density');
-    probabilityDensitySlider.value = config.verse5.probabilityDensity;
-    probabilityDensitySlider.addEventListener('input', () => {
-        config.verse5.probabilityDensity = probabilityDensitySlider.value;
-        updateProbabilityDensity();
-    });
-    
-    // Function to update probability density
-    function updateProbabilityDensity() {
-        const density = config.verse5.probabilityDensity / 100;
-        wave.scale.set(density * 2, density * 2, density * 2);
-    }
-    
-    // Function to activate fixations
-    function activateFixations() {
-        // Fade in fixation network
-        fixationGroup.visible = true;
-        fixationGroup.scale.set(0.1, 0.1, 0.1);
-        
-        const duration = 1000; // ms
-        const startTime = Date.now();
-        
-        function animateFixationIn() {
-            const elapsed = Date.now() - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            // Scale up fixation network
-            fixationGroup.scale.set(progress, progress, progress);
-            
-            // Fade out wave
-            wave.material.opacity = 0.5 * (1 - progress);
-            
-            if (progress < 1) {
-                requestAnimationFrame(animateFixationIn);
-            } else {
-                wave.visible = false;
-                
-                // Start rotation animation of fixation network
-                fixationAnimationActive = true;
-            }
-        }
-        
-        animateFixationIn();
-    }
-    
-    // Function to release fixations
-    function releaseFixations() {
-        // Stop fixation animation
-        fixationAnimationActive = false;
-        
-        // Fade out fixation network
-        wave.visible = true;
-        wave.material.opacity = 0;
-        
-        const duration = 1000; // ms
-        const startTime = Date.now();
-        
-        function animateFixationOut() {
-            const elapsed = Date.now() - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            // Scale down fixation network
-            fixationGroup.scale.set(1 - progress * 0.9, 1 - progress * 0.9, 1 - progress * 0.9);
-            
-            // Fade in wave
-            wave.material.opacity = 0.5 * progress;
-            
-            if (progress < 1) {
-                requestAnimationFrame(animateFixationOut);
-            } else {
-                fixationGroup.visible = false;
-            }
-        }
-        
-        animateFixationOut();
-    }
-    
-    // Fixation animation flag
-    let fixationAnimationActive = config.verse5.fixationActive;
-    
-    // Update initial probability density
-    updateProbabilityDensity();
-    
-    // Animation loop
-    function animate(time) {
-        requestAnimationFrame(animate);
-        
-        // Update particle
-        particle.rotation.y += 0.01;
-        
-        // Add pulsing effect to particle
-        const pulse = 1 + 0.1 * Math.sin(time * 0.002);
-        particle.scale.set(pulse, pulse, pulse);
-        
-        // Update wave visualization
-        if (wave.visible) {
-            wave.rotation.y += 0.002;
-            wave.rotation.x += 0.001;
-            
-            // Distort wave based on probability density
-            const vertices = wave.geometry.attributes.position;
-            const density = config.verse5.probabilityDensity / 100;
-            
-            for (let i = 0; i < vertices.count; i++) {
-                const x = vertices.getX(i);
-                const y = vertices.getY(i);
-                const z = vertices.getZ(i);
-                
-                const distance = Math.sqrt(x*x + y*y + z*z);
-                const originalDistance = 10; // original sphere radius
-                
-                const offset = 0.5 * Math.sin(distance * 1 + time * 0.001) * density;
-                const newDistance = originalDistance + offset;
-                
-                const scale = newDistance / distance;
-                
-                vertices.setX(i, x * scale);
-                vertices.setY(i, y * scale);
-                vertices.setZ(i, z * scale);
-            }
-            
-            wave.geometry.attributes.position.needsUpdate = true;
-        }
-        
-        // Update fixation network animation
-        if (fixationAnimationActive) {
-            fixationGroup.rotation.y += 0.005;
-            
-            // Make thoughts pulse
-            thoughts.forEach((thought, i) => {
-                const pulseFactor = 1 + 0.2 * Math.sin(time * 0.002 + i * 0.5);
-                thought.scale.set(pulseFactor, pulseFactor, pulseFactor);
-            });
-        }
-        
-        controls.update();
-        renderer.render(scene, camera);
-    }
-    
-    // Start animation
-    animate(0);
-    
-    // Handle window resize
-    function onWindowResize() {
-        camera.aspect = container.clientWidth / container.clientHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(container.clientWidth, container.clientHeight);
-    }
-    
-    window.addEventListener('resize', onWindowResize);
-    
-    // Store animation objects for cleanup
-    animations.verse5 = {
-        renderer,
-        controls,
-        cleanup: () => {
-            window.removeEventListener('resize', onWindowResize);
-            controls.dispose();
-            renderer.dispose();
-        }
-    };
-}
-
-// Verse 6: Self and Non-Self
-function initializeVerse6Animation(container) {
-    // Set up THREE.js scene
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setClearColor(0x1a1a2e, 1);
-    container.appendChild(renderer.domElement);
-    
-    // Add lights
-    const ambientLight = new THREE.AmbientLight(0x404040);
-    scene.add(ambientLight);
-    
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(0, 1, 1);
-    scene.add(directionalLight);
-    
-    // Create quantum spin visualization
-    // Outer sphere (superposition state)
-    const outerGeometry = new THREE.SphereGeometry(5, 32, 32);
-    const outerMaterial = new THREE.MeshPhongMaterial({
-        color: config.verse6.superpositionColor,
+    // Create a more complex probabilistic cloud
+    const cloudGeometry = new THREE.SphereGeometry(waveRadius, 32, 16);
+    const cloudMaterial = new THREE.MeshBasicMaterial({
+        color: config.verse5.waveColor,
         transparent: true,
-        opacity: 0.3,
+        opacity: 0.15,
         wireframe: true
     });
-    const outerSphere = new THREE.Mesh(outerGeometry, outerMaterial);
-    scene.add(outerSphere);
+    const cloud = new THREE.Mesh(cloudGeometry, cloudMaterial);
+    scene.add(cloud);
     
-    // Inner sphere (actual particle)
-    const innerGeometry = new THREE.SphereGeometry(config.verse6.particleSize / 10, 32, 32);
-    const innerMaterial = new THREE.MeshPhongMaterial({
-        color: config.verse6.superpositionColor,
-        emissive: 0x3030a0,
-        shininess: 50
-    });
-    const innerSphere = new THREE.Mesh(innerGeometry, innerMaterial);
-    scene.add(innerSphere);
-    
-    // Spin up and down indicators
-    const arrowGeometry = new THREE.CylinderGeometry(0, 0.5, 2, 16);
-    const upArrowMaterial = new THREE.MeshPhongMaterial({
-        color: config.verse6.spinUpColor,
-        emissive: 0x303080
-    });
-    const downArrowMaterial = new THREE.MeshPhongMaterial({
-        color: config.verse6.spinDownColor,
-        emissive: 0x803030
-    });
-    
-    const upArrow = new THREE.Mesh(arrowGeometry, upArrowMaterial);
-    upArrow.position.set(0, 7, 0);
-    upArrow.visible = false;
-    scene.add(upArrow);
-    
-    const downArrow = new THREE.Mesh(arrowGeometry, downArrowMaterial);
-    downArrow.position.set(0, -7, 0);
-    downArrow.rotation.x = Math.PI;
-    downArrow.visible = false;
-    scene.add(downArrow);
-    
-    // Orbital path for inner sphere during superposition
-    const orbitGeometry = new THREE.TorusGeometry(3, 0.05, 16, 100);
-    const orbitMaterial = new THREE.MeshBasicMaterial({
-        color: 0x6060c0,
+    // Create fixation visualization
+    const fixationGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+    const fixationMaterial = new THREE.MeshBasicMaterial({
+        color: config.verse5.fixationColor,
         transparent: true,
-        opacity: 0.3
+        opacity: fixationActive ? 0.7 : 0
     });
-    const orbitPath = new THREE.Mesh(orbitGeometry, orbitMaterial);
-    orbitPath.rotation.x = Math.PI / 2;
-    scene.add(orbitPath);
+    const fixation = new THREE.Mesh(fixationGeometry, fixationMaterial);
+    scene.add(fixation);
     
-    // Controls for interaction
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.screenSpacePanning = false;
-    controls.minDistance = 10;
-    controls.maxDistance = 30;
-    controls.target.set(0, 0, 0);
-    
-    // Set camera position
-    camera.position.set(0, 10, 20);
-    
-    // Add spin measurement button functionality
-    const measureSpinBtn = document.getElementById('measure-spin');
-    measureSpinBtn.addEventListener('click', () => {
-        if (config.verse6.inSuperposition) {
-            measureSpin();
-        }
-    });
-    
-    // Add reset button functionality
-    const resetSpinBtn = document.getElementById('reset-spin');
-    resetSpinBtn.addEventListener('click', () => {
-        if (!config.verse6.inSuperposition) {
-            resetToSuperposition();
-        }
-    });
-    
-    // Current state
-    let orbitAngle = 0;
-    let spinState = null; // 'up' or 'down' after measurement
-    
-    // Function to measure spin
-    function measureSpin() {
-        config.verse6.inSuperposition = false;
-        
-        // Randomly choose up or down
-        spinState = Math.random() > 0.5 ? 'up' : 'down';
-        
-        // Create collapse animation
-        const duration = 1000; // ms
-        const startTime = Date.now();
-        
-        function animateCollapse() {
-            const elapsed = Date.now() - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            // Fade out superposition elements
-            outerSphere.material.opacity = 0.3 * (1 - progress);
-            orbitPath.material.opacity = 0.3 * (1 - progress);
-            
-            // Move inner sphere to final position
-            if (spinState === 'up') {
-                innerSphere.position.y = progress * 5;
-                innerSphere.material.color.set(config.verse6.spinUpColor);
-            } else {
-                innerSphere.position.y = progress * -5;
-                innerSphere.material.color.set(config.verse6.spinDownColor);
-            }
-            
-            // Scale inner sphere
-            innerSphere.scale.set(
-                1 + progress,
-                1 + progress,
-                1 + progress
-            );
-            
-            if (progress < 1) {
-                requestAnimationFrame(animateCollapse);
-            } else {
-                // Show appropriate arrow
-                if (spinState === 'up') {
-                    upArrow.visible = true;
-                } else {
-                    downArrow.visible = true;
-                }
-                
-                // Hide superposition elements
-                outerSphere.visible = false;
-                orbitPath.visible = false;
-            }
-        }
-        
-        animateCollapse();
-    }
-    
-    // Function to reset to superposition
-    function resetToSuperposition() {
-        config.verse6.inSuperposition = true;
-        
-        // Create reset animation
-        const duration = 1000; // ms
-        const startTime = Date.now();
-        
-        // Show superposition elements
-        outerSphere.visible = true;
-        outerSphere.material.opacity = 0;
-        
-        orbitPath.visible = true;
-        orbitPath.material.opacity = 0;
-        
-        function animateReset() {
-            const elapsed = Date.now() - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            // Fade in superposition elements
-            outerSphere.material.opacity = 0.3 * progress;
-            orbitPath.material.opacity = 0.3 * progress;
-            
-            // Move inner sphere back to center
-            innerSphere.position.y = spinState === 'up' ? 5 * (1 - progress) : -5 * (1 - progress);
-            
-            // Return inner sphere color to superposition
-            innerSphere.material.color.copy(new THREE.Color(config.verse6.superpositionColor).lerp(
-                new THREE.Color(spinState === 'up' ? config.verse6.spinUpColor : config.verse6.spinDownColor),
-                1 - progress
-            ));
-            
-            // Scale inner sphere back to original size
-            innerSphere.scale.set(
-                2 - progress,
-                2 - progress,
-                2 - progress
-            );
-            
-            if (progress < 1) {
-                requestAnimationFrame(animateReset);
-            } else {
-                // Hide arrows
-                upArrow.visible = false;
-                downArrow.visible = false;
-                
-                // Reset spin state
-                spinState = null;
-            }
-        }
-        
-        animateReset();
-    }
-    
-    // Animation loop
-    function animate(time) {
-        requestAnimationFrame(animate);
-        
-        // Update based on state
-        if (config.verse6.inSuperposition) {
-            // Update orbit position
-            orbitAngle += config.verse6.rotationSpeed;
-            innerSphere.position.x = Math.cos(orbitAngle) * 3;
-            innerSphere.position.z = Math.sin(orbitAngle) * 3;
-            innerSphere.position.y = Math.sin(orbitAngle * 1.5) * 2;
-            
-            // Rotate outer sphere
-            outerSphere.rotation.y += 0.005;
-            outerSphere.rotation.x += 0.002;
-        } else if (spinState) {
-            // Add subtle animation for measured state
-            if (spinState === 'up') {
-                upArrow.rotation.y += 0.01;
-                innerSphere.position.y = 5 + 0.1 * Math.sin(time * 0.002);
-            } else {
-                downArrow.rotation.y += 0.01;
-                innerSphere.position.y = -5 + 0.1 * Math.sin(time * 0.002);
-            }
-        }
-        
-        controls.update();
-        renderer.render(scene, camera);
-    }
-    
-    // Start animation
-    animate(0);
-    
-    // Handle window resize
-    function onWindowResize() {
-        camera.aspect = container.clientWidth / container.clientHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(container.clientWidth, container.clientHeight);
-    }
-    
-    window.addEventListener('resize', onWindowResize);
-    
-    // Store animation objects for cleanup
-    animations.verse6 = {
-        renderer,
-        controls,
-        cleanup: () => {
-            window.removeEventListener('resize', onWindowResize);
-            controls.dispose();
-            renderer.dispose();
-        }
-    };
-}
-
-// Verse 7: Quantum Vacuum
-function initializeVerse7Animation(container) {
-    // Set up THREE.js scene
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setClearColor(config.verse7.vacuumColor, 1);
-    container.appendChild(renderer.domElement);
-    
-    // Add lights
+    // Add lighting
     const ambientLight = new THREE.AmbientLight(0x404040);
     scene.add(ambientLight);
     
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(0, 1, 1);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
+    directionalLight.position.set(1, 1, 2);
     scene.add(directionalLight);
     
-    // Create quantum vacuum visualization
-    // Outer sphere (superposition state)
-    const vacuumGeometry = new THREE.BoxGeometry(30, 20, 30);
-    const vacuumMaterial = new THREE.MeshBasicMaterial({
-        color: config.verse7.vacuumColor,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.3
-    });
-    const vacuum = new THREE.Mesh(vacuumGeometry, vacuumMaterial);
-    scene.add(vacuum);
-    
-    // Create energy field visualization
-    const fieldGeometry = new THREE.PlaneGeometry(40, 40, 50, 50);
-    const fieldMaterial = new THREE.MeshBasicMaterial({
-        color: 0x3030a0,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.2
-    });
-    
-    // Create multiple intersecting fields
-    const field1 = new THREE.Mesh(fieldGeometry, fieldMaterial);
-    scene.add(field1);
-    
-    const field2 = new THREE.Mesh(fieldGeometry, fieldMaterial);
-    field2.rotation.x = Math.PI / 2;
-    scene.add(field2);
-    
-    const field3 = new THREE.Mesh(fieldGeometry, fieldMaterial);
-    field3.rotation.z = Math.PI / 2;
-    scene.add(field3);
-    
-    // Particle container
-    const particles = [];
-    const particlesGroup = new THREE.Group();
-    scene.add(particlesGroup);
-    
-    // Controls for interaction
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.screenSpacePanning = false;
-    controls.minDistance = 10;
-    controls.maxDistance = 40;
-    controls.target.set(0, 0, 0);
-    
-    // Set camera position
-    camera.position.set(15, 10, 20);
-    
-    // Add fluctuations toggle button functionality
-    const toggleFluctuationsBtn = document.getElementById('toggle-fluctuations');
-    toggleFluctuationsBtn.addEventListener('click', () => {
-        config.verse7.fluctuationsActive = !config.verse7.fluctuationsActive;
-        toggleFluctuationsBtn.textContent = config.verse7.fluctuationsActive ? 
-            'Pause Fluctuations' : 'Resume Fluctuations';
-    });
-    
-    // Add fluctuation rate slider functionality
-    const fluctuationRateSlider = document.getElementById('fluctuation-rate');
-    fluctuationRateSlider.value = config.verse7.fluctuationRate;
-    fluctuationRateSlider.addEventListener('input', () => {
-        config.verse7.fluctuationRate = fluctuationRateSlider.value;
-    });
-    
-    // Function to create a virtual particle pair
-    function createParticlePair() {
-        if (!config.verse7.fluctuationsActive) return;
-        
-        // Random position within the vacuum
-        const x = (Math.random() - 0.5) * 20;
-        const y = (Math.random() - 0.5) * 12;
-        const z = (Math.random() - 0.5) * 20;
-        
-        // Create particle and antiparticle
-        const particleGeometry = new THREE.SphereGeometry(0.2, 16, 16);
-        const particleMaterial = new THREE.MeshPhongMaterial({
-            color: config.verse7.particleColor,
-            emissive: 0x3030a0,
-            transparent: true,
-            opacity: 0.8
+    // Event listeners for controls
+    const toggleFixationBtn = document.getElementById('toggle-fixation');
+    if (toggleFixationBtn) {
+        toggleFixationBtn.addEventListener('click', () => {
+            fixationActive = !fixationActive;
+            config.verse5.fixationActive = fixationActive;
+            updateVisualization();
         });
-        
-        const particle = new THREE.Mesh(particleGeometry, particleMaterial);
-        particle.position.set(x, y, z);
-        particle.userData = {
-            birthTime: Date.now(),
-            initialPosition: new THREE.Vector3(x, y, z),
-            velocity: new THREE.Vector3(
-                (Math.random() - 0.5) * 0.05,
-                (Math.random() - 0.5) * 0.05,
-                (Math.random() - 0.5) * 0.05
-            )
-        };
-        
-        const antiparticle = particle.clone();
-        antiparticle.material = particleMaterial.clone();
-        antiparticle.position.set(x, y, z);
-        antiparticle.userData = {
-            birthTime: Date.now(),
-            initialPosition: new THREE.Vector3(x, y, z),
-            velocity: new THREE.Vector3(
-                -particle.userData.velocity.x,
-                -particle.userData.velocity.y,
-                -particle.userData.velocity.z
-            )
-        };
-        
-        // Add to scene
-        particlesGroup.add(particle);
-        particlesGroup.add(antiparticle);
-        
-        // Add to tracking array
-        particles.push(particle);
-        particles.push(antiparticle);
-        
-        // Add glow effect
-        const glowSize = 1;
-        const glowGeometry = new THREE.SphereGeometry(glowSize, 16, 16);
-        const glowMaterial = new THREE.MeshBasicMaterial({
-            color: config.verse7.particleColor,
-            transparent: true,
-            opacity: 0.3
+    }
+    
+    const densitySlider = document.getElementById('probability-density');
+    if (densitySlider) {
+        densitySlider.value = config.verse5.probabilityDensity;
+        densitySlider.addEventListener('input', () => {
+            probabilityDensity = parseInt(densitySlider.value) / 100;
+            config.verse5.probabilityDensity = parseInt(densitySlider.value);
+            updateVisualization();
         });
-        
-        const glow = new THREE.Mesh(glowGeometry, glowMaterial);
-        glow.position.copy(particle.position);
-        glow.userData = {
-            birthTime: Date.now(),
-            maxSize: glowSize,
-            isGlow: true
-        };
-        
-        particlesGroup.add(glow);
-        particles.push(glow);
-        
-        // Create emergence animation
-        animateParticleCreation(particle, antiparticle, glow);
     }
     
-    // Function to animate particle creation
-    function animateParticleCreation(particle, antiparticle, glow) {
-        const duration = 500; // ms
-        const startTime = Date.now();
+    // Update visualization based on current state
+    function updateVisualization() {
+        // Update fixation box
+        fixationMaterial.opacity = fixationActive ? 0.7 : 0;
         
-        // Start with small size
-        particle.scale.set(0.1, 0.1, 0.1);
-        antiparticle.scale.set(0.1, 0.1, 0.1);
-        glow.scale.set(0.1, 0.1, 0.1);
+        // Update particle color
+        particle.material.color.set(fixationActive ? config.verse5.fixationColor : config.verse5.particleColor);
         
-        function growParticles() {
-            const elapsed = Date.now() - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            // Scale up particles
-            particle.scale.set(progress, progress, progress);
-            antiparticle.scale.set(progress, progress, progress);
-            glow.scale.set(progress, progress, progress);
-            
-            if (progress < 1) {
-                requestAnimationFrame(growParticles);
-            }
-        }
-        
-        growParticles();
+        // Update cloud size based on density
+        cloud.scale.set(
+            0.7 + probabilityDensity * 0.6,
+            0.7 + probabilityDensity * 0.6,
+            0.7 + probabilityDensity * 0.6
+        );
     }
     
-    // Function to update particles
-    function updateParticles() {
-        const now = Date.now();
-        
-        // Check if we need to create new particles
-        if (particles.length < config.verse7.maxParticles * 2 && 
-            Math.random() < config.verse7.fluctuationRate / 1000) {
-            createParticlePair();
-        }
-        
-        // Update and remove old particles
-        for (let i = particles.length - 1; i >= 0; i--) {
-            const particle = particles[i];
-            const age = now - particle.userData.birthTime;
-            
-            // Remove particles that exceed lifetime
-            if (age > config.verse7.particleLifetime) {
-                particlesGroup.remove(particle);
-                particles.splice(i, 1);
-                continue;
-            }
-            
-            // Update particle position
-            if (!particle.userData.isGlow) {
-                particle.position.add(particle.userData.velocity);
-                
-                // Make particles and antiparticles attract back to each other over time
-                const initialPos = particle.userData.initialPosition;
-                particle.position.lerp(initialPos, 0.005);
-            } else {
-                // Update glow size and opacity based on age
-                const lifeProgress = age / config.verse7.particleLifetime;
-                const fadeSize = 1 - Math.abs(lifeProgress - 0.5) * 2; // peak at halfway
-                
-                particle.scale.set(fadeSize, fadeSize, fadeSize);
-                particle.material.opacity = 0.3 * (1 - lifeProgress);
-            }
-        }
-    }
-    
-    // Animation loop
-    function animate(time) {
-        requestAnimationFrame(animate);
-        
-        // Update quantum vacuum visualization
-        vacuum.rotation.y += 0.001;
-        vacuum.rotation.x += 0.0005;
-        
-        // Update energy fields
-        field1.position.z = Math.sin(time * 0.0005) * 5;
-        field2.position.x = Math.sin(time * 0.0003) * 5;
-        field3.position.y = Math.sin(time * 0.0004) * 5;
-        
-        // Update particles
-        updateParticles();
-        
-        controls.update();
-        renderer.render(scene, camera);
-    }
-    
-    // Start animation
-    animate(0);
+    // Apply initial visualization
+    updateVisualization();
     
     // Handle window resize
     function onWindowResize() {
@@ -2150,438 +1671,483 @@ function initializeVerse7Animation(container) {
         camera.updateProjectionMatrix();
         renderer.setSize(container.clientWidth, container.clientHeight);
     }
-    
     window.addEventListener('resize', onWindowResize);
-    
-    // Store animation objects for cleanup
-    animations.verse7 = {
-        renderer,
-        controls,
-        cleanup: () => {
-            window.removeEventListener('resize', onWindowResize);
-            controls.dispose();
-            renderer.dispose();
-        }
-    };
-}
-
-// Verse 8: Contextuality - Tetralemma
-function initializeVerse8Animation(container) {
-    // Create canvas directly without d3.js
-    const canvas = document.createElement('canvas');
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
-    container.appendChild(canvas);
-    const ctx = canvas.getContext('2d');
-    
-    // Create tetralemma visualization
-    const width = canvas.width;
-    const height = canvas.height;
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const radius = Math.min(width, height) * 0.35;
-    
-    // The four positions of the tetralemma
-    const positions = [
-        { x: centerX, y: centerY - radius, label: "Real", context: "A" },
-        { x: centerX, y: centerY + radius, label: "Not Real", context: "B" },
-        { x: centerX - radius, y: centerY, label: "Both", context: "C" },
-        { x: centerX + radius, y: centerY, label: "Neither", context: "D" }
-    ];
-    
-    // Current particle position
-    let particlePos = { ...positions.find(p => p.context === config.verse8.currentContext) };
-    let particleColor = getContextColor(config.verse8.currentContext);
-    let glowSize = 20;
-    let pulsateDirection = 1;
-    
-    // Add measurement context button functionality
-    const changeContextBtn = document.getElementById('change-context');
-    const contextLabel = document.querySelector('.context-label');
-    
-    contextLabel.textContent = `Current Context: ${config.verse8.currentContext} (${positions.find(p => p.context === config.verse8.currentContext).label})`;
-    
-    changeContextBtn.addEventListener('click', changeContext);
-    
-    // Context transitions
-    const contextTransitions = {
-        "A": "B",
-        "B": "C",
-        "C": "D",
-        "D": "A"
-    };
-    
-    // Animation variables
-    let isTransitioning = false;
-    let transitionStart = 0;
-    let transitionFrom = null;
-    let transitionTo = null;
-    
-    // Function to change context
-    function changeContext() {
-        const nextContext = contextTransitions[config.verse8.currentContext];
-        const currentPos = positions.find(p => p.context === config.verse8.currentContext);
-        const nextPos = positions.find(p => p.context === nextContext);
-        
-        // Start transition
-        isTransitioning = true;
-        transitionStart = Date.now();
-        transitionFrom = { ...currentPos, color: particleColor };
-        transitionTo = { ...nextPos, color: getContextColor(nextContext) };
-        
-        // Update state
-        config.verse8.currentContext = nextContext;
-        
-        // Update context label
-        contextLabel.textContent = `Current Context: ${nextContext} (${nextPos.label})`;
-    }
-    
-    function getContextColor(context) {
-        switch(context) {
-            case "A": return config.verse8.contextA.color;
-            case "B": return config.verse8.contextB.color;
-            case "C": return config.verse8.contextC.color;
-            case "D": return config.verse8.contextD.color;
-            default: return config.verse8.contextA.color;
-        }
-    }
     
     // Animation loop
     function animate() {
-        // Clear canvas
-        ctx.fillStyle = '#1a1a2e';
-        ctx.fillRect(0, 0, width, height);
-        
-        // Draw background gradient
-        const gradient = ctx.createLinearGradient(0, 0, width, height);
-        gradient.addColorStop(0, '#1a1a2e');
-        gradient.addColorStop(1, '#2a2a4a');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, width, height);
-        
-        // Draw lines connecting positions
-        for (let i = 0; i < positions.length; i++) {
-            for (let j = i + 1; j < positions.length; j++) {
-                ctx.strokeStyle = '#3a3a6a';
-                ctx.lineWidth = 2;
-                ctx.globalAlpha = 0.5;
-                ctx.beginPath();
-                ctx.moveTo(positions[i].x, positions[i].y);
-                ctx.lineTo(positions[j].x, positions[j].y);
-                ctx.stroke();
-                ctx.globalAlpha = 1;
-            }
-        }
-        
-        // Draw labels
-        ctx.font = 'bold 16px Arial';
-        ctx.fillStyle = '#a0a0ff';
-        ctx.textAlign = 'center';
-        
-        positions.forEach(pos => {
-            const labelY = pos.y > centerY ? pos.y - 35 : pos.y + 35;
-            ctx.fillText(pos.label, pos.x, labelY);
-        });
-        
-        // Update particle position if transitioning
-        if (isTransitioning) {
-            const elapsed = Date.now() - transitionStart;
-            const duration = config.verse8.transitionSpeed;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            // Linear interpolation
-            particlePos.x = transitionFrom.x + progress * (transitionTo.x - transitionFrom.x);
-            particlePos.y = transitionFrom.y + progress * (transitionTo.y - transitionFrom.y);
-            
-            // Color interpolation
-            particleColor = interpolateColor(transitionFrom.color, transitionTo.color, progress);
-            
-            // Create superposition effect during transition
-            if (progress < 1) {
-                // Draw ghost particles
-                positions.forEach(pos => {
-                    if (pos.context !== config.verse8.currentContext) {
-                        ctx.fillStyle = particleColor;
-                        ctx.globalAlpha = 0.3 * (1 - progress);
-                        ctx.beginPath();
-                        ctx.arc(pos.x, pos.y, 5, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.globalAlpha = 1;
-                    }
-                });
-            } else {
-                // Transition complete
-                isTransitioning = false;
-            }
-        }
-        
-        // Pulsate glow
-        glowSize += 0.2 * pulsateDirection;
-        if (glowSize > 25) {
-            pulsateDirection = -1;
-        } else if (glowSize < 20) {
-            pulsateDirection = 1;
-        }
-        
-        // Draw particle glow
-        ctx.fillStyle = particleColor;
-        ctx.globalAlpha = 0.5;
-        ctx.beginPath();
-        ctx.arc(particlePos.x, particlePos.y, glowSize, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.globalAlpha = 1;
-        
-        // Draw particle
-        ctx.fillStyle = particleColor;
-        ctx.beginPath();
-        ctx.arc(particlePos.x, particlePos.y, 10, 0, Math.PI * 2);
-        ctx.fill();
-        
         requestAnimationFrame(animate);
-    }
-    
-    function interpolateColor(color1, color2, factor) {
-        // Simple RGB interpolation
-        function getRGB(str) {
-            if (str.startsWith('#')) {
-                // Convert hex to RGB
-                const hex = str.substring(1);
-                return {
-                    r: parseInt(hex.substring(0, 2), 16),
-                    g: parseInt(hex.substring(2, 4), 16),
-                    b: parseInt(hex.substring(4, 6), 16)
-                };
-            } else if (str.startsWith('rgb')) {
-                // Parse RGB format
-                const parts = str.match(/\d+/g);
-                return {
-                    r: parseInt(parts[0]),
-                    g: parseInt(parts[1]),
-                    b: parseInt(parts[2])
-                };
+        
+        const time = Date.now() * 0.001;
+        
+        if (fixationActive) {
+            // Fixed behavior
+            particle.position.set(0, 0, 0);
+            fixation.position.set(0, 0, 0);
+            
+            // Slowly rotate fixation
+            fixation.rotation.x = time * 0.3;
+            fixation.rotation.y = time * 0.5;
+            
+            // Pulsate fixation slightly
+            const scale = 1 + 0.1 * Math.sin(time * 2);
+            fixation.scale.set(scale, scale, scale);
+            
+            // Fade out wave and cloud
+            wave.material.opacity = Math.max(0, wave.material.opacity - 0.005);
+            cloud.material.opacity = Math.max(0, cloud.material.opacity - 0.001);
+            
+        } else {
+            // Probabilistic behavior
+            
+            // Restore wave and cloud visibility
+            wave.material.opacity = Math.min(0.6, wave.material.opacity + 0.01);
+            cloud.material.opacity = Math.min(0.15, cloud.material.opacity + 0.002);
+            
+            // Make particle orbit within probability cloud
+            const orbitRadius = 0.4 + Math.sin(time * 0.5) * 0.3;
+            const orbitSpeed = 1.0;
+            
+            particle.position.x = Math.cos(time * orbitSpeed) * orbitRadius;
+            particle.position.y = Math.sin(time * orbitSpeed) * orbitRadius;
+            particle.position.z = Math.sin(time * 0.7) * 0.2;
+            
+            // Animate wave
+            const wavePoints = [];
+            for (let i = 0; i <= waveSegments; i++) {
+                const angle = (i / waveSegments) * Math.PI * 2;
+                const waveStrength = 0.1 * (0.5 + probabilityDensity);
+                const radius = waveRadius + Math.sin(angle * 8 + time * 2) * waveStrength;
+                
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+                wavePoints.push(new THREE.Vector3(x, y, 0));
             }
-            return { r: 0, g: 0, b: 0 };
+            
+            // Update wave geometry
+            wave.geometry.dispose();
+            wave.geometry = new THREE.BufferGeometry().setFromPoints(wavePoints);
+            
+            // Rotate cloud
+            cloud.rotation.x = time * 0.1;
+            cloud.rotation.y = time * 0.15;
         }
         
-        const c1 = getRGB(color1);
-        const c2 = getRGB(color2);
-        
-        const r = Math.round(c1.r + factor * (c2.r - c1.r));
-        const g = Math.round(c1.g + factor * (c2.g - c1.g));
-        const b = Math.round(c1.b + factor * (c2.b - c1.b));
-        
-        return `rgb(${r}, ${g}, ${b})`;
+        controls.update();
+        renderer.render(scene, camera);
     }
     
     // Start animation
     animate();
     
-    // Handle window resize
-    function handleResize() {
-        canvas.width = container.clientWidth;
-        canvas.height = container.clientHeight;
-        
-        // Recalculate positions
-        const newRadius = Math.min(canvas.width, canvas.height) * 0.35;
-        const newCenterX = canvas.width / 2;
-        const newCenterY = canvas.height / 2;
-        
-        positions[0].x = newCenterX;
-        positions[0].y = newCenterY - newRadius;
-        positions[1].x = newCenterX;
-        positions[1].y = newCenterY + newRadius;
-        positions[2].x = newCenterX - newRadius;
-        positions[2].y = newCenterY;
-        positions[3].x = newCenterX + newRadius;
-        positions[3].y = newCenterY;
-        
-        // Update particle position
-        if (!isTransitioning) {
-            const currentPos = positions.find(p => p.context === config.verse8.currentContext);
-            particlePos = { ...currentPos };
-        }
-    }
-    
-    window.addEventListener("resize", handleResize);
-    
-    // Store for cleanup
-    animations.verse8 = {
-        cleanup: () => {
-            window.removeEventListener("resize", handleResize);
-            container.removeChild(canvas);
+    // Store cleanup function
+    animations[`verse5`] = {
+        cleanup: function() {
+            // Remove event listeners
+            window.removeEventListener('resize', onWindowResize);
+            
+            // Dispose of geometries, materials
+            particleGeometry.dispose();
+            particleMaterial.dispose();
+            waveGeometry.dispose();
+            waveMaterial.dispose();
+            cloudGeometry.dispose();
+            cloudMaterial.dispose();
+            fixationGeometry.dispose();
+            fixationMaterial.dispose();
+            
+            // Dispose of renderer
+            renderer.dispose();
+            
+            // Remove renderer element from DOM
+            if (renderer.domElement.parentNode) {
+                renderer.domElement.parentNode.removeChild(renderer.domElement);
+            }
         }
     };
 }
 
-// Verse 9: Suchness - Undifferentiated Wave
-function initializeVerse9Animation(container) {
-    // Set up THREE.js scene
+function initializeVerse6Animation(container) {
+    // Create a scene
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    scene.background = new THREE.Color(0x1a1a2e);
     
+    // Create a camera
+    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 5;
+    
+    // Create a renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setClearColor(0x1a1a2e, 1);
     container.appendChild(renderer.domElement);
     
-    // Add lights
+    // Add orbit controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    
+    // Configuration variables
+    let inSuperposition = config.verse6.inSuperposition;
+    const particleSize = config.verse6.particleSize / 100;
+    const rotationSpeed = config.verse6.rotationSpeed;
+    
+    // Create the central spin particle
+    const particleGeometry = new THREE.SphereGeometry(particleSize, 32, 32);
+    const superpositionMaterial = new THREE.MeshPhongMaterial({ 
+        color: config.verse6.superpositionColor,
+        transparent: true,
+        opacity: 0.9
+    });
+    const spinUpMaterial = new THREE.MeshPhongMaterial({ 
+        color: config.verse6.spinUpColor,
+        transparent: true,
+        opacity: 0.9
+    });
+    const spinDownMaterial = new THREE.MeshPhongMaterial({ 
+        color: config.verse6.spinDownColor,
+        transparent: true,
+        opacity: 0.9
+    });
+    
+    const particle = new THREE.Mesh(particleGeometry, superpositionMaterial);
+    scene.add(particle);
+    
+    // Create spin axis
+    const axisGeometry = new THREE.CylinderGeometry(0.01, 0.01, 3, 8);
+    const axisMaterial = new THREE.MeshBasicMaterial({ color: 0x666666 });
+    const axis = new THREE.Mesh(axisGeometry, axisMaterial);
+    axis.rotation.x = Math.PI / 2;
+    scene.add(axis);
+    
+    // Create superposition indicator (ring)
+    const ringGeometry = new THREE.TorusGeometry(particleSize * 1.5, 0.03, 16, 48);
+    const ringMaterial = new THREE.MeshBasicMaterial({ 
+        color: config.verse6.superpositionColor,
+        transparent: true,
+        opacity: 0.7
+    });
+    const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+    ring.rotation.x = Math.PI / 2;
+    scene.add(ring);
+    
+    // Add arrow indicators for spin state
+    const arrowUpGeometry = new THREE.ConeGeometry(0.1, 0.3, 16);
+    const arrowUpMaterial = new THREE.MeshBasicMaterial({ 
+        color: config.verse6.spinUpColor,
+        transparent: true,
+        opacity: 0
+    });
+    const arrowUp = new THREE.Mesh(arrowUpGeometry, arrowUpMaterial);
+    arrowUp.position.y = 0.8;
+    scene.add(arrowUp);
+    
+    const arrowDownGeometry = new THREE.ConeGeometry(0.1, 0.3, 16);
+    const arrowDownMaterial = new THREE.MeshBasicMaterial({ 
+        color: config.verse6.spinDownColor,
+        transparent: true,
+        opacity: 0
+    });
+    const arrowDown = new THREE.Mesh(arrowDownGeometry, arrowDownMaterial);
+    arrowDown.position.y = -0.8;
+    arrowDown.rotation.x = Math.PI;
+    scene.add(arrowDown);
+    
+    // Add lighting
     const ambientLight = new THREE.AmbientLight(0x404040);
     scene.add(ambientLight);
     
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(0, 1, 1);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(1, 1, 2);
     scene.add(directionalLight);
     
-    // Create smooth wave function
-    const waveResolution = 100;
-    const waveGeometry = new THREE.PlaneGeometry(30, 20, waveResolution, waveResolution / 2);
-    const waveMaterial = new THREE.MeshPhongMaterial({
-        color: config.verse9.smoothColor,
-        side: THREE.DoubleSide,
-        wireframe: false,
-        transparent: true,
-        opacity: 0.7,
-        shininess: 50
-    });
-    const wave = new THREE.Mesh(waveGeometry, waveMaterial);
-    scene.add(wave);
+    // Group for rotation
+    const rotationGroup = new THREE.Group();
+    rotationGroup.add(particle);
+    rotationGroup.add(ring);
+    scene.add(rotationGroup);
     
-    // Controls for interaction
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.screenSpacePanning = false;
-    controls.minDistance = 10;
-    controls.maxDistance = 30;
-    controls.target.set(0, 0, 0);
-    
-    // Set camera position
-    camera.position.set(0, 10, 20);
-    
-    // Add differentiation toggle button functionality
-    const toggleDifferentiationBtn = document.getElementById('toggle-differentiation');
-    toggleDifferentiationBtn.addEventListener('click', () => {
-        config.verse9.differentiationActive = !config.verse9.differentiationActive;
-        toggleDifferentiationBtn.textContent = config.verse9.differentiationActive ? 
-            'Return to Suchness' : 'Add Differentiation';
-        
-        // Change wave appearance
-        if (config.verse9.differentiationActive) {
-            addDifferentiation();
-        } else {
-            removeDifferentiation();
-        }
-    });
-    
-    // Add wave smoothness slider functionality
-    const waveSmoothnessSlider = document.getElementById('wave-smoothness');
-    waveSmoothnessSlider.value = config.verse9.waveSmoothness;
-    waveSmoothnessSlider.addEventListener('input', () => {
-        config.verse9.waveSmoothness = waveSmoothnessSlider.value;
-    });
-    
-    // Function to add differentiation
-    function addDifferentiation() {
-        // Animate transition to differentiated state
-        const duration = 1000; // ms
-        const startTime = Date.now();
-        const startColor = new THREE.Color(config.verse9.smoothColor);
-        const endColor = new THREE.Color(config.verse9.differentiatedColor);
-        
-        function animateDifferentiation() {
-            const elapsed = Date.now() - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            // Transition color
-            wave.material.color.copy(startColor).lerp(endColor, progress);
-            
-            // Transition to wireframe
-            wave.material.wireframe = progress > 0.5;
-            
-            if (progress < 1) {
-                requestAnimationFrame(animateDifferentiation);
+    // Event listeners for controls
+    const measureSpinBtn = document.getElementById('measure-spin');
+    if (measureSpinBtn) {
+        measureSpinBtn.addEventListener('click', () => {
+            if (inSuperposition) {
+                inSuperposition = false;
+                config.verse6.inSuperposition = false;
+                
+                // Randomly choose spin up or down
+                const spinUp = Math.random() > 0.5;
+                measureSpin(spinUp);
             }
-        }
-        
-        animateDifferentiation();
+        });
     }
     
-    // Function to remove differentiation
-    function removeDifferentiation() {
-        // Animate transition to smooth state
-        const duration = 1000; // ms
-        const startTime = Date.now();
-        const startColor = new THREE.Color(config.verse9.differentiatedColor);
-        const endColor = new THREE.Color(config.verse9.smoothColor);
-        
-        // Immediately disable wireframe
-        wave.material.wireframe = false;
-        
-        function animateSmoothing() {
-            const elapsed = Date.now() - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            // Transition color
-            wave.material.color.copy(startColor).lerp(endColor, progress);
-            
-            if (progress < 1) {
-                requestAnimationFrame(animateSmoothing);
-            }
-        }
-        
-        animateSmoothing();
+    const resetSpinBtn = document.getElementById('reset-spin');
+    if (resetSpinBtn) {
+        resetSpinBtn.addEventListener('click', () => {
+            inSuperposition = true;
+            config.verse6.inSuperposition = true;
+            resetToSuperposition();
+        });
     }
+    
+    // Function to measure spin (collapse superposition)
+    function measureSpin(spinUp) {
+        // Change particle color based on measurement
+        particle.material = spinUp ? spinUpMaterial : spinDownMaterial;
+        
+        // Animate the transition
+        const timeline = { t: 0 };
+        
+        // Initial state
+        const initialY = particle.position.y;
+        const targetY = spinUp ? 0.5 : -0.5;
+        
+        // Update visualization
+        ring.material.opacity = 0;
+        
+        // Show appropriate arrow
+        arrowUpMaterial.opacity = spinUp ? 0.8 : 0;
+        arrowDownMaterial.opacity = spinUp ? 0 : 0.8;
+        
+        // Animate the particle moving to measured position
+        const tween = {
+            update: function(time) {
+                if (timeline.t < 1) {
+                    timeline.t += 0.02;
+                    
+                    // Move particle to measured position
+                    particle.position.y = THREE.MathUtils.lerp(initialY, targetY, timeline.t);
+                    
+                    return true; // Continue animation
+                }
+                return false; // Stop animation
+            }
+        };
+        
+        tweens.push(tween);
+    }
+    
+    // Function to reset to superposition state
+    function resetToSuperposition() {
+        // Change particle back to superposition state
+        particle.material = superpositionMaterial;
+        
+        // Reset position
+        const timeline = { t: 0 };
+        const initialY = particle.position.y;
+        
+        // Update visualization
+        ring.material.opacity = 0.7;
+        
+        // Hide arrows
+        arrowUpMaterial.opacity = 0;
+        arrowDownMaterial.opacity = 0;
+        
+        // Animate the particle moving back to center
+        const tween = {
+            update: function(time) {
+                if (timeline.t < 1) {
+                    timeline.t += 0.02;
+                    
+                    // Move particle back to center
+                    particle.position.y = THREE.MathUtils.lerp(initialY, 0, timeline.t);
+                    
+                    return true; // Continue animation
+                }
+                return false; // Stop animation
+            }
+        };
+        
+        tweens.push(tween);
+    }
+    
+    // Array to store active tweens
+    const tweens = [];
+    
+    // Handle window resize
+    function onWindowResize() {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+    window.addEventListener('resize', onWindowResize);
     
     // Animation loop
-    function animate(time) {
+    function animate() {
         requestAnimationFrame(animate);
         
-        // Update wave based on differentiation state
-        updateWave(time);
+        const time = Date.now() * 0.001;
+        
+        // Process active tweens
+        for (let i = tweens.length - 1; i >= 0; i--) {
+            const stillActive = tweens[i].update(time);
+            if (!stillActive) {
+                tweens.splice(i, 1);
+            }
+        }
+        
+        if (inSuperposition) {
+            // Animate superposition state
+            rotationGroup.rotation.y = time * rotationSpeed;
+            rotationGroup.rotation.x = Math.sin(time * rotationSpeed * 0.5) * 0.2;
+            
+            // Pulse the ring slightly
+            const scale = 1 + 0.05 * Math.sin(time * 2);
+            ring.scale.set(scale, scale, scale);
+        }
         
         controls.update();
         renderer.render(scene, camera);
     }
     
     // Start animation
-    animate(0);
+    animate();
     
-    // Update wave function visualization
-    function updateWave(time) {
-        const positions = wave.geometry.attributes.position;
-        const smoothness = config.verse9.waveSmoothness / 100;
-        
-        for (let i = 0; i < positions.count; i++) {
-            const x = positions.getX(i);
-            const y = positions.getY(i);
+    // Store cleanup function
+    animations[`verse6`] = {
+        cleanup: function() {
+            // Remove event listeners
+            window.removeEventListener('resize', onWindowResize);
             
-            let z;
+            // Clear tweens
+            tweens.length = 0;
             
-            if (config.verse9.differentiationActive) {
-                // Create more peaks and valleys (differentiated)
-                const frequency = 0.1;
-                const amplitude = config.verse9.waveHeight / 50;
-                
-                z = amplitude * Math.sin(x * frequency * 5 + time * config.verse9.waveSpeed) * 
-                    Math.cos(y * frequency * 5 + time * config.verse9.waveSpeed * 0.7);
-                
-                // Add some noise for more differentiation
-                z += (Math.random() - 0.5) * 0.5;
-            } else {
-                // Create very smooth, gentle waves (suchness)
-                const frequency = 0.05;
-                const amplitude = config.verse9.waveHeight / 80;
-                
-                // Use very gentle sine waves
-                z = amplitude * Math.sin(
-                    (x * frequency + time * config.verse9.waveSpeed) * smoothness
-                ) * smoothness;
+            // Dispose of geometries, materials
+            particleGeometry.dispose();
+            superpositionMaterial.dispose();
+            spinUpMaterial.dispose();
+            spinDownMaterial.dispose();
+            axisGeometry.dispose();
+            axisMaterial.dispose();
+            ringGeometry.dispose();
+            ringMaterial.dispose();
+            arrowUpGeometry.dispose();
+            arrowUpMaterial.dispose();
+            arrowDownGeometry.dispose();
+            arrowDownMaterial.dispose();
+            
+            // Dispose of renderer
+            renderer.dispose();
+            
+            // Remove renderer element from DOM
+            if (renderer.domElement.parentNode) {
+                renderer.domElement.parentNode.removeChild(renderer.domElement);
             }
-            
-            positions.setZ(i, z);
         }
+    };
+}
+
+function initializeVerse7Animation(container) {
+    // Create a scene
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(config.verse7.vacuumColor);
+    
+    // Create a camera
+    const camera = new THREE.PerspectiveCamera(70, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 5;
+    
+    // Create a renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+    
+    // Add orbit controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    
+    // Configuration variables
+    let fluctuationsActive = config.verse7.fluctuationsActive;
+    let fluctuationRate = config.verse7.fluctuationRate / 100;
+    const particleLifetime = config.verse7.particleLifetime;
+    const maxParticles = config.verse7.maxParticles;
+    
+    // Create vacuum visualization - subtle grid
+    const gridHelper = new THREE.GridHelper(10, 20, 0x222244, 0x111133);
+    gridHelper.position.y = -2;
+    scene.add(gridHelper);
+    
+    // Add a subtle glow to the background
+    const glowGeometry = new THREE.SphereGeometry(8, 32, 32);
+    const glowMaterial = new THREE.MeshBasicMaterial({
+        color: 0x111133,
+        transparent: true,
+        opacity: 0.3,
+        side: THREE.BackSide
+    });
+    const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+    scene.add(glow);
+    
+    // Particle system for quantum fluctuations
+    const particles = [];
+    
+    // Event listeners for controls
+    const toggleFluctuationsBtn = document.getElementById('toggle-fluctuations');
+    if (toggleFluctuationsBtn) {
+        toggleFluctuationsBtn.addEventListener('click', () => {
+            fluctuationsActive = !fluctuationsActive;
+            config.verse7.fluctuationsActive = fluctuationsActive;
+            
+            // Update button text
+            if (toggleFluctuationsBtn.textContent) {
+                toggleFluctuationsBtn.textContent = fluctuationsActive ? 'Pause Fluctuations' : 'Resume Fluctuations';
+            }
+        });
+    }
+    
+    const fluctuationRateSlider = document.getElementById('fluctuation-rate');
+    if (fluctuationRateSlider) {
+        fluctuationRateSlider.value = config.verse7.fluctuationRate;
+        fluctuationRateSlider.addEventListener('input', () => {
+            fluctuationRate = parseInt(fluctuationRateSlider.value) / 100;
+            config.verse7.fluctuationRate = parseInt(fluctuationRateSlider.value);
+        });
+    }
+    
+    // Function to create particle pairs
+    function createParticlePair() {
+        // Random position in visible area
+        const x = (Math.random() - 0.5) * 6;
+        const y = (Math.random() - 0.5) * 4;
+        const z = (Math.random() - 0.5) * 4;
         
-        wave.geometry.attributes.position.needsUpdate = true;
+        // Create particle geometry with random size
+        const size = 0.05 + Math.random() * 0.1;
+        const particleGeometry = new THREE.SphereGeometry(size, 8, 8);
+        
+        // Material for the particle
+        const particleMaterial = new THREE.MeshBasicMaterial({
+            color: config.verse7.particleColor,
+            transparent: true,
+            opacity: 0.8
+        });
+        
+        // Create particle pair
+        const particle1 = new THREE.Mesh(particleGeometry, particleMaterial.clone());
+        const particle2 = new THREE.Mesh(particleGeometry, particleMaterial.clone());
+        
+        // Position them close together
+        particle1.position.set(x, y, z);
+        particle2.position.set(x + size * 2, y, z);
+        
+        // Add to scene
+        scene.add(particle1);
+        scene.add(particle2);
+        
+        // Add to particles array with lifetime
+        particles.push({
+            meshes: [particle1, particle2],
+            lifetime: 0,
+            maxLifetime: particleLifetime * (0.5 + Math.random()),
+            velocity: new THREE.Vector3(
+                (Math.random() - 0.5) * 0.01,
+                (Math.random() - 0.5) * 0.01,
+                (Math.random() - 0.5) * 0.01
+            )
+        });
+        
+        // Limit number of particles
+        if (particles.length > maxParticles) {
+            const oldestPair = particles.shift();
+            oldestPair.meshes.forEach(mesh => scene.remove(mesh));
+        }
     }
     
     // Handle window resize
@@ -2590,315 +2156,802 @@ function initializeVerse9Animation(container) {
         camera.updateProjectionMatrix();
         renderer.setSize(container.clientWidth, container.clientHeight);
     }
-    
     window.addEventListener('resize', onWindowResize);
     
-    // Store animation objects for cleanup
-    animations.verse9 = {
-        renderer,
-        controls,
-        cleanup: () => {
+    // Animation loop
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        const time = Date.now();
+        
+        // Create new particle pairs if active
+        if (fluctuationsActive && Math.random() < fluctuationRate) {
+            createParticlePair();
+        }
+        
+        // Update existing particles
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const pair = particles[i];
+            
+            // Increase lifetime
+            pair.lifetime += 16; // Approx. 16ms per frame
+            
+            // Move particles apart
+            if (pair.meshes[0] && pair.meshes[1]) {
+                // Move first particle
+                pair.meshes[0].position.add(pair.velocity);
+                
+                // Move second particle in opposite direction
+                const oppositeVelocity = pair.velocity.clone().negate();
+                pair.meshes[1].position.add(oppositeVelocity);
+                
+                // Calculate fade based on lifetime
+                const fadeRatio = pair.lifetime / pair.maxLifetime;
+                const opacity = Math.max(0, 0.8 * (1 - fadeRatio));
+                
+                // Apply fade
+                pair.meshes.forEach(mesh => {
+                    if (mesh.material) {
+                        mesh.material.opacity = opacity;
+                    }
+                });
+                
+                // Remove if lifetime exceeded
+                if (pair.lifetime >= pair.maxLifetime) {
+                    pair.meshes.forEach(mesh => scene.remove(mesh));
+                    particles.splice(i, 1);
+                }
+            }
+        }
+        
+        // Rotate grid slightly for dynamic effect
+        gridHelper.rotation.y = time * 0.0001;
+        
+        // Pulse glow
+        const glowPulse = 0.3 + 0.05 * Math.sin(time * 0.001);
+        glowMaterial.opacity = glowPulse;
+        
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    
+    // Start animation
+    animate();
+    
+    // Store cleanup function
+    animations[`verse7`] = {
+        cleanup: function() {
+            // Remove event listeners
             window.removeEventListener('resize', onWindowResize);
-            controls.dispose();
+            
+            // Remove all particles
+            particles.forEach(pair => {
+                pair.meshes.forEach(mesh => scene.remove(mesh));
+            });
+            
+            // Dispose of geometries, materials
+            glowGeometry.dispose();
+            glowMaterial.dispose();
+            
+            // Dispose of renderer
             renderer.dispose();
+            
+            // Remove renderer element from DOM
+            if (renderer.domElement.parentNode) {
+                renderer.domElement.parentNode.removeChild(renderer.domElement);
+            }
         }
     };
 }
 
-// Verse 10: Dependent Origination - Entanglement
-function initializeVerse10Animation(container) {
-    // Set up THREE.js scene
+function initializeVerse8Animation(container) {
+    // Create a scene
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    scene.background = new THREE.Color(0x1a1a2e);
     
+    // Create a camera
+    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 5;
+    
+    // Create a renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setClearColor(0x1a1a2e, 1);
     container.appendChild(renderer.domElement);
     
-    // Add lights
+    // Add orbit controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    
+    // Configuration variables
+    let currentContext = config.verse8.currentContext;
+    const transitionSpeed = config.verse8.transitionSpeed;
+    
+    // Create base object (always present)
+    const baseGeometry = new THREE.OctahedronGeometry(1, 0);
+    const baseMaterial = new THREE.MeshPhongMaterial({
+        color: 0x666666,
+        transparent: true,
+        opacity: 0.2,
+        wireframe: true
+    });
+    const baseObject = new THREE.Mesh(baseGeometry, baseMaterial);
+    scene.add(baseObject);
+    
+    // Create context objects
+    const contextGeometries = {
+        A: new THREE.BoxGeometry(1.5, 1.5, 1.5),
+        B: new THREE.SphereGeometry(1.2, 32, 32),
+        C: new THREE.TorusGeometry(1, 0.4, 16, 64),
+        D: new THREE.TorusKnotGeometry(1, 0.3, 64, 16)
+    };
+    
+    const contextMaterials = {
+        A: new THREE.MeshPhongMaterial({
+            color: new THREE.Color(config.verse8.contextA.color),
+            transparent: true,
+            opacity: 0.7
+        }),
+        B: new THREE.MeshPhongMaterial({
+            color: new THREE.Color(config.verse8.contextB.color),
+            transparent: true,
+            opacity: 0.7
+        }),
+        C: new THREE.MeshPhongMaterial({
+            color: new THREE.Color(config.verse8.contextC.color),
+            transparent: true,
+            opacity: 0.7
+        }),
+        D: new THREE.MeshPhongMaterial({
+            color: new THREE.Color(config.verse8.contextD.color),
+            transparent: true,
+            opacity: 0.7
+        })
+    };
+    
+    // Create meshes for each context
+    const contextObjects = {
+        A: new THREE.Mesh(contextGeometries.A, contextMaterials.A),
+        B: new THREE.Mesh(contextGeometries.B, contextMaterials.B),
+        C: new THREE.Mesh(contextGeometries.C, contextMaterials.C),
+        D: new THREE.Mesh(contextGeometries.D, contextMaterials.D)
+    };
+    
+    // Add all objects to scene (will control visibility)
+    Object.values(contextObjects).forEach(obj => {
+        obj.visible = false;
+        scene.add(obj);
+    });
+    
+    // Set initial context
+    contextObjects[currentContext].visible = true;
+    
+    // Create label for current context
+    function createContextLabel() {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = 512;
+        canvas.height = 128;
+        
+        context.fillStyle = 'rgba(0, 0, 0, 0)';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        
+        context.font = 'bold 36px Arial';
+        context.fillStyle = '#ffffff';
+        
+        // Get label for current context
+        let label;
+        switch(currentContext) {
+            case 'A': label = config.verse8.contextA.label; break;
+            case 'B': label = config.verse8.contextB.label; break;
+            case 'C': label = config.verse8.contextC.label; break;
+            case 'D': label = config.verse8.contextD.label; break;
+            default: label = 'Unknown Context';
+        }
+        
+        // Center text
+        const textMetrics = context.measureText(label);
+        const x = (canvas.width - textMetrics.width) / 2;
+        
+        context.fillText(label, x, 70);
+        
+        const texture = new THREE.CanvasTexture(canvas);
+        
+        return texture;
+    }
+    
+    // Create sprite for label
+    const labelMaterial = new THREE.SpriteMaterial({ 
+        map: createContextLabel(),
+        transparent: true
+    });
+    const labelSprite = new THREE.Sprite(labelMaterial);
+    labelSprite.position.y = -2;
+    labelSprite.scale.set(2, 0.5, 1);
+    scene.add(labelSprite);
+    
+    // Update label when context changes
+    function updateContextLabel() {
+        labelMaterial.map = createContextLabel();
+        labelMaterial.needsUpdate = true;
+        
+        // Also update DOM label if it exists
+        const contextLabel = document.querySelector('.context-label');
+        if (contextLabel) {
+            let label;
+            switch(currentContext) {
+                case 'A': label = config.verse8.contextA.label; break;
+                case 'B': label = config.verse8.contextB.label; break;
+                case 'C': label = config.verse8.contextC.label; break;
+                case 'D': label = config.verse8.contextD.label; break;
+                default: label = 'Unknown Context';
+            }
+            contextLabel.textContent = `Current Context: ${label}`;
+        }
+    }
+    
+    // Add lighting
     const ambientLight = new THREE.AmbientLight(0x404040);
     scene.add(ambientLight);
     
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(0, 1, 1);
-    scene.add(directionalLight);
+    const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.6);
+    directionalLight1.position.set(1, 1, 2);
+    scene.add(directionalLight1);
     
-    // Create two entangled particles
-    const particle1Geometry = new THREE.SphereGeometry(config.verse10.particleSize / 10, 32, 32);
-    const particle1Material = new THREE.MeshPhongMaterial({
-        color: config.verse10.particle1Color,
-        emissive: 0x3030a0,
-        shininess: 50
+    const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.3);
+    directionalLight2.position.set(-1, -1, -1);
+    scene.add(directionalLight2);
+    
+    // Event listeners for controls
+    const changeContextBtn = document.getElementById('change-context');
+    if (changeContextBtn) {
+        changeContextBtn.addEventListener('click', () => {
+            // Cycle through contexts: A -> B -> C -> D -> A
+            const contexts = ['A', 'B', 'C', 'D'];
+            const currentIndex = contexts.indexOf(currentContext);
+            const nextIndex = (currentIndex + 1) % contexts.length;
+            
+            changeContext(contexts[nextIndex]);
+        });
+    }
+    
+    // Animation variables
+    let transitioning = false;
+    let transitionProgress = 0;
+    let fromContext = 'A';
+    let toContext = 'A';
+    
+    // Function to change context with animated transition
+    function changeContext(newContext) {
+        if (transitioning || newContext === currentContext) return;
+        
+        fromContext = currentContext;
+        toContext = newContext;
+        transitioning = true;
+        transitionProgress = 0;
+        
+        // Make both objects visible during transition
+        contextObjects[fromContext].visible = true;
+        contextObjects[toContext].visible = true;
+        
+        // Update context in config
+        config.verse8.currentContext = newContext;
+        currentContext = newContext;
+        
+        // Update the label
+        updateContextLabel();
+    }
+    
+    // Handle window resize
+    function onWindowResize() {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+    window.addEventListener('resize', onWindowResize);
+    
+    // Animation loop
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        const time = Date.now() * 0.001;
+        
+        // Handle transition animation
+        if (transitioning) {
+            transitionProgress += 1000 / transitionSpeed / 60; // Approx. 60fps
+            
+            if (transitionProgress >= 1) {
+                // Transition complete
+                transitioning = false;
+                
+                // Hide the old context object
+                contextObjects[fromContext].visible = false;
+                
+                // Reset opacity of new object
+                contextObjects[toContext].material.opacity = 0.7;
+            } else {
+                // Animate transition
+                const fadeOut = 1 - transitionProgress;
+                const fadeIn = transitionProgress;
+                
+                contextObjects[fromContext].material.opacity = fadeOut * 0.7;
+                contextObjects[toContext].material.opacity = fadeIn * 0.7;
+                
+                // Animate scale
+                contextObjects[fromContext].scale.setScalar(1 + fadeOut * 0.2);
+                contextObjects[toContext].scale.setScalar(0.8 + fadeIn * 0.2);
+            }
+        }
+        
+        // Rotate all visible objects
+        Object.keys(contextObjects).forEach(key => {
+            const obj = contextObjects[key];
+            if (obj.visible) {
+                obj.rotation.x = time * 0.3;
+                obj.rotation.y = time * 0.5;
+            }
+        });
+        
+        // Rotate base object slightly differently
+        baseObject.rotation.x = time * 0.2;
+        baseObject.rotation.y = time * 0.4;
+        baseObject.rotation.z = time * 0.1;
+        
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    
+    // Start animation
+    animate();
+    
+    // Store cleanup function
+    animations[`verse8`] = {
+        cleanup: function() {
+            // Remove event listeners
+            window.removeEventListener('resize', onWindowResize);
+            
+            // Dispose of geometries, materials, textures
+            baseGeometry.dispose();
+            baseMaterial.dispose();
+            
+            Object.values(contextGeometries).forEach(geometry => geometry.dispose());
+            Object.values(contextMaterials).forEach(material => material.dispose());
+            
+            if (labelMaterial.map) labelMaterial.map.dispose();
+            labelMaterial.dispose();
+            
+            // Dispose of renderer
+            renderer.dispose();
+            
+            // Remove renderer element from DOM
+            if (renderer.domElement.parentNode) {
+                renderer.domElement.parentNode.removeChild(renderer.domElement);
+            }
+        }
+    };
+}
+
+function initializeVerse9Animation(container) {
+    // Create a scene
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x1a1a2e);
+    
+    // Create a camera
+    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 5;
+    
+    // Create a renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+    
+    // Add orbit controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    
+    // Configuration variables
+    let differentiationActive = config.verse9.differentiationActive;
+    let waveSmoothness = config.verse9.waveSmoothness / 100; // Convert to 0-1 range
+    const waveSpeed = config.verse9.waveSpeed;
+    const waveHeight = config.verse9.waveHeight / 100;
+    
+    // Create wave surface
+    const waveSegments = 100;
+    const waveWidth = 5;
+    const waveDepth = 5;
+    
+    // Create geometry for the wave surface
+    const waveGeometry = new THREE.PlaneGeometry(
+        waveWidth, 
+        waveDepth, 
+        waveSegments, 
+        waveSegments
+    );
+    
+    // Materials for different states
+    const smoothMaterial = new THREE.MeshPhongMaterial({
+        color: new THREE.Color(config.verse9.smoothColor),
+        transparent: true,
+        opacity: 0.75,
+        side: THREE.DoubleSide,
+        flatShading: false,
+        shininess: 80
     });
-    const particle1 = new THREE.Mesh(particle1Geometry, particle1Material);
+    
+    const differentiatedMaterial = new THREE.MeshPhongMaterial({
+        color: new THREE.Color(config.verse9.differentiatedColor),
+        transparent: true,
+        opacity: 0.75,
+        side: THREE.DoubleSide,
+        flatShading: true, // Enable flat shading for angular appearance
+        shininess: 30
+    });
+    
+    // Create the wave mesh with initial material
+    const wave = new THREE.Mesh(
+        waveGeometry, 
+        differentiationActive ? differentiatedMaterial : smoothMaterial
+    );
+    wave.rotation.x = -Math.PI / 2; // Lay flat
+    scene.add(wave);
+    
+    // Add a grid for reference
+    const gridHelper = new THREE.GridHelper(10, 20, 0x111122, 0x222233);
+    gridHelper.position.y = -0.2;
+    scene.add(gridHelper);
+    
+    // Add lighting
+    const ambientLight = new THREE.AmbientLight(0x333333);
+    scene.add(ambientLight);
+    
+    const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.7);
+    directionalLight1.position.set(1, 1, 1);
+    scene.add(directionalLight1);
+    
+    const directionalLight2 = new THREE.DirectionalLight(0x8080ff, 0.5);
+    directionalLight2.position.set(-1, 0.5, -1);
+    scene.add(directionalLight2);
+    
+    // Event listeners for controls
+    const toggleDifferentiationBtn = document.getElementById('toggle-differentiation');
+    if (toggleDifferentiationBtn) {
+        toggleDifferentiationBtn.addEventListener('click', () => {
+            differentiationActive = !differentiationActive;
+            config.verse9.differentiationActive = differentiationActive;
+            
+            // Update wave material
+            wave.material = differentiationActive ? differentiatedMaterial : smoothMaterial;
+            
+            // Update button text
+            if (toggleDifferentiationBtn.textContent) {
+                toggleDifferentiationBtn.textContent = differentiationActive ? 
+                    'Show Suchness (Undifferentiated)' : 'Show Differentiation';
+            }
+        });
+    }
+    
+    const waveSmoothSlider = document.getElementById('wave-smoothness');
+    if (waveSmoothSlider) {
+        waveSmoothSlider.value = config.verse9.waveSmoothness;
+        waveSmoothSlider.addEventListener('input', () => {
+            waveSmoothness = parseInt(waveSmoothSlider.value) / 100;
+            config.verse9.waveSmoothness = parseInt(waveSmoothSlider.value);
+        });
+    }
+    
+    // Function to update wave vertices
+    function updateWave(time) {
+        const positions = waveGeometry.attributes.position;
+        const vertex = new THREE.Vector3();
+        
+        // The smoothness factor affects the frequency of waves
+        const frequencyFactor = 1 - waveSmoothness;
+        
+        for (let i = 0; i < positions.count; i++) {
+            vertex.fromBufferAttribute(positions, i);
+            
+            // Original position (on the flat plane)
+            const origX = vertex.x;
+            const origZ = vertex.y; // Y in buffer is Z in our rotated mesh
+            
+            // Wave calculation - based on smoothness
+            if (differentiationActive) {
+                // More angular, distinct waves when differentiated
+                const frequency = 1 + frequencyFactor * 3;
+                const distanceFromCenter = Math.sqrt(origX * origX + origZ * origZ);
+                
+                // Create sharper peaks with modulo operation
+                let height = Math.sin(distanceFromCenter * frequency - time) * waveHeight;
+                height += Math.sin(origX * frequency * 1.5 - time * 1.3) * waveHeight * 0.5;
+                
+                // Add some noise for more differentiation
+                height += (Math.random() - 0.5) * 0.05 * waveHeight;
+                
+                vertex.z = height;
+            } else {
+                // Smooth, flowing waves for suchness
+                const frequency = 0.5 + frequencyFactor * 0.5;
+                const distanceFromCenter = Math.sqrt(origX * origX + origZ * origZ);
+                
+                // Create gentle, harmonious patterns
+                let height = Math.sin(distanceFromCenter * frequency - time) * waveHeight;
+                height += Math.sin(origX * frequency * 0.8 - time * 0.7) * waveHeight * 0.3;
+                height += Math.cos(origZ * frequency * 0.8 - time * 0.6) * waveHeight * 0.3;
+                
+                vertex.z = height;
+            }
+            
+            // Update position
+            positions.setXYZ(i, vertex.x, vertex.y, vertex.z);
+        }
+        
+        positions.needsUpdate = true;
+        waveGeometry.computeVertexNormals();
+    }
+    
+    // Handle window resize
+    function onWindowResize() {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+    window.addEventListener('resize', onWindowResize);
+    
+    // Animation loop
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        const time = Date.now() * 0.001;
+        
+        // Update wave
+        updateWave(time * waveSpeed);
+        
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    
+    // Start animation
+    animate();
+    
+    // Store cleanup function
+    animations[`verse9`] = {
+        cleanup: function() {
+            // Remove event listeners
+            window.removeEventListener('resize', onWindowResize);
+            
+            // Dispose of geometries, materials
+            waveGeometry.dispose();
+            smoothMaterial.dispose();
+            differentiatedMaterial.dispose();
+            
+            // Dispose of renderer
+            renderer.dispose();
+            
+            // Remove renderer element from DOM
+            if (renderer.domElement.parentNode) {
+                renderer.domElement.parentNode.removeChild(renderer.domElement);
+            }
+        }
+    };
+}
+
+function initializeVerse10Animation(container) {
+    // Create a scene
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x1a1a2e);
+    
+    // Create a camera
+    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 6;
+    
+    // Create a renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+    
+    // Add orbit controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    
+    // Configuration variables
+    let entangled = config.verse10.entangled;
+    const particle1Color = new THREE.Color(config.verse10.particle1Color);
+    const particle2Color = new THREE.Color(config.verse10.particle2Color);
+    const connectionColor = new THREE.Color(config.verse10.connectionColor);
+    const particleSize = config.verse10.particleSize / 100;
+    const distance = config.verse10.distance / 100;
+    const rotationSpeed = config.verse10.rotationSpeed;
+    
+    // Create particle geometry
+    const particleGeometry = new THREE.SphereGeometry(particleSize, 32, 32);
+    
+    // Create particle materials
+    const particle1Material = new THREE.MeshPhongMaterial({
+        color: particle1Color,
+        transparent: true,
+        opacity: 0.8,
+        shininess: 80
+    });
+    
+    const particle2Material = new THREE.MeshPhongMaterial({
+        color: particle2Color,
+        transparent: true,
+        opacity: 0.8,
+        shininess: 80
+    });
+    
+    // Create particles
+    const particle1 = new THREE.Mesh(particleGeometry, particle1Material);
+    particle1.position.x = -distance;
     scene.add(particle1);
     
-    const particle2Geometry = new THREE.SphereGeometry(config.verse10.particleSize / 10, 32, 32);
-    const particle2Material = new THREE.MeshPhongMaterial({
-        color: config.verse10.particle2Color,
-        emissive: 0x803030,
-        shininess: 50
-    });
-    const particle2 = new THREE.Mesh(particle2Geometry, particle2Material);
+    const particle2 = new THREE.Mesh(particleGeometry, particle2Material);
+    particle2.position.x = distance;
     scene.add(particle2);
     
-    // Position particles
-    const distance = config.verse10.distance / 40;
-    particle1.position.set(-distance, 0, 0);
-    particle2.position.set(distance, 0, 0);
+    // Connection between particles
+    const connectionGeometry = new THREE.CylinderGeometry(0.03, 0.03, distance * 2, 16);
+    connectionGeometry.rotateZ(Math.PI / 2); // Orient horizontally
     
-    // Create connection between particles
-    const connectionGeometry = new THREE.CylinderGeometry(0.05, 0.05, distance * 2, 16);
-    connectionGeometry.rotateZ(Math.PI / 2);
     const connectionMaterial = new THREE.MeshBasicMaterial({
-        color: config.verse10.connectionColor,
+        color: connectionColor,
         transparent: true,
         opacity: 0.5
     });
+    
     const connection = new THREE.Mesh(connectionGeometry, connectionMaterial);
     scene.add(connection);
     
-    // Create wave visualization
-    const waveGeometry = new THREE.SphereGeometry(distance * 1.5, 32, 16);
-    const waveMaterial = new THREE.MeshBasicMaterial({
-        color: config.verse10.connectionColor,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.3
-    });
-    const wave = new THREE.Mesh(waveGeometry, waveMaterial);
-    scene.add(wave);
+    // Create axes for each particle to represent spin states
+    const axisGeometry = new THREE.CylinderGeometry(0.01, 0.01, 0.5, 8);
+    const axisMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
     
-    // Create orbit visualizations for particles
-    const orbit1Geometry = new THREE.TorusGeometry(1, 0.03, 16, 100);
-    const orbit1Material = new THREE.MeshBasicMaterial({
-        color: config.verse10.particle1Color,
-        transparent: true,
-        opacity: 0.5
-    });
-    const orbit1 = new THREE.Mesh(orbit1Geometry, orbit1Material);
-    orbit1.position.copy(particle1.position);
-    scene.add(orbit1);
+    const axis1 = new THREE.Group();
+    const axis1X = new THREE.Mesh(axisGeometry, axisMaterial.clone());
+    axis1X.material.color.set(0xff5555);
+    axis1X.rotation.z = Math.PI / 2;
     
-    const orbit2Geometry = new THREE.TorusGeometry(1, 0.03, 16, 100);
-    const orbit2Material = new THREE.MeshBasicMaterial({
-        color: config.verse10.particle2Color,
-        transparent: true,
-        opacity: 0.5
-    });
-    const orbit2 = new THREE.Mesh(orbit2Geometry, orbit2Material);
-    orbit2.position.copy(particle2.position);
-    scene.add(orbit2);
+    const axis1Y = new THREE.Mesh(axisGeometry, axisMaterial.clone());
+    axis1Y.material.color.set(0x55ff55);
     
-    // Controls for interaction
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.screenSpacePanning = false;
-    controls.minDistance = 5;
-    controls.maxDistance = 20;
-    controls.target.set(0, 0, 0);
+    const axis1Z = new THREE.Mesh(axisGeometry, axisMaterial.clone());
+    axis1Z.material.color.set(0x5555ff);
+    axis1Z.rotation.x = Math.PI / 2;
     
-    // Set camera position
-    camera.position.set(0, 5, 10);
+    axis1.add(axis1X);
+    axis1.add(axis1Y);
+    axis1.add(axis1Z);
+    particle1.add(axis1);
     
-    // Add particle measurement button functionality
+    const axis2 = new THREE.Group();
+    const axis2X = new THREE.Mesh(axisGeometry, axisMaterial.clone());
+    axis2X.material.color.set(0xff5555);
+    axis2X.rotation.z = Math.PI / 2;
+    
+    const axis2Y = new THREE.Mesh(axisGeometry, axisMaterial.clone());
+    axis2Y.material.color.set(0x55ff55);
+    
+    const axis2Z = new THREE.Mesh(axisGeometry, axisMaterial.clone());
+    axis2Z.material.color.set(0x5555ff);
+    axis2Z.rotation.x = Math.PI / 2;
+    
+    axis2.add(axis2X);
+    axis2.add(axis2Y);
+    axis2.add(axis2Z);
+    particle2.add(axis2);
+    
+    // Create arrows to show spin direction
+    const arrowGeometry = new THREE.ConeGeometry(0.05, 0.1, 8);
+    
+    const arrow1 = new THREE.Mesh(arrowGeometry, new THREE.MeshBasicMaterial({ color: 0xffffff }));
+    arrow1.position.y = 0.3;
+    particle1.add(arrow1);
+    
+    const arrow2 = new THREE.Mesh(arrowGeometry, new THREE.MeshBasicMaterial({ color: 0xffffff }));
+    arrow2.position.y = 0.3;
+    arrow2.rotation.x = Math.PI; // Point in opposite direction
+    particle2.add(arrow2);
+    
+    // Group containing both particles and connection
+    const particleSystem = new THREE.Group();
+    particleSystem.add(particle1);
+    particleSystem.add(particle2);
+    particleSystem.add(connection);
+    scene.add(particleSystem);
+    
+    // Add lighting
+    const ambientLight = new THREE.AmbientLight(0x333333);
+    scene.add(ambientLight);
+    
+    const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight1.position.set(1, 1, 1);
+    scene.add(directionalLight1);
+    
+    const directionalLight2 = new THREE.DirectionalLight(0xccccff, 0.3);
+    directionalLight2.position.set(-1, -1, -1);
+    scene.add(directionalLight2);
+    
+    // Event listeners for controls
     const measureEntangledBtn = document.getElementById('measure-entangled');
-    measureEntangledBtn.addEventListener('click', () => {
-        if (config.verse10.entangled) {
-            measureParticle();
-        }
-    });
-    
-    // Add reset button functionality
-    const resetEntanglementBtn = document.getElementById('reset-entanglement');
-    resetEntanglementBtn.addEventListener('click', () => {
-        if (!config.verse10.entangled) {
-            resetEntanglement();
-        }
-    });
-    
-    // Particle state variables
-    let particle1State = 'superposition';
-    let particle2State = 'superposition';
-    let orbitAngle1 = 0;
-    let orbitAngle2 = Math.PI;
-    
-    // Function to measure particle
-    function measureParticle() {
-        config.verse10.entangled = false;
-        
-        // Randomly choose up or down for particle1
-        particle1State = Math.random() > 0.5 ? 'up' : 'down';
-        
-        // Particle2 gets opposite state due to entanglement
-        particle2State = particle1State === 'up' ? 'down' : 'up';
-        
-        // Create collapse animation
-        const duration = 1000; // ms
-        const startTime = Date.now();
-        
-        // Visual effect for measurement
-        const flashGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-        const flashMaterial = new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-            transparent: true,
-            opacity: 1
+    if (measureEntangledBtn) {
+        measureEntangledBtn.addEventListener('click', () => {
+            // Only trigger if currently entangled
+            if (entangled) {
+                // Measure one particle, affecting the other
+                measureParticles();
+            }
         });
-        const flash1 = new THREE.Mesh(flashGeometry, flashMaterial);
-        flash1.position.copy(particle1.position);
-        scene.add(flash1);
+    }
+    
+    const resetEntanglementBtn = document.getElementById('reset-entanglement');
+    if (resetEntanglementBtn) {
+        resetEntanglementBtn.addEventListener('click', () => {
+            resetEntanglement();
+        });
+    }
+    
+    // Rotation state
+    let particle1Rotation = { x: 0, y: 0, z: 0 };
+    let particle2Rotation = { x: 0, y: 0, z: 0 };
+    let targetRotation1 = { x: 0, y: 0, z: 0 };
+    let targetRotation2 = { x: 0, y: 0, z: 0 };
+    let animatingMeasurement = false;
+    let animationProgress = 0;
+    
+    // Function to measure the entangled particles
+    function measureParticles() {
+        entangled = false;
+        config.verse10.entangled = false;
+        animatingMeasurement = true;
+        animationProgress = 0;
         
-        function animateCollapse() {
-            const elapsed = Date.now() - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            // Fade out connection
-            connection.material.opacity = 0.5 * (1 - progress);
-            wave.material.opacity = 0.3 * (1 - progress);
-            
-            // Flash effect
-            flash1.scale.set(
-                1 + progress * 5,
-                1 + progress * 5,
-                1 + progress * 5
-            );
-            flash1.material.opacity = 1 - progress;
-            
-            // Move particles to measured states
-            if (particle1State === 'up') {
-                particle1.position.y = progress * 1;
-                particle1Material.color.set(0x8080ff);
-            } else {
-                particle1.position.y = progress * -1;
-                particle1Material.color.set(0xff8080);
-            }
-            
-            if (particle2State === 'up') {
-                particle2.position.y = progress * 1;
-                particle2Material.color.set(0x8080ff);
-            } else {
-                particle2.position.y = progress * -1;
-                particle2Material.color.set(0xff8080);
-            }
-            
-            if (progress < 1) {
-                requestAnimationFrame(animateCollapse);
-            } else {
-                // Remove flash and connection
-                scene.remove(flash1);
-                scene.remove(connection);
-                scene.remove(wave);
-                
-                // Give orbits appropriate colors
-                orbit1Material.color.copy(particle1Material.color);
-                orbit2Material.color.copy(particle2Material.color);
-            }
-        }
+        // Randomly choose a measurement result
+        const randomAngleX = Math.random() * Math.PI * 2;
+        const randomAngleY = Math.random() * Math.PI * 2;
+        const randomAngleZ = Math.random() * Math.PI * 2;
         
-        animateCollapse();
+        // Set target rotations for both particles
+        // For entangled particles, they are correlated but opposite
+        targetRotation1 = { 
+            x: randomAngleX, 
+            y: randomAngleY, 
+            z: randomAngleZ 
+        };
+        
+        targetRotation2 = { 
+            x: randomAngleX + Math.PI, 
+            y: randomAngleY + Math.PI, 
+            z: randomAngleZ + Math.PI 
+        };
+        
+        // Make connection fade out
+        const originalOpacity = connectionMaterial.opacity;
+        connectionMaterial.opacity = 0;
+        
+        // Flash particles to indicate measurement
+        particle1Material.emissive.set(particle1Color);
+        particle2Material.emissive.set(particle2Color);
+        
+        setTimeout(() => {
+            particle1Material.emissive.set(0x000000);
+            particle2Material.emissive.set(0x000000);
+        }, 300);
     }
     
     // Function to reset entanglement
     function resetEntanglement() {
+        entangled = true;
         config.verse10.entangled = true;
+        animatingMeasurement = false;
         
-        // Reset particle states
-        particle1State = 'superposition';
-        particle2State = 'superposition';
+        // Reset rotations
+        particle1Rotation = { x: 0, y: 0, z: 0 };
+        particle2Rotation = { x: 0, y: 0, z: 0 };
+        particle1.rotation.set(0, 0, 0);
+        particle2.rotation.set(0, 0, 0);
         
-        // Create reset animation
-        const duration = 1000; // ms
-        const startTime = Date.now();
-        
-        // Add connection and wave back
-        scene.add(connection);
-        scene.add(wave);
-        connection.material.opacity = 0;
-        wave.material.opacity = 0;
-        
-        function animateReset() {
-            const elapsed = Date.now() - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            // Fade in connection
-            connection.material.opacity = 0.5 * progress;
-            wave.material.opacity = 0.3 * progress;
-            
-            // Move particles back to original positions
-            particle1.position.x = -distance;
-            particle1.position.y = particle1State === 'up' ? 1 * (1 - progress) : -1 * (1 - progress);
-            particle1.position.z = 0;
-            
-            particle2.position.x = distance;
-            particle2.position.y = particle2State === 'up' ? 1 * (1 - progress) : -1 * (1 - progress);
-            particle2.position.z = 0;
-            
-            // Reset colors
-            particle1Material.color.set(config.verse10.particle1Color);
-            particle2Material.color.set(config.verse10.particle2Color);
-            orbit1Material.color.set(config.verse10.particle1Color);
-            orbit2Material.color.set(config.verse10.particle2Color);
-            
-            if (progress < 1) {
-                requestAnimationFrame(animateReset);
-            }
-        }
-        
-        animateReset();
+        // Restore connection
+        connectionMaterial.opacity = 0.5;
     }
-    
-    // Animation loop
-    function animate(time) {
-        requestAnimationFrame(animate);
-        
-        // Update based on state
-        if (config.verse10.entangled) {
-            // Rotate orbits
-            orbitAngle1 += config.verse10.rotationSpeed;
-            orbitAngle2 -= config.verse10.rotationSpeed;
-            
-            // Set orbit rotations (always opposite directions)
-            orbit1.rotation.y = orbitAngle1;
-            orbit2.rotation.y = orbitAngle2;
-            
-            // Rotate wave effect
-            wave.rotation.x += 0.005;
-            wave.rotation.y += 0.003;
-            
-            // Make connection pulse
-            const pulseFactor = 1 + 0.1 * Math.sin(time * 0.002);
-            connection.scale.set(1, 1, pulseFactor);
-        } else {
-            // Update measured particles
-            if (particle1State === 'up') {
-                orbit1.rotation.x = Math.PI / 2;
-            } else {
-                orbit1.rotation.x = -Math.PI / 2;
-            }
-            
-            if (particle2State === 'up') {
-                orbit2.rotation.x = Math.PI / 2;
-            } else {
-                orbit2.rotation.x = -Math.PI / 2;
-            }
-            
-            // Rotate orbits in measured state
-            orbit1.rotation.z += 0.01;
-            orbit2.rotation.z += 0.01;
-        }
-        
-        // Update orbit positions
-        orbit1.position.copy(particle1.position);
-        orbit2.position.copy(particle2.position);
-        
-        controls.update();
-        renderer.render(scene, camera);
-    }
-    
-    // Start animation
-    animate(0);
     
     // Handle window resize
     function onWindowResize() {
@@ -2906,404 +2959,320 @@ function initializeVerse10Animation(container) {
         camera.updateProjectionMatrix();
         renderer.setSize(container.clientWidth, container.clientHeight);
     }
-    
     window.addEventListener('resize', onWindowResize);
     
-    // Store animation objects for cleanup
-    animations.verse10 = {
-        renderer,
-        controls,
-        cleanup: () => {
+    // Animation loop
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        const time = Date.now() * 0.001;
+        
+        // Rotate entire system slowly
+        particleSystem.rotation.y = time * rotationSpeed;
+        
+        if (entangled) {
+            // When entangled, particles rotate in sync
+            const rotX = Math.sin(time * 0.5) * 0.2;
+            const rotY = Math.sin(time * 0.7) * 0.2;
+            const rotZ = Math.sin(time * 0.3) * 0.2;
+            
+            particle1.rotation.set(rotX, rotY, rotZ);
+            particle2.rotation.set(-rotX, -rotY, -rotZ); // Opposite rotation
+            
+            // Pulse connection
+            connection.material.opacity = 0.3 + Math.sin(time * 2) * 0.2;
+            
+        } else if (animatingMeasurement) {
+            // Animate transition to measured state
+            animationProgress += 0.02;
+            
+            if (animationProgress >= 1) {
+                animatingMeasurement = false;
+                
+                // Set final rotations
+                particle1.rotation.set(
+                    targetRotation1.x,
+                    targetRotation1.y,
+                    targetRotation1.z
+                );
+                
+                particle2.rotation.set(
+                    targetRotation2.x,
+                    targetRotation2.y,
+                    targetRotation2.z
+                );
+                
+                particle1Rotation = targetRotation1;
+                particle2Rotation = targetRotation2;
+            } else {
+                // Interpolate rotations
+                particle1.rotation.x = THREE.MathUtils.lerp(particle1Rotation.x, targetRotation1.x, animationProgress);
+                particle1.rotation.y = THREE.MathUtils.lerp(particle1Rotation.y, targetRotation1.y, animationProgress);
+                particle1.rotation.z = THREE.MathUtils.lerp(particle1Rotation.z, targetRotation1.z, animationProgress);
+                
+                particle2.rotation.x = THREE.MathUtils.lerp(particle2Rotation.x, targetRotation2.x, animationProgress);
+                particle2.rotation.y = THREE.MathUtils.lerp(particle2Rotation.y, targetRotation2.y, animationProgress);
+                particle2.rotation.z = THREE.MathUtils.lerp(particle2Rotation.z, targetRotation2.z, animationProgress);
+            }
+        }
+        
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    
+    // Start animation
+    animate();
+    
+    // Store cleanup function
+    animations[`verse10`] = {
+        cleanup: function() {
+            // Remove event listeners
             window.removeEventListener('resize', onWindowResize);
-            controls.dispose();
+            
+            // Dispose of geometries, materials
+            particleGeometry.dispose();
+            particle1Material.dispose();
+            particle2Material.dispose();
+            connectionGeometry.dispose();
+            connectionMaterial.dispose();
+            axisGeometry.dispose();
+            axisMaterial.dispose();
+            arrowGeometry.dispose();
+            
+            // Dispose of renderer
             renderer.dispose();
+            
+            // Remove renderer element from DOM
+            if (renderer.domElement.parentNode) {
+                renderer.domElement.parentNode.removeChild(renderer.domElement);
+            }
         }
     };
 }
 
-// Verse 11: Non-Locality
 function initializeVerse11Animation(container) {
-    // Set up THREE.js scene
+    // Create a scene
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    scene.background = new THREE.Color(0x1a1a2e);
     
+    // Create a camera
+    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 7;
+    
+    // Create a renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setClearColor(0x1a1a2e, 1);
     container.appendChild(renderer.domElement);
     
-    // Add lights
-    const ambientLight = new THREE.AmbientLight(0x404040);
-    scene.add(ambientLight);
+    // Add orbit controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
     
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(0, 1, 1);
-    scene.add(directionalLight);
+    // Configuration variables
+    let localityActive = config.verse11.localityActive;
+    const particle1Color = new THREE.Color(config.verse11.particle1Color);
+    const particle2Color = new THREE.Color(config.verse11.particle2Color);
+    const effectColor = new THREE.Color(config.verse11.effectColor);
+    let distance = config.verse11.distance / 20; // Convert to appropriate scale
+    const effectSpeed = config.verse11.effectSpeed;
+    const particleSize = config.verse11.particleSize / 100;
     
-    // Create particles group
-    const particlesGroup = new THREE.Group();
-    scene.add(particlesGroup);
+    // Create geometry for particles
+    const particleGeometry = new THREE.SphereGeometry(particleSize, 32, 32);
     
-    // Calculate particle positions based on distance
-    const distanceFactor = config.verse11.distance / 50;
-    const particle1Pos = new THREE.Vector3(-distanceFactor * 5, 0, 0);
-    const particle2Pos = new THREE.Vector3(distanceFactor * 5, 0, 0);
+    // Create materials
+    const particle1Material = new THREE.MeshPhongMaterial({
+        color: particle1Color,
+        transparent: true,
+        opacity: 0.9,
+        shininess: 90
+    });
+    
+    const particle2Material = new THREE.MeshPhongMaterial({
+        color: particle2Color,
+        transparent: true,
+        opacity: 0.9,
+        shininess: 90
+    });
     
     // Create particles
-    const particleSize = config.verse11.particleSize / 10;
+    const particle1 = new THREE.Mesh(particleGeometry, particle1Material);
+    particle1.position.x = -distance;
+    scene.add(particle1);
     
-    const particle1Geometry = new THREE.SphereGeometry(particleSize, 32, 32);
-    const particle1Material = new THREE.MeshPhongMaterial({
-        color: config.verse11.particle1Color,
-        emissive: 0x3030a0,
-        shininess: 50
-    });
-    const particle1 = new THREE.Mesh(particle1Geometry, particle1Material);
-    particle1.position.copy(particle1Pos);
-    particlesGroup.add(particle1);
+    const particle2 = new THREE.Mesh(particleGeometry, particle2Material);
+    particle2.position.x = distance;
+    scene.add(particle2);
     
-    const particle2Geometry = new THREE.SphereGeometry(particleSize, 32, 32);
-    const particle2Material = new THREE.MeshPhongMaterial({
-        color: config.verse11.particle2Color,
-        emissive: 0x803030,
-        shininess: 50
-    });
-    const particle2 = new THREE.Mesh(particle2Geometry, particle2Material);
-    particle2.position.copy(particle2Pos);
-    particlesGroup.add(particle2);
+    // Create effect path for non-locality visualization
+    const effectPathGeometry = new THREE.TubeGeometry(
+        new THREE.LineCurve3(
+            new THREE.Vector3(-distance, 0, 0),
+            new THREE.Vector3(distance, 0, 0)
+        ),
+        20, // Path segments
+        0.1, // Tube radius
+        8, // Radial segments
+        false // Closed
+    );
     
-    // Add glow effects
-    const glow1Geometry = new THREE.SphereGeometry(particleSize * 2, 32, 32);
-    const glow1Material = new THREE.MeshBasicMaterial({
-        color: config.verse11.particle1Color,
+    const effectPathMaterial = new THREE.MeshBasicMaterial({
+        color: effectColor,
         transparent: true,
-        opacity: 0.3
+        opacity: 0,
+        wireframe: true
     });
-    const glow1 = new THREE.Mesh(glow1Geometry, glow1Material);
-    particle1.add(glow1);
     
-    const glow2Geometry = new THREE.SphereGeometry(particleSize * 2, 32, 32);
-    const glow2Material = new THREE.MeshBasicMaterial({
-        color: config.verse11.particle2Color,
+    const effectPath = new THREE.Mesh(effectPathGeometry, effectPathMaterial);
+    scene.add(effectPath);
+    
+    // Create effect wave for non-locality
+    const effectWaveGeometry = new THREE.SphereGeometry(0.2, 16, 16);
+    const effectWaveMaterial = new THREE.MeshBasicMaterial({
+        color: effectColor,
         transparent: true,
-        opacity: 0.3
+        opacity: 0,
+        wireframe: true
     });
-    const glow2 = new THREE.Mesh(glow2Geometry, glow2Material);
-    particle2.add(glow2);
     
-    // Create non-locality effect (the connection)
-    const nonLocalEffectGroup = new THREE.Group();
-    scene.add(nonLocalEffectGroup);
+    const effectWave = new THREE.Mesh(effectWaveGeometry, effectWaveMaterial);
+    effectWave.position.copy(particle1.position);
+    scene.add(effectWave);
     
-    // Space background
-    const spaceGeometry = new THREE.SphereGeometry(50, 32, 32);
-    const spaceMaterial = new THREE.MeshBasicMaterial({
-        color: 0x1a1a2e,
-        side: THREE.BackSide,
+    // Create glowing rings around particles
+    const ringGeometry = new THREE.TorusGeometry(particleSize * 1.5, 0.02, 16, 48);
+    const ring1Material = new THREE.MeshBasicMaterial({
+        color: particle1Color,
         transparent: true,
         opacity: 0.5
     });
-    const space = new THREE.Mesh(spaceGeometry, spaceMaterial);
-    scene.add(space);
     
-    // Add stars
-    const starsGroup = new THREE.Group();
-    scene.add(starsGroup);
+    const ring2Material = new THREE.MeshBasicMaterial({
+        color: particle2Color,
+        transparent: true,
+        opacity: 0.5
+    });
     
-    for (let i = 0; i < 200; i++) {
-        const starGeometry = new THREE.SphereGeometry(0.05, 8, 8);
-        const starMaterial = new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-            transparent: true,
-            opacity: Math.random() * 0.5 + 0.5
-        });
-        const star = new THREE.Mesh(starGeometry, starMaterial);
-        
-        // Random position on sphere
-        const phi = Math.acos(2 * Math.random() - 1);
-        const theta = Math.random() * Math.PI * 2;
-        const radius = 40 + Math.random() * 10;
-        
-        star.position.x = radius * Math.sin(phi) * Math.cos(theta);
-        star.position.y = radius * Math.sin(phi) * Math.sin(theta);
-        star.position.z = radius * Math.cos(phi);
-        
-        starsGroup.add(star);
-    }
+    const ring1 = new THREE.Mesh(ringGeometry, ring1Material);
+    ring1.rotation.x = Math.PI / 2;
+    particle1.add(ring1);
     
-    // Controls for interaction
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.screenSpacePanning = false;
-    controls.minDistance = 5;
-    controls.maxDistance = 30;
-    controls.target.set(0, 0, 0);
+    const ring2 = new THREE.Mesh(ringGeometry, ring2Material);
+    ring2.rotation.x = Math.PI / 2;
+    particle2.add(ring2);
     
-    // Set camera position
-    camera.position.set(0, 10, 20);
+    // Connect particles with line when in local mode
+    const lineGeometry = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(-distance, 0, 0),
+        new THREE.Vector3(distance, 0, 0)
+    ]);
     
-    // Add locality toggle button functionality
+    const lineMaterial = new THREE.LineBasicMaterial({
+        color: 0x555555,
+        transparent: true,
+        opacity: localityActive ? 0.8 : 0
+    });
+    
+    const connectionLine = new THREE.Line(lineGeometry, lineMaterial);
+    scene.add(connectionLine);
+    
+    // Add lighting
+    const ambientLight = new THREE.AmbientLight(0x333333);
+    scene.add(ambientLight);
+    
+    const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight1.position.set(1, 1, 1);
+    scene.add(directionalLight1);
+    
+    const directionalLight2 = new THREE.DirectionalLight(0xccccff, 0.4);
+    directionalLight2.position.set(-1, -1, -1);
+    scene.add(directionalLight2);
+    
+    // Animation variables
+    let animatingEffect = false;
+    let effectProgress = 0;
+    
+    // Event listeners for controls
     const toggleLocalityBtn = document.getElementById('toggle-locality');
-    toggleLocalityBtn.addEventListener('click', () => {
-        config.verse11.localityActive = !config.verse11.localityActive;
-        toggleLocalityBtn.textContent = config.verse11.localityActive ? 
-            'Show Non-Locality' : 'Show Locality';
-        
-        // Visual change based on locality
-        updateLocalityVisualization();
-    });
-    
-    // Add distance slider functionality
-    const distanceSlider = document.getElementById('distance');
-    distanceSlider.value = config.verse11.distance;
-    distanceSlider.addEventListener('input', () => {
-        config.verse11.distance = distanceSlider.value;
-        
-        // Update particle positions
-        const newDistanceFactor = config.verse11.distance / 50;
-        particle1.position.x = -newDistanceFactor * 5;
-        particle2.position.x = newDistanceFactor * 5;
-        
-        // Update effect visualization
-        updateLocalityVisualization();
-    });
-    
-    // Current effect state
-    let effectActive = false;
-    let effectStartTime = 0;
-    
-    // Function to update locality visualization
-    function updateLocalityVisualization() {
-        // Clear previous effects
-        while (nonLocalEffectGroup.children.length > 0) {
-            nonLocalEffectGroup.remove(nonLocalEffectGroup.children[0]);
-        }
-        
-        // Create appropriate visualization
-        if (config.verse11.localityActive) {
-            // Local effect visualization (causal wave)
-            const effectGeometry = new THREE.SphereGeometry(0.5, 16, 16);
-            const effectMaterial = new THREE.MeshBasicMaterial({
-                color: config.verse11.effectColor,
-                transparent: true,
-                opacity: 0.8
-            });
+    if (toggleLocalityBtn) {
+        toggleLocalityBtn.addEventListener('click', () => {
+            localityActive = !localityActive;
+            config.verse11.localityActive = localityActive;
             
-            const effect = new THREE.Mesh(effectGeometry, effectMaterial);
-            effect.position.copy(particle1.position);
-            nonLocalEffectGroup.add(effect);
+            // Update visualization
+            updateVisualization();
             
-            // Start effect animation
-            effectActive = true;
-            effectStartTime = Date.now();
-        } else {
-            // Non-local effect visualization (instantaneous)
-            const tubeGeometry = new THREE.CylinderGeometry(0.1, 0.1, particle2.position.x - particle1.position.x, 8);
-            tubeGeometry.rotateZ(Math.PI / 2);
-            const tubeMaterial = new THREE.MeshBasicMaterial({
-                color: config.verse11.effectColor,
-                transparent: true,
-                opacity: 0.5
-            });
-            
-            const tube = new THREE.Mesh(tubeGeometry, tubeMaterial);
-            tube.position.set((particle1.position.x + particle2.position.x) / 2, 0, 0);
-            nonLocalEffectGroup.add(tube);
-            
-            // Add quantum entanglement visualization
-            const entanglementGeometry = new THREE.TorusKnotGeometry(0.3, 0.1, 64, 8, 2, 3);
-            const entanglementMaterial = new THREE.MeshBasicMaterial({
-                color: config.verse11.effectColor,
-                transparent: true,
-                opacity: 0.8
-            });
-            
-            const entanglement1 = new THREE.Mesh(entanglementGeometry, entanglementMaterial);
-            entanglement1.position.copy(particle1.position);
-            entanglement1.position.y += 1.5;
-            nonLocalEffectGroup.add(entanglement1);
-            
-            const entanglement2 = entanglement1.clone();
-            entanglement2.position.copy(particle2.position);
-            entanglement2.position.y += 1.5;
-            nonLocalEffectGroup.add(entanglement2);
-            
-            // Trigger instant effect
-            createInstantEffect();
-        }
-    }
-    
-    // Function to create instant non-local effect
-    function createInstantEffect() {
-        // Flash both particles simultaneously
-        const flashGeometry = new THREE.SphereGeometry(particleSize * 3, 32, 32);
-        const flashMaterial = new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.8
-        });
-        
-        const flash1 = new THREE.Mesh(flashGeometry, flashMaterial);
-        flash1.position.copy(particle1.position);
-        scene.add(flash1);
-        
-        const flash2 = new THREE.Mesh(flashGeometry, flashMaterial);
-        flash2.position.copy(particle2.position);
-        scene.add(flash2);
-        
-        // Animate flashes
-        const duration = 500; // ms
-        const startTime = Date.now();
-        
-        function animateFlash() {
-            const elapsed = Date.now() - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            // Expand and fade
-            const scale = 1 + progress * 2;
-            flash1.scale.set(scale, scale, scale);
-            flash2.scale.set(scale, scale, scale);
-            
-            flash1.material.opacity = 0.8 * (1 - progress);
-            flash2.material.opacity = 0.8 * (1 - progress);
-            
-            if (progress < 1) {
-                requestAnimationFrame(animateFlash);
-            } else {
-                scene.remove(flash1);
-                scene.remove(flash2);
-            }
-        }
-        
-        animateFlash();
-    }
-    
-    // Animation loop
-    function animate(time) {
-        requestAnimationFrame(animate);
-        
-        // Update glow effects
-        const glowFactor = 1 + 0.1 * Math.sin(time * 0.002);
-        glow1.scale.set(glowFactor, glowFactor, glowFactor);
-        glow2.scale.set(glowFactor, glowFactor, glowFactor);
-        
-        // Rotate particles slightly
-        particle1.rotation.y += 0.01;
-        particle2.rotation.y += 0.01;
-        
-        // Rotate stars slowly
-        starsGroup.rotation.y += 0.0005;
-        
-        // Update causal effect animation
-        if (effectActive && config.verse11.localityActive) {
-            const elapsed = Date.now() - effectStartTime;
-            const totalDistance = particle2.position.x - particle1.position.x;
-            const progress = Math.min(elapsed / config.verse11.effectSpeed, 1);
-            
-            // Move effect from particle1 to particle2
-            const effect = nonLocalEffectGroup.children[0];
-            effect.position.x = particle1.position.x + progress * totalDistance;
-            
-            // Create trail
-            if (progress > 0.05 && progress < 0.95 && Math.random() > 0.7) {
-                const trailGeometry = new THREE.SphereGeometry(0.1 + Math.random() * 0.2, 8, 8);
-                const trailMaterial = new THREE.MeshBasicMaterial({
-                    color: config.verse11.effectColor,
-                    transparent: true,
-                    opacity: 0.5
-                });
+            // Trigger effect animation
+            if (!animatingEffect) {
+                animatingEffect = true;
+                effectProgress = 0;
                 
-                const trail = new THREE.Mesh(trailGeometry, trailMaterial);
-                trail.position.copy(effect.position);
-                trail.userData = { birth: Date.now() };
-                nonLocalEffectGroup.add(trail);
-            }
-            
-            // Fade out old trail particles
-            for (let i = 1; i < nonLocalEffectGroup.children.length; i++) {
-                const trail = nonLocalEffectGroup.children[i];
-                const trailAge = Date.now() - trail.userData.birth;
+                // Reset effect wave
+                effectWave.position.copy(particle1.position);
+                effectWave.scale.set(1, 1, 1);
+                effectWaveMaterial.opacity = 0;
                 
-                if (trailAge > 500) {
-                    nonLocalEffectGroup.remove(trail);
-                    i--;
-                } else {
-                    trail.material.opacity = 0.5 * (1 - trailAge / 500);
-                }
-            }
-            
-            // Check if effect reached target
-            if (progress >= 1) {
-                effectActive = false;
-                
-                // Create impact at particle2
-                createImpactEffect(particle2.position);
-                
-                // Reset effect
+                // Flash source particle
+                particle1Material.emissive.set(particle1Color);
                 setTimeout(() => {
-                    updateLocalityVisualization();
-                }, 1000);
+                    particle1Material.emissive.set(0x000000);
+                }, 300);
             }
-        }
-        
-        // Update non-local visualization
-        if (!config.verse11.localityActive) {
-            // Rotate entanglement knots
-            nonLocalEffectGroup.children.forEach((child, index) => {
-                if (index > 0) { // Skip the tube
-                    child.rotation.x += 0.01;
-                    child.rotation.y += 0.005;
-                    child.rotation.z += 0.003;
-                }
-            });
-        }
-        
-        controls.update();
-        renderer.render(scene, camera);
-    }
-    
-    // Create impact effect
-    function createImpactEffect(position) {
-        const impactGeometry = new THREE.SphereGeometry(1, 32, 32);
-        const impactMaterial = new THREE.MeshBasicMaterial({
-            color: config.verse11.effectColor,
-            transparent: true,
-            opacity: 0.8
+            
+            // Update button text
+            if (toggleLocalityBtn.textContent) {
+                toggleLocalityBtn.textContent = localityActive ? 
+                    'Show Non-Locality' : 'Show Locality';
+            }
         });
-        
-        const impact = new THREE.Mesh(impactGeometry, impactMaterial);
-        impact.position.copy(position);
-        scene.add(impact);
-        
-        // Animate impact
-        const duration = 500; // ms
-        const startTime = Date.now();
-        
-        function animateImpact() {
-            const elapsed = Date.now() - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            // Expand and fade
-            const scale = 1 + progress * 3;
-            impact.scale.set(scale, scale, scale);
-            impact.material.opacity = 0.8 * (1 - progress);
-            
-            if (progress < 1) {
-                requestAnimationFrame(animateImpact);
-            } else {
-                scene.remove(impact);
-            }
-        }
-        
-        animateImpact();
     }
     
-    // Initialize visualization based on current state
-    updateLocalityVisualization();
+    const distanceSlider = document.getElementById('distance');
+    if (distanceSlider) {
+        distanceSlider.value = config.verse11.distance;
+        distanceSlider.addEventListener('input', () => {
+            distance = parseInt(distanceSlider.value) / 20;
+            config.verse11.distance = parseInt(distanceSlider.value);
+            
+            // Update particle positions
+            particle1.position.x = -distance;
+            particle2.position.x = distance;
+            
+            // Update connection line
+            lineGeometry.dispose();
+            lineGeometry.setFromPoints([
+                new THREE.Vector3(-distance, 0, 0),
+                new THREE.Vector3(distance, 0, 0)
+            ]);
+            
+            // Update effect path
+            scene.remove(effectPath);
+            effectPathGeometry.dispose();
+            
+            const newEffectPathGeometry = new THREE.TubeGeometry(
+                new THREE.LineCurve3(
+                    new THREE.Vector3(-distance, 0, 0),
+                    new THREE.Vector3(distance, 0, 0)
+                ),
+                20, // Path segments
+                0.1, // Tube radius
+                8, // Radial segments
+                false // Closed
+            );
+            
+            effectPath.geometry = newEffectPathGeometry;
+            scene.add(effectPath);
+        });
+    }
     
-    // Start animation
-    animate(0);
+    // Update visualization based on locality mode
+    function updateVisualization() {
+        // Update connection line visibility
+        lineMaterial.opacity = localityActive ? 0.8 : 0;
+    }
+    
+    // Apply initial visualization
+    updateVisualization();
     
     // Handle window resize
     function onWindowResize() {
@@ -3311,363 +3280,244 @@ function initializeVerse11Animation(container) {
         camera.updateProjectionMatrix();
         renderer.setSize(container.clientWidth, container.clientHeight);
     }
-    
     window.addEventListener('resize', onWindowResize);
     
-    // Store animation objects for cleanup
-    animations.verse11 = {
-        renderer,
-        controls,
-        cleanup: () => {
+    // Animation loop
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        const time = Date.now() * 0.001;
+        
+        // Animate rings around particles
+        if (ring1) ring1.rotation.z = time * 0.5;
+        if (ring2) ring2.rotation.z = -time * 0.5;
+        
+        // Animate non-locality effect
+        if (animatingEffect) {
+            // Progress the effect
+            effectProgress += 1000 / effectSpeed / 60; // Approx. 60fps
+            
+            if (effectProgress < 1) {
+                if (localityActive) {
+                    // Local effect - moves along the path
+                    const position = new THREE.Vector3();
+                    position.x = THREE.MathUtils.lerp(-distance, distance, effectProgress);
+                    effectWave.position.copy(position);
+                    
+                    // Make effect visible during transit
+                    effectWaveMaterial.opacity = effectProgress < 0.9 ? 0.7 : 0.7 * (1 - (effectProgress - 0.9) * 10);
+                } else {
+                    // Non-local effect - instantaneous
+                    // Just make path briefly visible then fade it
+                    effectPathMaterial.opacity = 0.7 * (1 - effectProgress);
+                    
+                    // Flash target particle immediately
+                    if (effectProgress < 0.1) {
+                        particle2Material.emissive.set(particle2Color);
+                    } else if (effectProgress < 0.2) {
+                        particle2Material.emissive.set(0x000000);
+                    }
+                    
+                    // Expand effect wave from particle1
+                    const radius = 0.2 + effectProgress * distance * 2;
+                    effectWave.scale.set(radius, radius, radius);
+                    effectWaveMaterial.opacity = 0.5 * (1 - effectProgress);
+                }
+            } else {
+                // Effect complete
+                animatingEffect = false;
+                effectWaveMaterial.opacity = 0;
+                effectPathMaterial.opacity = 0;
+                particle2Material.emissive.set(0x000000);
+            }
+        }
+        
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    
+    // Start animation
+    animate();
+    
+    // Store cleanup function
+    animations[`verse11`] = {
+        cleanup: function() {
+            // Remove event listeners
             window.removeEventListener('resize', onWindowResize);
-            controls.dispose();
+            
+            // Dispose of geometries, materials
+            particleGeometry.dispose();
+            particle1Material.dispose();
+            particle2Material.dispose();
+            effectPathGeometry.dispose();
+            effectPathMaterial.dispose();
+            effectWaveGeometry.dispose();
+            effectWaveMaterial.dispose();
+            ringGeometry.dispose();
+            ring1Material.dispose();
+            ring2Material.dispose();
+            lineGeometry.dispose();
+            lineMaterial.dispose();
+            
+            // Dispose of renderer
             renderer.dispose();
+            
+            // Remove renderer element from DOM
+            if (renderer.domElement.parentNode) {
+                renderer.domElement.parentNode.removeChild(renderer.domElement);
+            }
         }
     };
 }
 
-// Verse 12: Quantum Tunneling
 function initializeVerse12Animation(container) {
-    // Set up THREE.js scene
+    // Create a scene
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    scene.background = new THREE.Color(0x1a1a2e);
     
+    // Create a camera
+    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 5;
+    
+    // Create a renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setClearColor(0x1a1a2e, 1);
     container.appendChild(renderer.domElement);
     
-    // Add lights
-    const ambientLight = new THREE.AmbientLight(0x404040);
-    scene.add(ambientLight);
+    // Add orbit controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
     
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(0, 1, 1);
-    scene.add(directionalLight);
+    // Configuration variables
+    let barrierActive = config.verse12.barrierActive;
+    const barrierHeight = config.verse12.barrierHeight / 100; // Convert to 0-1 range
+    const particleSize = config.verse12.particleSize / 100;
+    const animationSpeed = config.verse12.animationSpeed;
     
-    // Create potential barrier
-    const barrierHeight = config.verse12.barrierHeight / 10;
-    const barrierWidth = 2;
-    const barrierGeometry = new THREE.BoxGeometry(barrierWidth, barrierHeight, 10);
+    // Create barrier
+    const barrierWidth = 0.5;
+    const barrierGeometry = new THREE.BoxGeometry(barrierWidth, barrierHeight * 3, 0.5);
     const barrierMaterial = new THREE.MeshPhongMaterial({
-        color: config.verse12.barrierColor,
+        color: new THREE.Color(config.verse12.barrierColor),
         transparent: true,
         opacity: 0.7
     });
+    
     const barrier = new THREE.Mesh(barrierGeometry, barrierMaterial);
     scene.add(barrier);
     
-    // Create energy level visualization (ground plane)
-    const planeGeometry = new THREE.PlaneGeometry(30, 10);
-    const planeMaterial = new THREE.MeshBasicMaterial({
-        color: 0x2a2a4a,
+    // Create tunnel visualization
+    const tunnelGeometry = new THREE.BoxGeometry(barrierWidth + 0.02, 0.2, 0.55);
+    const tunnelMaterial = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(config.verse12.tunnelColor),
         transparent: true,
         opacity: 0.5,
-        side: THREE.DoubleSide
-    });
-    const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-    plane.rotation.x = Math.PI / 2;
-    plane.position.y = -barrierHeight / 2;
-    scene.add(plane);
-    
-    // Create grid lines
-    const gridHelper = new THREE.GridHelper(30, 30, 0x3a3a6a, 0x2a2a4a);
-    gridHelper.position.y = -barrierHeight / 2 + 0.01;
-    scene.add(gridHelper);
-    
-    // Create particle
-    const particleGeometry = new THREE.SphereGeometry(config.verse12.particleSize / 10, 32, 32);
-    const particleMaterial = new THREE.MeshPhongMaterial({
-        color: config.verse12.particleColor,
-        emissive: 0x3030a0,
-        shininess: 50
-    });
-    const particle = new THREE.Mesh(particleGeometry, particleMaterial);
-    particle.position.set(-8, -barrierHeight / 2, 0);
-    scene.add(particle);
-    
-    // Add particle trail
-    const trailGroup = new THREE.Group();
-    scene.add(trailGroup);
-    
-    // Add probability wave visualization
-    const waveGeometry = new THREE.PlaneGeometry(25, 5, 100, 1);
-    const waveMaterial = new THREE.MeshBasicMaterial({
-        color: 0x4040a0,
-        transparent: true,
-        opacity: 0.3,
-        side: THREE.DoubleSide,
         wireframe: true
     });
-    const wave = new THREE.Mesh(waveGeometry, waveMaterial);
-    wave.position.set(0, -barrierHeight / 2 + 1, 0);
-    wave.rotation.x = Math.PI / 2;
-    scene.add(wave);
     
-    // Tunnel visualization
-    const tunnelGeometry = new THREE.CylinderGeometry(0.2, 0.2, barrierHeight, 16);
-    const tunnelMaterial = new THREE.MeshBasicMaterial({
-        color: config.verse12.tunnelColor,
+    const tunnel = new THREE.Mesh(tunnelGeometry, tunnelMaterial);
+    tunnel.visible = !barrierActive;
+    scene.add(tunnel);
+    
+    // Create particle
+    const particleGeometry = new THREE.SphereGeometry(particleSize, 32, 32);
+    const particleMaterial = new THREE.MeshPhongMaterial({
+        color: new THREE.Color(config.verse12.particleColor),
+        transparent: true,
+        opacity: 0.9,
+        emissive: new THREE.Color(0x303060)
+    });
+    
+    const particle = new THREE.Mesh(particleGeometry, particleMaterial);
+    particle.position.x = -3; // Start position
+    scene.add(particle);
+    
+    // Create particle trail
+    const trailPoints = [];
+    for (let i = 0; i < 50; i++) {
+        trailPoints.push(new THREE.Vector3(-3, 0, 0));
+    }
+    
+    const trailGeometry = new THREE.BufferGeometry().setFromPoints(trailPoints);
+    const trailMaterial = new THREE.LineBasicMaterial({
+        color: new THREE.Color(config.verse12.particleColor),
         transparent: true,
         opacity: 0.3
     });
-    const tunnel = new THREE.Mesh(tunnelGeometry, tunnelMaterial);
-    tunnel.position.y = 0;
-    tunnel.rotation.x = Math.PI / 2;
-    tunnel.visible = false;
-    scene.add(tunnel);
     
-    // Controls for interaction
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.screenSpacePanning = false;
-    controls.minDistance = 5;
-    controls.maxDistance = 30;
-    controls.target.set(0, 0, 0);
+    const trail = new THREE.Line(trailGeometry, trailMaterial);
+    scene.add(trail);
     
-    // Set camera position
-    camera.position.set(-5, 10, 15);
+    // Create path visualization
+    const pathGeometry = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(-4, 0, 0),
+        new THREE.Vector3(-barrierWidth/2, 0, 0),
+        new THREE.Vector3(barrierWidth/2, 0, 0),
+        new THREE.Vector3(4, 0, 0)
+    ]);
     
-    // Add barrier toggle button functionality
+    const pathMaterial = new THREE.LineDashedMaterial({
+        color: 0x555555,
+        dashSize: 0.2,
+        gapSize: 0.1,
+        transparent: true,
+        opacity: 0.5
+    });
+    
+    const path = new THREE.Line(pathGeometry, pathMaterial);
+    path.computeLineDistances(); // Required for dashed lines
+    scene.add(path);
+    
+    // Add lighting
+    const ambientLight = new THREE.AmbientLight(0x333333);
+    scene.add(ambientLight);
+    
+    const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight1.position.set(1, 1, 1);
+    scene.add(directionalLight1);
+    
+    const directionalLight2 = new THREE.DirectionalLight(0xaaaaff, 0.4);
+    directionalLight2.position.set(-1, -1, -1);
+    scene.add(directionalLight2);
+    
+    // Event listeners for controls
     const toggleBarrierBtn = document.getElementById('toggle-barrier');
-    toggleBarrierBtn.addEventListener('click', () => {
-        config.verse12.barrierActive = !config.verse12.barrierActive;
-        toggleBarrierBtn.textContent = config.verse12.barrierActive ? 
-            'Remove Barrier' : 'Add Barrier';
-        
-        // Update visualization
-        barrier.visible = config.verse12.barrierActive;
-    });
+    if (toggleBarrierBtn) {
+        toggleBarrierBtn.addEventListener('click', () => {
+            barrierActive = !barrierActive;
+            config.verse12.barrierActive = barrierActive;
+            
+            // Update visualization
+            tunnel.visible = !barrierActive;
+            
+            // Update button text
+            if (toggleBarrierBtn.textContent) {
+                toggleBarrierBtn.textContent = barrierActive ? 
+                    'Enable Tunneling' : 'Disable Tunneling';
+            }
+        });
+    }
     
-    // Add barrier height slider functionality
     const barrierHeightSlider = document.getElementById('barrier-height');
-    barrierHeightSlider.value = config.verse12.barrierHeight;
-    barrierHeightSlider.addEventListener('input', () => {
-        config.verse12.barrierHeight = barrierHeightSlider.value;
-        
-        // Update barrier height
-        const newHeight = config.verse12.barrierHeight / 10;
-        barrier.scale.y = newHeight / barrierHeight;
-        
-        // Update tunnel height
-        tunnelGeometry.dispose();
-        tunnel.geometry = new THREE.CylinderGeometry(0.2, 0.2, newHeight, 16);
-        tunnel.rotation.x = Math.PI / 2;
-    });
-    
-    // Particle animation state
-    let particleState = 'approaching'; // approaching, tunneling, passed
-    let tunnelProbability = 0;
-    let particleSpeed = 0.1;
-    
-    // Animation loop
-    function animate(time) {
-        requestAnimationFrame(animate);
-        
-        // Update probability wave
-        updateWave(time);
-        
-        // Update particle position based on state
-        updateParticle(time);
-        
-        controls.update();
-        renderer.render(scene, camera);
-    }
-    
-    // Start animation
-    animate(0);
-    
-    // Update probability wave
-    function updateWave(time) {
-        const positions = wave.geometry.attributes.position;
-        
-        for (let i = 0; i < positions.count; i++) {
-            const x = positions.getX(i);
+    if (barrierHeightSlider) {
+        barrierHeightSlider.value = config.verse12.barrierHeight;
+        barrierHeightSlider.addEventListener('input', () => {
+            const newHeight = parseInt(barrierHeightSlider.value) / 100;
+            config.verse12.barrierHeight = parseInt(barrierHeightSlider.value);
             
-            let amplitude;
-            
-            // Different wave function based on x position (before/at/after barrier)
-            if (x < -barrierWidth/2) {
-                // Incoming wave
-                amplitude = 1.0;
-            } else if (x >= -barrierWidth/2 && x <= barrierWidth/2) {
-                // Inside barrier - exponential decay
-                const barrierFactor = config.verse12.barrierHeight / 100;
-                amplitude = Math.exp(-barrierFactor * (x + barrierWidth/2));
-            } else {
-                // Transmitted wave
-                const barrierFactor = config.verse12.barrierHeight / 100;
-                amplitude = Math.exp(-barrierFactor * barrierWidth) * 0.8;
-            }
-            
-            // Add wave motion
-            const z = amplitude * Math.sin(x * 0.5 + time * 0.001 * config.verse12.animationSpeed);
-            
-            positions.setZ(i, z);
-        }
-        
-        wave.geometry.attributes.position.needsUpdate = true;
-    }
-    
-    // Update particle based on state
-    function updateParticle(time) {
-        const trailInterval = 0.5;
-        
-        // Calculate tunnel probability based on barrier height
-        tunnelProbability = Math.exp(-config.verse12.barrierHeight / 20);
-        
-        switch (particleState) {
-            case 'approaching':
-                // Move particle towards barrier
-                particle.position.x += particleSpeed * config.verse12.animationSpeed;
-                
-                // Add trail
-                if (Math.random() > 0.8) {
-                    addTrail(particle.position.clone());
-                }
-                
-                // Check if reached barrier
-                if (particle.position.x >= -barrierWidth/2) {
-                    if (config.verse12.barrierActive) {
-                        // Decide whether to tunnel
-                        if (Math.random() < tunnelProbability) {
-                            particleState = 'tunneling';
-                            tunnel.visible = true;
-                            
-                            // Slow down during tunneling
-                            particleSpeed = 0.03;
-                            
-                            // Create tunnel flash effect
-                            createTunnelEffect();
-                        } else {
-                            // Reflect off barrier
-                            particleSpeed = -0.1;
-                            setTimeout(() => {
-                                // Reset particle position after a while
-                                resetParticle();
-                            }, 5000);
-                        }
-                    } else {
-                        // No barrier, just pass through
-                        particleState = 'passed';
-                    }
-                }
-                break;
-                
-            case 'tunneling':
-                // Move particle through barrier
-                particle.position.x += particleSpeed * config.verse12.animationSpeed;
-                
-                // Make particle semi-transparent during tunneling
-                particle.material.transparent = true;
-                particle.material.opacity = 0.5;
-                
-                // Check if passed through barrier
-                if (particle.position.x > barrierWidth/2) {
-                    particleState = 'passed';
-                    tunnel.visible = false;
-                    
-                    // Speed up after tunneling
-                    particleSpeed = 0.1;
-                    
-                    // Make particle solid again
-                    particle.material.opacity = 1.0;
-                }
-                break;
-                
-            case 'passed':
-                // Move particle past barrier
-                particle.position.x += particleSpeed * config.verse12.animationSpeed;
-                
-                // Add trail
-                if (Math.random() > 0.8) {
-                    addTrail(particle.position.clone());
-                }
-                
-                // Reset when particle leaves scene
-                if (particle.position.x > 12) {
-                    resetParticle();
-                }
-                break;
-        }
-        
-        // Make particle bob up and down slightly
-        particle.position.y = -barrierHeight / 2 + Math.sin(time * 0.003) * 0.2;
-    }
-    
-    // Add trail particle
-    function addTrail(position) {
-        const trailGeometry = new THREE.SphereGeometry(0.1, 8, 8);
-        const trailMaterial = new THREE.MeshBasicMaterial({
-            color: config.verse12.particleColor,
-            transparent: true,
-            opacity: 0.5
+            // Update barrier height
+            barrierGeometry.dispose();
+            const newBarrierGeometry = new THREE.BoxGeometry(barrierWidth, newHeight * 3, 0.5);
+            barrier.geometry = newBarrierGeometry;
         });
-        
-        const trail = new THREE.Mesh(trailGeometry, trailMaterial);
-        trail.position.copy(position);
-        trail.userData = { birth: Date.now() };
-        trailGroup.add(trail);
-        
-        // Remove old trail particles
-        for (let i = trailGroup.children.length - 1; i >= 0; i--) {
-            const child = trailGroup.children[i];
-            const age = Date.now() - child.userData.birth;
-            
-            if (age > 1000) {
-                trailGroup.remove(child);
-            } else {
-                // Fade based on age
-                child.material.opacity = 0.5 * (1 - age / 1000);
-            }
-        }
     }
     
-    // Create tunnel effect
-    function createTunnelEffect() {
-        // Create a flash along the tunnel
-        const flashGeometry = new THREE.CylinderGeometry(0.3, 0.3, barrierHeight * barrier.scale.y, 16);
-        const flashMaterial = new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.8
-        });
-        
-        const flash = new THREE.Mesh(flashGeometry, flashMaterial);
-        flash.position.copy(tunnel.position);
-        flash.rotation.copy(tunnel.rotation);
-        scene.add(flash);
-        
-        // Animate flash
-        const duration = 500; // ms
-        const startTime = Date.now();
-        
-        function animateFlash() {
-            const elapsed = Date.now() - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            // Fade out
-            flash.material.opacity = 0.8 * (1 - progress);
-            
-            if (progress < 1) {
-                requestAnimationFrame(animateFlash);
-            } else {
-                scene.remove(flash);
-            }
-        }
-        
-        animateFlash();
-    }
-    
-    // Reset particle to starting position
-    function resetParticle() {
-        particle.position.set(-8, -barrierHeight / 2, 0);
-        particleState = 'approaching';
-        particleSpeed = 0.1;
-        particle.material.opacity = 1.0;
-        tunnel.visible = false;
-    }
+    // Animation variables
+    let particlePosition = -3;
+    let particleDirection = 1;
+    let particleState = "approaching"; // approaching, tunneling, passed
+    let tunnelProgress = 0;
+    const trailHistory = [];
     
     // Handle window resize
     function onWindowResize() {
@@ -3675,20 +3525,146 @@ function initializeVerse12Animation(container) {
         camera.updateProjectionMatrix();
         renderer.setSize(container.clientWidth, container.clientHeight);
     }
-    
     window.addEventListener('resize', onWindowResize);
     
-    // Store animation objects for cleanup
-    animations.verse12 = {
-        renderer,
-        controls,
-        cleanup: () => {
+    // Animation loop
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        const time = Date.now() * 0.001;
+        
+        // Update barrier appearance
+        if (!barrierActive) {
+            // Make barrier more transparent when tunneling is allowed
+            barrierMaterial.opacity = 0.4 + Math.sin(time * 2) * 0.1;
+            
+            // Animate tunnel glow
+            tunnelMaterial.opacity = 0.3 + Math.sin(time * 3) * 0.2;
+        } else {
+            barrierMaterial.opacity = 0.7;
+        }
+        
+        // Animate particle
+        if (particleState === "approaching") {
+            // Approach the barrier
+            particlePosition += 0.02 * animationSpeed * particleDirection;
+            
+            // Check if reached barrier
+            if (particleDirection > 0 && particlePosition >= -barrierWidth/2) {
+                if (barrierActive) {
+                    // Reflect off barrier
+                    particleDirection = -1;
+                    particleMaterial.emissive.set(0x602020); // Change glow to indicate reflection
+                    
+                    setTimeout(() => {
+                        particleMaterial.emissive.set(0x303060);
+                    }, 300);
+                } else {
+                    // Start tunneling
+                    particleState = "tunneling";
+                    tunnelProgress = 0;
+                    particleMaterial.emissive.set(config.verse12.tunnelColor); // Change glow during tunneling
+                }
+            } else if (particleDirection < 0 && particlePosition <= -3) {
+                // Reached left edge, reverse again
+                particleDirection = 1;
+                particleMaterial.emissive.set(0x303060); // Reset glow
+            }
+        } else if (particleState === "tunneling") {
+            // Animate tunneling
+            tunnelProgress += 0.01 * animationSpeed;
+            
+            if (tunnelProgress >= 1) {
+                // Finished tunneling
+                particleState = "passed";
+                particleMaterial.emissive.set(0x306030); // Change glow to indicate successful tunneling
+                particlePosition = barrierWidth/2; // Place just past barrier
+            } else {
+                // Interpolate position through barrier
+                particlePosition = THREE.MathUtils.lerp(-barrierWidth/2, barrierWidth/2, tunnelProgress);
+                
+                // Add wiggle effect during tunneling
+                const wiggle = Math.sin(tunnelProgress * Math.PI * 10) * 0.05;
+                particle.position.y = wiggle;
+                
+                // Pulse opacity during tunneling
+                particleMaterial.opacity = 0.5 + Math.sin(tunnelProgress * Math.PI * 6) * 0.3;
+            }
+        } else if (particleState === "passed") {
+            // Continue moving away from barrier
+            particlePosition += 0.02 * animationSpeed;
+            
+            // Reset when off screen
+            if (particlePosition >= 3) {
+                // Reset to starting position
+                particlePosition = -3;
+                particleState = "approaching";
+                particleDirection = 1;
+                particleMaterial.emissive.set(0x303060); // Reset glow
+                particleMaterial.opacity = 0.9; // Reset opacity
+                particle.position.y = 0; // Reset any y-offset
+            }
+        }
+        
+        // Update particle position
+        particle.position.x = particlePosition;
+        
+        // Update trail
+        trailHistory.unshift({
+            x: particlePosition,
+            y: particle.position.y,
+            z: particle.position.z
+        });
+        
+        if (trailHistory.length > 50) {
+            trailHistory.pop();
+        }
+        
+        const points = trailHistory.map(p => new THREE.Vector3(p.x, p.y, p.z));
+        trail.geometry.dispose();
+        trail.geometry = new THREE.BufferGeometry().setFromPoints(points);
+        
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    
+    // Start animation
+    animate();
+    
+    // Store cleanup function
+    animations[`verse12`] = {
+        cleanup: function() {
+            // Remove event listeners
             window.removeEventListener('resize', onWindowResize);
-            controls.dispose();
+            
+            // Dispose of geometries, materials
+            barrierGeometry.dispose();
+            barrierMaterial.dispose();
+            tunnelGeometry.dispose();
+            tunnelMaterial.dispose();
+            particleGeometry.dispose();
+            particleMaterial.dispose();
+            trailGeometry.dispose();
+            trailMaterial.dispose();
+            pathGeometry.dispose();
+            pathMaterial.dispose();
+            
+            // Dispose of renderer
             renderer.dispose();
+            
+            // Remove renderer element from DOM
+            if (renderer.domElement.parentNode) {
+                renderer.domElement.parentNode.removeChild(renderer.domElement);
+            }
         }
     };
 }
 
+// Initialize side panel on page load
+initSidePanel();
+
 // Show first verse initially
-showVerse(1);
+// Delay slightly to ensure DOM is ready
+setTimeout(() => {
+     showVerse(1);
+}, 100);

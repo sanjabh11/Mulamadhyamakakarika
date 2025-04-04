@@ -1,238 +1,83 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chapter 19 - Investigation of Time</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Madhyamaka Time Investigation</title>
+    <link rel="stylesheet" href="style.css">
     <script type="importmap">
-        {
-            "imports": {
-                "three": "https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.module.js",
-                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/",
-                "p5": "https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js",
-                "d3": "https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js"
-            }
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+            "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.4/index.js"
         }
+    }
     </script>
 </head>
 <body>
-    <div id="main-container">
-        <div id="control-panel">
-            <h1>Chapter 19 - Investigation of Time</h1>
-            <div class="nav-buttons">
-                <button id="prev-verse" disabled>Previous Verse</button>
-                <span id="verse-indicator">Verse 1 of 6</span>
-                <button id="next-verse">Next Verse</button>
+    <div class="container">
+        <div class="side-panel" id="sidePanel">
+            <div class="panel-toggle" id="panelToggle">
+                <div class="toggle-icon">◀</div>
             </div>
-            <div class="toggle-buttons">
-                <button id="toggle-text">Hide Text</button>
-                <button id="toggle-controls">Hide Controls</button>
-            </div>
-        </div>
-
-        <div id="content-container">
-            <div id="animation-container"></div>
-            
-            <div id="text-container">
-                <div class="verse-content" id="verse-1">
-                    <h2>Verse 1</h2>
-                    <div class="concept-container">
-                        <h3>Madhyamaka Concept</h3>
-                        <p>"If the present and the future were contingent on the past, then the present and the future would have existed in the past."</p>
-                        <p>Illustrates time's emptiness via reductio, showing interdependence of temporal categories.</p>
+            <div class="panel-content">
+                <div class="chapter-title">Chapter 19: Investigation of Time</div>
+                
+                <div class="navigation">
+                    <button id="prevVerse" class="nav-button">Previous</button>
+                    <button id="nextVerse" class="nav-button">Next</button>
+                </div>
+                <div class="verse-selector">
+                    <select id="verseSelect">
+                        <option value="1">Verse 1: Contingency of Time</option>
+                        <option value="2">Verse 2: Dependency Critique</option>
+                        <option value="3">Verse 3: Establishment of Time</option>
+                        <option value="4">Verse 4: Categories and Dualities</option>
+                        <option value="5">Verse 5: Non-dwelling Time</option>
+                        <option value="6">Verse 6: Time and Phenomena</option>
+                    </select>
+                </div>
+                
+                <div class="section expanded" id="explanationSection">
+                    <div class="section-header" id="explanationHeader">
+                        <h2>Verse Explanation</h2>
+                        <div class="section-toggle">▼</div>
                     </div>
-                    <div class="physics-container">
-                        <h3>Quantum Physics Parallel</h3>
-                        <p>Quantum eraser experiment: Future actions affect past particle behavior, like secure quantum communication.</p>
-                    </div>
-                    <div class="explanation-container">
-                        <h3>Accessible Explanation</h3>
-                        <p>Time's like a flowing river, changing; past shapes future, but not fixed, like planning trips.</p>
+                    <div class="section-content">
+                        <div class="verse-display" id="verseDisplay"></div>
+                        <div class="explanation" id="verseExplanation">
+                            <!-- Explanation content will be loaded dynamically -->
+                        </div>
                     </div>
                 </div>
-
-                <div class="verse-content hidden" id="verse-2">
-                    <h2>Verse 2</h2>
-                    <div class="concept-container">
-                        <h3>Madhyamaka Concept</h3>
-                        <p>"If the present and future did not exist there, then how could the present and the future be contingent on it?"</p>
-                        <p>Extends critique, showing time's dependency is incoherent, reinforcing emptiness via tetralemma.</p>
+                
+                <div class="section" id="controlsSection">
+                    <div class="section-header" id="controlsHeader">
+                        <h2>Animation Controls</h2>
+                        <div class="section-toggle">►</div>
                     </div>
-                    <div class="physics-container">
-                        <h3>Quantum Physics Parallel</h3>
-                        <p>Delayed-choice experiment: Future choice determines past behavior, like qubits in quantum computing.</p>
-                    </div>
-                    <div class="explanation-container">
-                        <h3>Accessible Explanation</h3>
-                        <p>Time's a puzzle, pieces fit unexpectedly; past influences now, like calling a friend based on memories.</p>
-                    </div>
-                </div>
-
-                <div class="verse-content hidden" id="verse-3">
-                    <h2>Verse 3</h2>
-                    <div class="concept-container">
-                        <h3>Madhyamaka Concept</h3>
-                        <p>"Without being contingent on the past neither can be established. Hence the present and the future times also do not exist."</p>
-                        <p>Concludes present/future non-existence without past dependency, affirming time's emptiness.</p>
-                    </div>
-                    <div class="physics-container">
-                        <h3>Quantum Physics Parallel</h3>
-                        <p>Special relativity's time dilation: Time varies by frame, like GPS adjustments, showing non-absolute time.</p>
-                    </div>
-                    <div class="explanation-container">
-                        <h3>Accessible Explanation</h3>
-                        <p>Time's like clay, shaped by context; jet lag shows it changes, not fixed.</p>
-                    </div>
-                </div>
-
-                <div class="verse-content hidden" id="verse-4">
-                    <h2>Verse 4</h2>
-                    <div class="concept-container">
-                        <h3>Madhyamaka Concept</h3>
-                        <p>"These very stages can be applied to the other two. Superior, inferior, middling etc., singularity and so on can also be understood [thus]."</p>
-                        <p>Extends analysis to dualities, showing all categories are empty and interdependent, via prajnaparamita.</p>
-                    </div>
-                    <div class="physics-container">
-                        <h3>Quantum Physics Parallel</h3>
-                        <p>Heisenberg uncertainty principle: Position/momentum interdependence, like electron microscopy measurements.</p>
-                    </div>
-                    <div class="explanation-container">
-                        <h3>Accessible Explanation</h3>
-                        <p>Categories like good/bad change with context, like grades varying by class, showing interconnectedness.</p>
-                    </div>
-                </div>
-
-                <div class="verse-content hidden" id="verse-5">
-                    <h2>Verse 5</h2>
-                    <div class="concept-container">
-                        <h3>Madhyamaka Concept</h3>
-                        <p>"Non-dwelling time cannot be apprehended. Since time which can be apprehended, does not exist as something which dwells, how can one talk of unapprehendable time?"</p>
-                        <p>Emphasizes time's non-abiding nature, reinforcing emptiness as fleeting and dependent.</p>
-                    </div>
-                    <div class="physics-container">
-                        <h3>Quantum Physics Parallel</h3>
-                        <p>Time-energy uncertainty principle: Time's elusiveness, like particle accelerator measurements affecting precision.</p>
-                    </div>
-                    <div class="explanation-container">
-                        <h3>Accessible Explanation</h3>
-                        <p>Time's like water, slipping through hands; hard to hold, always changing, like remembering a moment.</p>
-                    </div>
-                </div>
-
-                <div class="verse-content hidden" id="verse-6">
-                    <h2>Verse 6</h2>
-                    <div class="concept-container">
-                        <h3>Madhyamaka Concept</h3>
-                        <p>"If time depended on things, where would time which is a non-thing exist? If there were no things at all, where would a view of time exist?"</p>
-                        <p>Shows time's dependency on phenomena, lacking inherent existence, tied to change via dependent origination.</p>
-                    </div>
-                    <div class="physics-container">
-                        <h3>Quantum Physics Parallel</h3>
-                        <p>Thermodynamic arrow of time: Entropy increase defines time, like ice melting showing direction.</p>
-                    </div>
-                    <div class="explanation-container">
-                        <h3>Accessible Explanation</h3>
-                        <p>Time needs change, like a clock ticking; without movement, no time, like watching a sunset.</p>
+                    <div class="section-content">
+                        <div class="controls" id="animationControls">
+                            <!-- Controls will be loaded dynamically -->
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div id="interactive-controls">
-            <div id="verse-1-controls" class="verse-controls">
-                <h3>Quantum Eraser Experiment Controls</h3>
-                <div class="control-group">
-                    <label for="measure-toggle">Measurement:</label>
-                    <button id="measure-toggle">Turn On</button>
-                </div>
-                <div class="control-group">
-                    <label for="eraser-toggle">Quantum Eraser:</label>
-                    <button id="eraser-toggle">Turn On</button>
-                </div>
-                <div class="control-group">
-                    <label for="photon-rate">Photon Rate:</label>
-                    <input type="range" id="photon-rate" min="1" max="100" value="50">
-                </div>
+        <div class="main-content">
+            <div class="title-area">
+                <h1>Chapter 19: Investigation of Time</h1>
+                <h2 id="verseTitle">Verse 1: Contingency of Time</h2>
             </div>
-
-            <div id="verse-2-controls" class="verse-controls hidden">
-                <h3>Delayed-Choice Experiment Controls</h3>
-                <div class="control-group">
-                    <label for="measurement-timing">Measurement Timing:</label>
-                    <input type="range" id="measurement-timing" min="0" max="100" value="50">
-                    <span id="timing-value">50%</span>
-                </div>
-                <div class="control-group">
-                    <label for="choice-type">Choice Type:</label>
-                    <select id="choice-type">
-                        <option value="wave">Wave Measurement</option>
-                        <option value="particle">Particle Measurement</option>
-                    </select>
-                </div>
+            <div class="verse-text" id="verseText">
+                <!-- Verse text will be loaded dynamically -->
             </div>
-
-            <div id="verse-3-controls" class="verse-controls hidden">
-                <h3>Time Dilation Controls</h3>
-                <div class="control-group">
-                    <label for="velocity">Relative Velocity (% of c):</label>
-                    <input type="range" id="velocity" min="0" max="99" value="50">
-                    <span id="velocity-value">50%</span>
-                </div>
-                <div class="control-group">
-                    <label for="observer-toggle">Observer:</label>
-                    <button id="observer-toggle">Switch Perspective</button>
-                </div>
-            </div>
-
-            <div id="verse-4-controls" class="verse-controls hidden">
-                <h3>Uncertainty Principle Controls</h3>
-                <div class="control-group">
-                    <label for="position-precision">Position Precision:</label>
-                    <input type="range" id="position-precision" min="1" max="100" value="50">
-                </div>
-                <div class="control-group">
-                    <label for="wave-type">Visualization:</label>
-                    <select id="wave-type">
-                        <option value="position">Position Space</option>
-                        <option value="momentum">Momentum Space</option>
-                        <option value="both">Both</option>
-                    </select>
-                </div>
-            </div>
-
-            <div id="verse-5-controls" class="verse-controls hidden">
-                <h3>Energy-Time Uncertainty Controls</h3>
-                <div class="control-group">
-                    <label for="measurement-duration">Measurement Duration:</label>
-                    <input type="range" id="measurement-duration" min="1" max="100" value="50">
-                    <span id="duration-value">50 (arbitrary units)</span>
-                </div>
-                <div class="control-group">
-                    <label for="energy-level">Energy Level:</label>
-                    <input type="range" id="energy-level" min="1" max="5" value="1" step="1">
-                    <span id="level-value">1</span>
-                </div>
-            </div>
-
-            <div id="verse-6-controls" class="verse-controls hidden">
-                <h3>Entropy Controls</h3>
-                <div class="control-group">
-                    <label for="particle-count">Particle Count:</label>
-                    <input type="range" id="particle-count" min="10" max="1000" value="200">
-                </div>
-                <div class="control-group">
-                    <label for="temperature">Temperature:</label>
-                    <input type="range" id="temperature" min="1" max="100" value="50">
-                </div>
-                <div class="control-group">
-                    <button id="reset-entropy">Reset System</button>
-                </div>
+            <div class="canvas-container" id="canvasContainer">
+                <!-- Three.js canvas will be inserted here -->
             </div>
         </div>
     </div>
-
-    <script type="module" src="config.js"></script>
-    <script type="module" src="main.js"></script>
-    <script type="module" src="animations.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>

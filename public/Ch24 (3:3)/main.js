@@ -15,47 +15,63 @@ let clock = new THREE.Clock();
 
 // DOM elements
 const sceneContainer = document.getElementById('scene-container');
-const hideButton = document.getElementById('hide-panel-btn');
-const showButton = document.getElementById('show-panel-btn');
 const controlsContainer = document.getElementById('controls-container');
-const prevButton = document.getElementById('prev-verse');
-const nextButton = document.getElementById('next-verse');
-const verseIndicator = document.getElementById('verse-indicator');
+const hideButton = document.getElementById('hide-panel-btn');
 const verseNumber = document.getElementById('verse-number');
 const verseText = document.getElementById('verse-text');
 const madhyamakaConcept = document.getElementById('madhyamaka-concept');
 const quantumPhysics = document.getElementById('quantum-physics');
 const accessibleExplanation = document.getElementById('accessible-explanation');
 const customControls = document.getElementById('custom-controls');
+const verseNavigation = document.getElementById('verse-navigation');
+const verseExplanationHeader = document.querySelector('#verse-explanation-section .section-header');
+const verseExplanationContent = document.getElementById('verse-explanation-content');
+const animationControlsHeader = document.querySelector('#animation-controls-section .section-header');
+const animationControlsContent = document.getElementById('animation-controls-content');
 
 // Initialize the scene
 init();
 animate();
 
-// Event listeners
+// Set up panel toggle functionality
 hideButton.addEventListener('click', () => {
-    controlsContainer.style.transform = 'translateY(100%)';
-    hideButton.classList.add('hidden');
-    showButton.classList.remove('hidden');
+    controlsContainer.classList.toggle('collapsed');
+    hideButton.textContent = controlsContainer.classList.contains('collapsed') ? '▶' : '◀';
 });
 
-showButton.addEventListener('click', () => {
-    controlsContainer.style.transform = 'translateY(0)';
-    hideButton.classList.remove('hidden');
-    showButton.classList.add('hidden');
+// Set up collapsible sections
+verseExplanationHeader.addEventListener('click', () => {
+    toggleSection(verseExplanationContent, verseExplanationHeader.querySelector('.toggle-icon'));
 });
 
-prevButton.addEventListener('click', () => {
-    if (currentVerse > 0) {
-        loadVerse(currentVerse - 1);
-    }
+animationControlsHeader.addEventListener('click', () => {
+    toggleSection(animationControlsContent, animationControlsHeader.querySelector('.toggle-icon'));
 });
 
-nextButton.addEventListener('click', () => {
-    if (currentVerse < verses.length - 1) {
-        loadVerse(currentVerse + 1);
-    }
-});
+function toggleSection(content, icon) {
+    const isExpanded = content.classList.toggle('expanded');
+    icon.textContent = isExpanded ? '▼' : '▶';
+}
+
+// Create verse navigation buttons
+function createVerseNavigation() {
+    verseNavigation.innerHTML = '';
+    
+    verses.forEach((verse, index) => {
+        const button = document.createElement('button');
+        button.textContent = verse.number;
+        button.dataset.index = index;
+        if (index === currentVerse) {
+            button.classList.add('active');
+        }
+        
+        button.addEventListener('click', () => {
+            loadVerse(index);
+        });
+        
+        verseNavigation.appendChild(button);
+    });
+}
 
 window.addEventListener('resize', onWindowResize);
 
@@ -98,12 +114,31 @@ function init() {
     );
     composer.addPass(bloomPass);
     
+    // Create verse navigation
+    createVerseNavigation();
+    
     // Load first verse
     loadVerse(currentVerse);
+    
+    // Set initial states for sections
+    if (window.innerWidth < 768) {
+        verseExplanationContent.classList.remove('expanded');
+        verseExplanationHeader.querySelector('.toggle-icon').textContent = '▶';
+    }
 }
 
 function loadVerse(index) {
     currentVerse = index;
+    
+    // Update active button in navigation
+    const buttons = verseNavigation.querySelectorAll('button');
+    buttons.forEach(button => {
+        button.classList.remove('active');
+        if (parseInt(button.dataset.index) === index) {
+            button.classList.add('active');
+        }
+    });
+    
     updateVerseInfo();
     
     // Clear previous animation
@@ -155,7 +190,6 @@ function loadVerse(index) {
 
 function updateVerseInfo() {
     const verse = verses[currentVerse];
-    verseIndicator.textContent = `${currentVerse + 1} / ${verses.length}`;
     verseNumber.textContent = verse.number;
     verseText.textContent = verse.text;
     madhyamakaConcept.textContent = verse.madhyamakaConcept;
@@ -219,24 +253,16 @@ function createAddParticlesControls() {
     const controlGroup = document.createElement('div');
     controlGroup.className = 'control-group';
     
-    if (!currentAnimation || !currentAnimation.particleTypes) {
-        const errorMsg = document.createElement('p');
-        errorMsg.textContent = "Animation not properly initialized";
-        controlGroup.appendChild(errorMsg);
-        customControls.appendChild(controlGroup);
-        return;
-    }
-    
-    currentAnimation.particleTypes.forEach(type => {
-        const button = document.createElement('button');
-        button.textContent = `Add ${type.name} (${type.skill})`;
-        button.style.backgroundColor = `#${new THREE.Color(type.color).getHexString()}`;
-        button.addEventListener('click', () => {
-            addParticleToSangha(currentAnimation.particleGroup, type);
-        });
-        controlGroup.appendChild(button);
+    const addBtn = document.createElement('button');
+    addBtn.textContent = 'Add Particle';
+    addBtn.addEventListener('click', () => {
+        if (currentAnimation && currentAnimation.particleGroup && currentAnimation.particleTypes) {
+            const randomType = currentAnimation.particleTypes[Math.floor(Math.random() * currentAnimation.particleTypes.length)];
+            addParticleToSangha(currentAnimation.particleGroup, randomType);
+        }
     });
     
+    controlGroup.appendChild(addBtn);
     customControls.appendChild(controlGroup);
 }
 

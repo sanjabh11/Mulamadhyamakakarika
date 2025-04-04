@@ -25,63 +25,75 @@ let clock = new THREE.Clock();
 const container = document.getElementById('animation-container');
 const controlPanel = document.getElementById('control-panel');
 const togglePanelBtn = document.getElementById('toggle-panel');
-const verseTitle = document.getElementById('verse-title');
 const verseText = document.getElementById('verse-text');
 const madhyamakaContent = document.getElementById('madhyamaka-content');
 const quantumContent = document.getElementById('quantum-content');
 const explanationContent = document.getElementById('explanation-content');
-const tabButtons = document.querySelectorAll('.tab-btn');
-const tabContents = document.querySelectorAll('.tab-content');
-const prevBtn = document.getElementById('prev-btn');
-const nextBtn = document.getElementById('next-btn');
-const verseIndicator = document.getElementById('verse-indicator');
+const verseIndicator = document.getElementById('verse-nav');
 const verseSpecificControls = document.getElementById('verse-specific-controls');
+const sectionHeaders = document.querySelectorAll('.section-header');
 
-// Create verse indicator dots
+// Create verse indicator buttons
 verses.forEach((verse, index) => {
-    const dot = document.createElement('div');
+    const dot = document.createElement('button');
     dot.classList.add('verse-dot');
     if (index === 0) dot.classList.add('active');
     dot.dataset.index = index;
+    dot.textContent = index + 1;
     dot.addEventListener('click', () => changeVerse(index));
     verseIndicator.appendChild(dot);
 });
 
-// Setup tab buttons
-tabButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        const tab = button.dataset.tab;
+// Toggle control panel
+togglePanelBtn.addEventListener('click', () => {
+    controlPanel.classList.toggle('collapsed');
+});
+
+// Section toggle functionality
+sectionHeaders.forEach(header => {
+    const sectionId = header.dataset.section;
+    const contentSection = document.getElementById(`${sectionId}-section`);
+    
+    // Set initial states
+    if (sectionId === 'verse-content') {
+        header.setAttribute('aria-expanded', 'true');
+    } else {
+        header.setAttribute('aria-expanded', 'false');
+    }
+    
+    header.addEventListener('click', () => {
+        const isExpanded = header.getAttribute('aria-expanded') === 'true';
         
-        // Remove active class from all buttons and contents
-        tabButtons.forEach(btn => btn.classList.remove('active'));
-        tabContents.forEach(content => content.classList.remove('active'));
+        // Toggle aria-expanded
+        header.setAttribute('aria-expanded', !isExpanded);
         
-        // Add active class to current button and content
-        button.classList.add('active');
-        document.getElementById(`${tab}-content`).classList.add('active');
+        // Toggle content visibility
+        contentSection.classList.toggle('active');
+        
+        // Update toggle icon
+        const toggleIcon = header.querySelector('.toggle-icon');
+        toggleIcon.textContent = !isExpanded ? '▼' : '►';
     });
 });
 
-// Toggle control panel
-togglePanelBtn.addEventListener('click', () => {
-    controlPanel.classList.toggle('hidden');
-    if (controlPanel.classList.contains('hidden')) {
-        togglePanelBtn.textContent = 'Show Panel';
-        togglePanelBtn.classList.add('panel-hidden');
-    } else {
-        togglePanelBtn.textContent = 'Hide Panel';
-        togglePanelBtn.classList.remove('panel-hidden');
+// Set mobile defaults
+function setMobileDefaults() {
+    if (window.innerWidth < 768) {
+        // Collapse all sections on mobile
+        document.querySelectorAll('.section-content').forEach(section => {
+            section.classList.remove('active');
+        });
+        
+        // Update all toggle icons
+        document.querySelectorAll('.section-header').forEach(header => {
+            header.setAttribute('aria-expanded', 'false');
+            header.querySelector('.toggle-icon').textContent = '►';
+        });
     }
-});
+}
 
-// Navigation
-prevBtn.addEventListener('click', () => {
-    changeVerse(Math.max(0, currentVerseIndex - 1));
-});
-
-nextBtn.addEventListener('click', () => {
-    changeVerse(Math.min(verses.length - 1, currentVerseIndex + 1));
-});
+// Initialize mobile defaults
+setMobileDefaults();
 
 // Helper to create animation based on verse number
 function createAnimationForVerse(index) {
@@ -171,7 +183,6 @@ function changeVerse(index) {
     
     // Update UI
     const verse = verses[index];
-    verseTitle.textContent = verse.title;
     verseText.textContent = verse.text;
     madhyamakaContent.textContent = verse.madhyamaka;
     quantumContent.textContent = verse.quantum;
@@ -189,9 +200,18 @@ function changeVerse(index) {
     // Create verse-specific controls
     createVerseControls(verse);
     
-    // Update navigation buttons
-    prevBtn.disabled = index === 0;
-    nextBtn.disabled = index === verses.length - 1;
+    // Ensure controls section expands when it has content
+    if (verse.controls && verse.controls.length > 0) {
+        const controlsHeader = document.querySelector('.section-header[data-section="controls"]');
+        const controlsSection = document.getElementById('controls-section');
+        
+        // Only expand on desktop
+        if (window.innerWidth >= 768) {
+            controlsHeader.setAttribute('aria-expanded', 'true');
+            controlsHeader.querySelector('.toggle-icon').textContent = '▼';
+            controlsSection.classList.add('active');
+        }
+    }
 }
 
 // Initialize with first verse
@@ -202,5 +222,7 @@ window.addEventListener('resize', () => {
     if (currentAnimation && typeof currentAnimation.resize === 'function') {
         currentAnimation.resize();
     }
+    
+    // Apply mobile defaults on resize if width is under mobile breakpoint
+    setMobileDefaults();
 });
-

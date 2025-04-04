@@ -19,30 +19,45 @@
         <div id="animation-container"></div>
         
         <div id="control-panel">
-            <div id="verse-nav">
-                <button id="prev-btn">Previous</button>
-                <div id="verse-indicator"></div>
-                <button id="next-btn">Next</button>
+            <div id="toggle-panel-container">
+                <button id="toggle-panel">◀</button>
             </div>
             
-            <div id="verse-content">
-                <h2 id="verse-title"></h2>
-                <div id="verse-text"></div>
+            <div id="panel-content">
+                <h1 id="chapter-title">Examination of Motion</h1>
                 
-                <div class="tabs">
-                    <button class="tab-btn active" data-tab="madhyamaka">Madhyamaka</button>
-                    <button class="tab-btn" data-tab="quantum">Quantum Physics</button>
-                    <button class="tab-btn" data-tab="explanation">Explanation</button>
+                <div id="verse-nav"></div>
+                
+                <div class="section-container">
+                    <div class="section-header" data-section="verse-content">
+                        <h2>Verse Explanation</h2>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    
+                    <div class="section-content active" id="verse-content-section">
+                        <div id="verse-text"></div>
+                        
+                        <h3 class="subsection-title">Madhyamaka</h3>
+                        <div id="madhyamaka-content"></div>
+                        
+                        <h3 class="subsection-title">Quantum Physics</h3>
+                        <div id="quantum-content"></div>
+                        
+                        <h3 class="subsection-title">Explanation</h3>
+                        <div id="explanation-content"></div>
+                    </div>
                 </div>
                 
-                <div class="tab-content active" id="madhyamaka-content"></div>
-                <div class="tab-content" id="quantum-content"></div>
-                <div class="tab-content" id="explanation-content"></div>
-            </div>
-            
-            <div id="controls">
-                <button id="toggle-panel">Hide Panel</button>
-                <div id="verse-specific-controls"></div>
+                <div class="section-container">
+                    <div class="section-header" data-section="controls">
+                        <h2>Animation Controls</h2>
+                        <span class="toggle-icon">►</span>
+                    </div>
+                    
+                    <div class="section-content" id="controls-section">
+                        <div id="verse-specific-controls"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

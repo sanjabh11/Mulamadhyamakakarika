@@ -8,22 +8,86 @@ import { verses } from './config.js';
 
 // DOM elements
 const sceneContainer = document.getElementById('scene-container');
-const infoPanelElement = document.getElementById('info-panel');
-const togglePanelBtn = document.getElementById('toggle-panel');
-const prevBtn = document.getElementById('prev-btn');
-const nextBtn = document.getElementById('next-btn');
-const verseIndicator = document.getElementById('verse-indicator');
-const verseTitleElement = document.getElementById('verse-title');
+const sidePanel = document.getElementById('side-panel');
+const panelToggle = document.getElementById('panel-toggle');
 const verseTextElement = document.getElementById('verse-text');
 const madhyamakaConceptElement = document.getElementById('madhyamaka-concept');
 const quantumParallelElement = document.getElementById('quantum-parallel');
 const accessibleExplanationElement = document.getElementById('accessible-explanation');
+const verseNavigation = document.getElementById('verse-navigation');
+const animationControls = document.getElementById('animation-controls');
 
 // ThreeJS globals
 let scene, camera, renderer, composer, controls;
 let currentVerseIndex = 0;
 let currentAnimation = null;
 let isAnimating = false;
+
+// Set up panel collapsing/expanding
+panelToggle.addEventListener('click', () => {
+    sidePanel.classList.toggle('collapsed');
+});
+
+// Set up collapsible sections
+document.querySelectorAll('.section-header').forEach(header => {
+    header.addEventListener('click', () => {
+        const section = header.parentElement;
+        section.classList.toggle('collapsed');
+        
+        // Update toggle icon
+        const toggleIcon = header.querySelector('.toggle-icon');
+        if (section.classList.contains('collapsed')) {
+            toggleIcon.textContent = '►';
+        } else {
+            toggleIcon.textContent = '▼';
+        }
+    });
+});
+
+// Set default states
+const verseExplanationSection = document.querySelector('.verse-explanation-section');
+const animationControlsSection = document.querySelector('.animation-controls-section');
+
+// Desktop default states
+if (window.innerWidth >= 768) {
+    // Explanation expanded, controls collapsed
+    animationControlsSection.classList.add('collapsed');
+    animationControlsSection.querySelector('.toggle-icon').textContent = '►';
+} else {
+    // Mobile default - both collapsed
+    verseExplanationSection.classList.add('collapsed');
+    verseExplanationSection.querySelector('.toggle-icon').textContent = '►';
+    animationControlsSection.classList.add('collapsed');
+    animationControlsSection.querySelector('.toggle-icon').textContent = '►';
+}
+
+// Create verse navigation buttons
+function createVerseNavigation() {
+    verseNavigation.innerHTML = '';
+    
+    verses.forEach((verse, index) => {
+        const button = document.createElement('button');
+        button.className = 'verse-button';
+        button.textContent = index + 1;
+        if (index === currentVerseIndex) {
+            button.classList.add('active');
+        }
+        
+        button.addEventListener('click', () => {
+            if (index !== currentVerseIndex) {
+                currentVerseIndex = index;
+                loadVerse(currentVerseIndex);
+                
+                // Update active button
+                document.querySelectorAll('.verse-button').forEach((btn, i) => {
+                    btn.classList.toggle('active', i === index);
+                });
+            }
+        });
+        
+        verseNavigation.appendChild(button);
+    });
+}
 
 // Initialize the 3D scene
 function initScene() {
@@ -66,6 +130,9 @@ function initScene() {
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     
+    // Create verse navigation buttons
+    createVerseNavigation();
+    
     // Initial animation
     loadVerse(currentVerseIndex);
     
@@ -103,7 +170,6 @@ class ElectronCollapseAnimation {
     }
     
     init() {
-        // Clear previous objects
         clearScene(this.scene);
         
         // Create electron
@@ -173,21 +239,10 @@ class ElectronCollapseAnimation {
     }
     
     addTextPanel() {
-        const textGroup = new THREE.Group();
-        
-        // Add a transparent background panel for text
-        const panelGeometry = new THREE.PlaneGeometry(3, 1);
-        const panelMaterial = new THREE.MeshBasicMaterial({
-            color: 0x000000,
-            transparent: true,
-            opacity: 0.7,
-            side: THREE.DoubleSide
-        });
-        const panel = new THREE.Mesh(panelGeometry, panelMaterial);
-        panel.position.set(0, -2.5, 0);
-        
-        textGroup.add(panel);
-        this.scene.add(textGroup);
+        const infoText = document.createElement('p');
+        infoText.textContent = "Click on the electron to collapse its wave function.";
+        infoText.style.marginBottom = "15px";
+        animationControls.appendChild(infoText);
     }
     
     onSceneClick() {
@@ -255,6 +310,7 @@ class ElectronCollapseAnimation {
     
     dispose() {
         renderer.domElement.removeEventListener('click', this.onSceneClick.bind(this));
+        animationControls.innerHTML = '';
     }
 }
 
@@ -334,37 +390,30 @@ class ContextDependentParticleAnimation {
     }
     
     addControls() {
-        const controlDiv = document.createElement('div');
-        controlDiv.className = 'verse-controls';
-        controlDiv.style.position = 'absolute';
-        controlDiv.style.left = '20px';
-        controlDiv.style.bottom = '80px';
-        controlDiv.style.zIndex = '100';
-        controlDiv.style.background = 'rgba(0,0,0,0.7)';
-        controlDiv.style.padding = '10px';
-        controlDiv.style.borderRadius = '10px';
-        
         const colors = ['Red', 'Green', 'Blue'];
+        
+        const controlsTitle = document.createElement('p');
+        controlsTitle.textContent = 'Choose a measurement device:';
+        controlsTitle.style.marginBottom = '10px';
+        animationControls.appendChild(controlsTitle);
         
         for (let i = 0; i < 3; i++) {
             const btn = document.createElement('button');
             btn.textContent = `Measure with ${colors[i]}`;
             btn.style.display = 'block';
-            btn.style.margin = '5px';
+            btn.style.margin = '5px 0';
             btn.style.padding = '8px 12px';
             btn.style.background = i === 0 ? '#ff0000' : i === 1 ? '#00ff00' : '#0000ff';
             btn.style.color = 'white';
             btn.style.border = 'none';
             btn.style.borderRadius = '5px';
             btn.style.cursor = 'pointer';
+            btn.style.width = '100%';
             
             btn.addEventListener('click', () => this.measure(i));
             
-            controlDiv.appendChild(btn);
+            animationControls.appendChild(btn);
         }
-        
-        sceneContainer.appendChild(controlDiv);
-        this.controlDiv = controlDiv;
     }
     
     measure(deviceIndex) {
@@ -441,9 +490,7 @@ class ContextDependentParticleAnimation {
     }
     
     dispose() {
-        if (this.controlDiv && this.controlDiv.parentNode) {
-            this.controlDiv.parentNode.removeChild(this.controlDiv);
-        }
+        animationControls.innerHTML = '';
     }
 }
 
@@ -529,15 +576,14 @@ class EntangledParticlesAnimation {
         this.cloud2 = new THREE.Group();
         
         const cloudGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+        const cloudMaterial = new THREE.MeshBasicMaterial({
+            color: 0xff3377,
+            transparent: true
+        });
         
         for (let i = 0; i < 30; i++) {
             // Particle 1 cloud
-            const cloudMaterial1 = new THREE.MeshBasicMaterial({
-                color: 0xff3377,
-                transparent: true,
-                opacity: Math.random() * 0.5 + 0.1
-            });
-            const cloudParticle1 = new THREE.Mesh(cloudGeometry, cloudMaterial1);
+            const cloudParticle1 = new THREE.Mesh(cloudGeometry, cloudMaterial.clone());
             
             // Random position around particle 1
             const angle1 = Math.random() * Math.PI * 2;
@@ -550,12 +596,7 @@ class EntangledParticlesAnimation {
             this.cloud1.add(cloudParticle1);
             
             // Particle 2 cloud
-            const cloudMaterial2 = new THREE.MeshBasicMaterial({
-                color: 0x33aaff,
-                transparent: true,
-                opacity: Math.random() * 0.5 + 0.1
-            });
-            const cloudParticle2 = new THREE.Mesh(cloudGeometry, cloudMaterial2);
+            const cloudParticle2 = new THREE.Mesh(cloudGeometry, cloudMaterial.clone());
             
             // Random position around particle 2
             const angle2 = Math.random() * Math.PI * 2;
@@ -573,60 +614,55 @@ class EntangledParticlesAnimation {
     }
     
     addMeasureControls() {
-        const controlDiv = document.createElement('div');
-        controlDiv.className = 'verse-controls';
-        controlDiv.style.position = 'absolute';
-        controlDiv.style.left = '20px';
-        controlDiv.style.bottom = '80px';
-        controlDiv.style.zIndex = '100';
-        controlDiv.style.background = 'rgba(0,0,0,0.7)';
-        controlDiv.style.padding = '10px';
-        controlDiv.style.borderRadius = '10px';
+        const controlsTitle = document.createElement('p');
+        controlsTitle.textContent = 'Measure particles:';
+        controlsTitle.style.marginBottom = '10px';
+        animationControls.appendChild(controlsTitle);
         
         // Measure particle 1 button
         const btn1 = document.createElement('button');
         btn1.textContent = 'Measure Left Particle';
         btn1.style.display = 'block';
-        btn1.style.margin = '5px';
+        btn1.style.margin = '5px 0';
         btn1.style.padding = '8px 12px';
         btn1.style.background = '#ff3377';
         btn1.style.color = 'white';
         btn1.style.border = 'none';
         btn1.style.borderRadius = '5px';
         btn1.style.cursor = 'pointer';
+        btn1.style.width = '100%';
         btn1.addEventListener('click', () => this.measureParticle(1));
-        controlDiv.appendChild(btn1);
+        animationControls.appendChild(btn1);
         
         // Measure particle 2 button
         const btn2 = document.createElement('button');
         btn2.textContent = 'Measure Right Particle';
         btn2.style.display = 'block';
-        btn2.style.margin = '5px';
+        btn2.style.margin = '5px 0';
         btn2.style.padding = '8px 12px';
         btn2.style.background = '#33aaff';
         btn2.style.color = 'white';
         btn2.style.border = 'none';
         btn2.style.borderRadius = '5px';
         btn2.style.cursor = 'pointer';
+        btn2.style.width = '100%';
         btn2.addEventListener('click', () => this.measureParticle(2));
-        controlDiv.appendChild(btn2);
+        animationControls.appendChild(btn2);
         
         // Reset button
         const resetBtn = document.createElement('button');
         resetBtn.textContent = 'Reset';
         resetBtn.style.display = 'block';
-        resetBtn.style.margin = '5px';
+        resetBtn.style.margin = '5px 0';
         resetBtn.style.padding = '8px 12px';
         resetBtn.style.background = '#444444';
         resetBtn.style.color = 'white';
         resetBtn.style.border = 'none';
         resetBtn.style.borderRadius = '5px';
         resetBtn.style.cursor = 'pointer';
+        resetBtn.style.width = '100%';
         resetBtn.addEventListener('click', () => this.resetParticles());
-        controlDiv.appendChild(resetBtn);
-        
-        sceneContainer.appendChild(controlDiv);
-        this.controlDiv = controlDiv;
+        animationControls.appendChild(resetBtn);
     }
     
     measureParticle(particleNumber) {
@@ -797,9 +833,7 @@ class EntangledParticlesAnimation {
     }
     
     dispose() {
-        if (this.controlDiv && this.controlDiv.parentNode) {
-            this.controlDiv.parentNode.removeChild(this.controlDiv);
-        }
+        animationControls.innerHTML = '';
     }
 }
 
@@ -851,7 +885,6 @@ class IdenticalParticlesAnimation {
         }
         
         // Add labels to particles
-        this.labels = [];
         this.addLabels();
         
         // Add control for swapping
@@ -869,12 +902,12 @@ class IdenticalParticlesAnimation {
     
     addLabels() {
         // Remove old labels if they exist
-        this.labels.forEach(label => {
-            if (label.element.parentNode) {
-                label.element.parentNode.removeChild(label.element);
+        const existingLabels = animationControls.children;
+        for (let i = existingLabels.length - 1; i >= 0; i--) {
+            if (existingLabels[i].className === 'particle-label') {
+                existingLabels[i].remove();
             }
-        });
-        this.labels = [];
+        }
         
         // Create new labels
         this.particles.forEach((particle, index) => {
@@ -890,74 +923,64 @@ class IdenticalParticlesAnimation {
             labelDiv.style.pointerEvents = 'none';
             labelDiv.style.transition = 'opacity 0.3s';
             
-            sceneContainer.appendChild(labelDiv);
-            
-            this.labels.push({
-                element: labelDiv,
-                particle: particle,
-                visible: true
-            });
+            animationControls.appendChild(labelDiv);
         });
     }
     
     updateLabels() {
-        this.labels.forEach(label => {
+        const labels = animationControls.children;
+        this.particles.forEach((particle, index) => {
+            const label = labels[labels.length - this.particles.length + index];
             if (label.visible) {
                 // Project 3D position to 2D screen coordinates
                 const vector = new THREE.Vector3();
-                vector.setFromMatrixPosition(label.particle.matrixWorld);
+                vector.setFromMatrixPosition(particle.matrixWorld);
                 vector.project(camera);
                 
                 const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
                 const y = (-(vector.y) * 0.5 + 0.5) * window.innerHeight;
                 
-                label.element.style.left = `${x}px`;
-                label.element.style.top = `${y}px`;
+                label.style.left = `${x}px`;
+                label.style.top = `${y}px`;
             }
         });
     }
     
     addSwapControls() {
-        const controlDiv = document.createElement('div');
-        controlDiv.className = 'verse-controls';
-        controlDiv.style.position = 'absolute';
-        controlDiv.style.left = '20px';
-        controlDiv.style.bottom = '80px';
-        controlDiv.style.zIndex = '100';
-        controlDiv.style.background = 'rgba(0,0,0,0.7)';
-        controlDiv.style.padding = '10px';
-        controlDiv.style.borderRadius = '10px';
+        const controlsTitle = document.createElement('p');
+        controlsTitle.textContent = 'Swap particles:';
+        controlsTitle.style.marginBottom = '10px';
+        animationControls.appendChild(controlsTitle);
         
         // Swap button
         const swapBtn = document.createElement('button');
         swapBtn.textContent = 'Swap Particles';
         swapBtn.style.display = 'block';
-        swapBtn.style.margin = '5px';
+        swapBtn.style.margin = '5px 0';
         swapBtn.style.padding = '8px 12px';
         swapBtn.style.background = '#3377ff';
         swapBtn.style.color = 'white';
         swapBtn.style.border = 'none';
         swapBtn.style.borderRadius = '5px';
         swapBtn.style.cursor = 'pointer';
+        swapBtn.style.width = '100%';
         swapBtn.addEventListener('click', () => this.swapParticles());
-        controlDiv.appendChild(swapBtn);
+        animationControls.appendChild(swapBtn);
         
         // Toggle labels button
         const toggleLabelsBtn = document.createElement('button');
         toggleLabelsBtn.textContent = 'Toggle Labels';
         toggleLabelsBtn.style.display = 'block';
-        toggleLabelsBtn.style.margin = '5px';
+        toggleLabelsBtn.style.margin = '5px 0';
         toggleLabelsBtn.style.padding = '8px 12px';
         toggleLabelsBtn.style.background = '#444444';
         toggleLabelsBtn.style.color = 'white';
         toggleLabelsBtn.style.border = 'none';
         toggleLabelsBtn.style.borderRadius = '5px';
         toggleLabelsBtn.style.cursor = 'pointer';
+        toggleLabelsBtn.style.width = '100%';
         toggleLabelsBtn.addEventListener('click', () => this.toggleLabels());
-        controlDiv.appendChild(toggleLabelsBtn);
-        
-        sceneContainer.appendChild(controlDiv);
-        this.controlDiv = controlDiv;
+        animationControls.appendChild(toggleLabelsBtn);
     }
     
     swapParticles() {
@@ -1029,11 +1052,12 @@ class IdenticalParticlesAnimation {
     }
     
     toggleLabels() {
-        const labelsVisible = this.labels[0]?.visible;
+        const labels = animationControls.children;
+        const labelsVisible = labels[labels.length - this.particles.length].style.opacity !== '0';
         
-        this.labels.forEach(label => {
-            label.visible = !labelsVisible;
-            label.element.style.opacity = label.visible ? '1' : '0';
+        this.particles.forEach((particle, index) => {
+            const label = labels[labels.length - this.particles.length + index];
+            label.style.opacity = labelsVisible ? '0' : '1';
         });
     }
     
@@ -1057,16 +1081,14 @@ class IdenticalParticlesAnimation {
     
     dispose() {
         // Remove labels
-        this.labels.forEach(label => {
-            if (label.element.parentNode) {
-                label.element.parentNode.removeChild(label.element);
+        const labels = animationControls.children;
+        for (let i = labels.length - 1; i >= 0; i--) {
+            if (labels[i].className === 'particle-label') {
+                labels[i].remove();
             }
-        });
-        
-        // Remove control div
-        if (this.controlDiv && this.controlDiv.parentNode) {
-            this.controlDiv.parentNode.removeChild(this.controlDiv);
         }
+        
+        animationControls.innerHTML = '';
     }
 }
 
@@ -1158,15 +1180,10 @@ class EntangledMeasurementAnimation {
     }
     
     addInteractiveControls() {
-        const controlDiv = document.createElement('div');
-        controlDiv.className = 'verse-controls';
-        controlDiv.style.position = 'absolute';
-        controlDiv.style.left = '20px';
-        controlDiv.style.bottom = '80px';
-        controlDiv.style.zIndex = '100';
-        controlDiv.style.background = 'rgba(0,0,0,0.7)';
-        controlDiv.style.padding = '10px';
-        controlDiv.style.borderRadius = '10px';
+        const controlsTitle = document.createElement('p');
+        controlsTitle.textContent = 'Test relationships:';
+        controlsTitle.style.marginBottom = '10px';
+        animationControls.appendChild(controlsTitle);
         
         const relationshipTypes = [
             'Same', 'Different', 'Possessor', 
@@ -1177,34 +1194,33 @@ class EntangledMeasurementAnimation {
             const btn = document.createElement('button');
             btn.textContent = `Test ${relationshipTypes[i]} Relationship`;
             btn.style.display = 'block';
-            btn.style.margin = '5px';
+            btn.style.margin = '5px 0';
             btn.style.padding = '8px 12px';
             btn.style.background = `rgb(${(this.nodes[i].material.color.r * 255)}, ${(this.nodes[i].material.color.g * 255)}, ${(this.nodes[i].material.color.b * 255)})`;
             btn.style.color = 'white';
             btn.style.border = 'none';
             btn.style.borderRadius = '5px';
             btn.style.cursor = 'pointer';
+            btn.style.width = '100%';
             
             btn.addEventListener('click', () => this.testRelationship(i));
             
-            controlDiv.appendChild(btn);
+            animationControls.appendChild(btn);
         }
         
         const resetBtn = document.createElement('button');
         resetBtn.textContent = 'Reset';
         resetBtn.style.display = 'block';
-        resetBtn.style.margin = '5px';
+        resetBtn.style.margin = '5px 0';
         resetBtn.style.padding = '8px 12px';
         resetBtn.style.background = '#444444';
         resetBtn.style.color = 'white';
         resetBtn.style.border = 'none';
         resetBtn.style.borderRadius = '5px';
         resetBtn.style.cursor = 'pointer';
+        resetBtn.style.width = '100%';
         resetBtn.addEventListener('click', () => this.resetNodes());
-        controlDiv.appendChild(resetBtn);
-        
-        sceneContainer.appendChild(controlDiv);
-        this.controlDiv = controlDiv;
+        animationControls.appendChild(resetBtn);
     }
     
     testRelationship(index) {
@@ -1488,9 +1504,7 @@ class EntangledMeasurementAnimation {
     }
     
     dispose() {
-        if (this.controlDiv && this.controlDiv.parentNode) {
-            this.controlDiv.parentNode.removeChild(this.controlDiv);
-        }
+        animationControls.innerHTML = '';
     }
 }
 
@@ -1562,41 +1576,38 @@ class QuantumFluctuationsAnimation {
     }
     
     addControls() {
-        const controlDiv = document.createElement('div');
-        controlDiv.className = 'verse-controls';
-        controlDiv.style.position = 'absolute';
-        controlDiv.style.left = '20px';
-        controlDiv.style.bottom = '80px';
-        controlDiv.style.zIndex = '100';
-        controlDiv.style.background = 'rgba(0,0,0,0.7)';
-        controlDiv.style.padding = '10px';
-        controlDiv.style.borderRadius = '10px';
+        const controlsTitle = document.createElement('p');
+        controlsTitle.textContent = 'Create fluctuation:';
+        controlsTitle.style.marginBottom = '10px';
+        animationControls.appendChild(controlsTitle);
         
         // Button to trigger fluctuation
         const fluctuateBtn = document.createElement('button');
         fluctuateBtn.textContent = 'Create Fluctuation';
         fluctuateBtn.style.display = 'block';
-        fluctuateBtn.style.margin = '5px';
+        fluctuateBtn.style.margin = '5px 0';
         fluctuateBtn.style.padding = '8px 12px';
         fluctuateBtn.style.background = '#0088ff';
         fluctuateBtn.style.color = 'white';
         fluctuateBtn.style.border = 'none';
         fluctuateBtn.style.borderRadius = '5px';
         fluctuateBtn.style.cursor = 'pointer';
+        fluctuateBtn.style.width = '100%';
         fluctuateBtn.addEventListener('click', () => this.createFluctuation());
-        controlDiv.appendChild(fluctuateBtn);
+        animationControls.appendChild(fluctuateBtn);
         
         // Toggle automatic fluctuations
         const toggleAutoBtn = document.createElement('button');
         toggleAutoBtn.textContent = 'Toggle Auto Fluctuations';
         toggleAutoBtn.style.display = 'block';
-        toggleAutoBtn.style.margin = '5px';
+        toggleAutoBtn.style.margin = '5px 0';
         toggleAutoBtn.style.padding = '8px 12px';
         toggleAutoBtn.style.background = '#444444';
         toggleAutoBtn.style.color = 'white';
         toggleAutoBtn.style.border = 'none';
         toggleAutoBtn.style.borderRadius = '5px';
         toggleAutoBtn.style.cursor = 'pointer';
+        toggleAutoBtn.style.width = '100%';
         toggleAutoBtn.addEventListener('click', () => {
             this.automaticFluctuationsEnabled = !this.automaticFluctuationsEnabled;
             toggleAutoBtn.textContent = this.automaticFluctuationsEnabled ? 
@@ -1606,10 +1617,7 @@ class QuantumFluctuationsAnimation {
                 this.nextFluctuation();
             }
         });
-        controlDiv.appendChild(toggleAutoBtn);
-        
-        sceneContainer.appendChild(controlDiv);
-        this.controlDiv = controlDiv;
+        animationControls.appendChild(toggleAutoBtn);
     }
     
     createFluctuation() {
@@ -1781,9 +1789,7 @@ class QuantumFluctuationsAnimation {
     dispose() {
         this.automaticFluctuationsEnabled = false;
         
-        if (this.controlDiv && this.controlDiv.parentNode) {
-            this.controlDiv.parentNode.removeChild(this.controlDiv);
-        }
+        animationControls.innerHTML = '';
     }
 }
 
@@ -1918,47 +1924,44 @@ class DecoherenceAnimation {
     }
     
     addControls() {
-        const controlDiv = document.createElement('div');
-        controlDiv.className = 'verse-controls';
-        controlDiv.style.position = 'absolute';
-        controlDiv.style.left = '20px';
-        controlDiv.style.bottom = '80px';
-        controlDiv.style.zIndex = '100';
-        controlDiv.style.background = 'rgba(0,0,0,0.7)';
-        controlDiv.style.padding = '10px';
-        controlDiv.style.borderRadius = '10px';
+        const controlsTitle = document.createElement('p');
+        controlsTitle.textContent = 'Interact with environment:';
+        controlsTitle.style.marginBottom = '10px';
+        animationControls.appendChild(controlsTitle);
         
         // Toggle interaction button
         const toggleBtn = document.createElement('button');
         toggleBtn.textContent = 'Introduce Environment Interaction';
         toggleBtn.style.display = 'block';
-        toggleBtn.style.margin = '5px';
+        toggleBtn.style.margin = '5px 0';
         toggleBtn.style.padding = '8px 12px';
         toggleBtn.style.background = '#3388ff';
         toggleBtn.style.color = 'white';
         toggleBtn.style.border = 'none';
         toggleBtn.style.borderRadius = '5px';
         toggleBtn.style.cursor = 'pointer';
+        toggleBtn.style.width = '100%';
         toggleBtn.addEventListener('click', () => this.toggleInteraction());
-        controlDiv.appendChild(toggleBtn);
+        animationControls.appendChild(toggleBtn);
         
         // Reset button
         const resetBtn = document.createElement('button');
         resetBtn.textContent = 'Reset to Quantum State';
         resetBtn.style.display = 'block';
-        resetBtn.style.margin = '5px';
+        resetBtn.style.margin = '5px 0';
         resetBtn.style.padding = '8px 12px';
         resetBtn.style.background = '#444444';
         resetBtn.style.color = 'white';
         resetBtn.style.border = 'none';
         resetBtn.style.borderRadius = '5px';
         resetBtn.style.cursor = 'pointer';
+        resetBtn.style.width = '100%';
         resetBtn.addEventListener('click', () => this.resetToQuantumState());
-        controlDiv.appendChild(resetBtn);
+        animationControls.appendChild(resetBtn);
         
         // Add a slider to control environment intensity
         const sliderContainer = document.createElement('div');
-        sliderContainer.style.margin = '10px 5px';
+        sliderContainer.style.margin = '10px 0';
         
         const sliderLabel = document.createElement('label');
         sliderLabel.textContent = 'Environment Intensity:';
@@ -1981,11 +1984,7 @@ class DecoherenceAnimation {
         
         sliderContainer.appendChild(sliderLabel);
         sliderContainer.appendChild(slider);
-        controlDiv.appendChild(sliderContainer);
-        
-        sceneContainer.appendChild(controlDiv);
-        this.controlDiv = controlDiv;
-        this.interactionButton = toggleBtn;
+        animationControls.appendChild(sliderContainer);
     }
     
     toggleInteraction() {
@@ -1995,12 +1994,16 @@ class DecoherenceAnimation {
         if (this.isQuantumState) {
             // Transition to classical state
             this.collapseQuantumState();
-            this.interactionButton.textContent = 'Reset to Quantum State';
+            // Update button text
+            const toggleBtn = animationControls.children[1];
+            toggleBtn.textContent = 'Reset to Quantum State';
             this.isQuantumState = false;
         } else {
             // Transition back to quantum state
             this.resetToQuantumState();
-            this.interactionButton.textContent = 'Introduce Environment Interaction';
+            // Update button text
+            const toggleBtn = animationControls.children[1];
+            toggleBtn.textContent = 'Introduce Environment Interaction';
             this.isQuantumState = true;
         }
     }
@@ -2091,9 +2094,6 @@ class DecoherenceAnimation {
             onComplete: () => {
                 isAnimating = false;
                 this.isQuantumState = true;
-                if (this.interactionButton) {
-                    this.interactionButton.textContent = 'Introduce Environment Interaction';
-                }
             }
         });
     }
@@ -2205,9 +2205,7 @@ class DecoherenceAnimation {
     }
     
     dispose() {
-        if (this.controlDiv && this.controlDiv.parentNode) {
-            this.controlDiv.parentNode.removeChild(this.controlDiv);
-        }
+        animationControls.innerHTML = '';
     }
 }
 
@@ -2408,43 +2406,40 @@ class QuantumFoamAnimation {
     }
     
     addZoomControls() {
-        const controlDiv = document.createElement('div');
-        controlDiv.className = 'verse-controls';
-        controlDiv.style.position = 'absolute';
-        controlDiv.style.left = '20px';
-        controlDiv.style.bottom = '80px';
-        controlDiv.style.zIndex = '100';
-        controlDiv.style.background = 'rgba(0,0,0,0.7)';
-        controlDiv.style.padding = '10px';
-        controlDiv.style.borderRadius = '10px';
+        const controlsTitle = document.createElement('p');
+        controlsTitle.textContent = 'Zoom levels:';
+        controlsTitle.style.marginBottom = '10px';
+        animationControls.appendChild(controlsTitle);
         
         // Zoom in button
         const zoomInBtn = document.createElement('button');
         zoomInBtn.textContent = 'Zoom In';
         zoomInBtn.style.display = 'block';
-        zoomInBtn.style.margin = '5px';
+        zoomInBtn.style.margin = '5px 0';
         zoomInBtn.style.padding = '8px 12px';
         zoomInBtn.style.background = '#22aaff';
         zoomInBtn.style.color = 'white';
         zoomInBtn.style.border = 'none';
         zoomInBtn.style.borderRadius = '5px';
         zoomInBtn.style.cursor = 'pointer';
+        zoomInBtn.style.width = '100%';
         zoomInBtn.addEventListener('click', () => this.zoomIn());
-        controlDiv.appendChild(zoomInBtn);
+        animationControls.appendChild(zoomInBtn);
         
         // Zoom out button
         const zoomOutBtn = document.createElement('button');
         zoomOutBtn.textContent = 'Zoom Out';
         zoomOutBtn.style.display = 'block';
-        zoomOutBtn.style.margin = '5px';
+        zoomOutBtn.style.margin = '5px 0';
         zoomOutBtn.style.padding = '8px 12px';
         zoomOutBtn.style.background = '#444444';
         zoomOutBtn.style.color = 'white';
         zoomOutBtn.style.border = 'none';
         zoomOutBtn.style.borderRadius = '5px';
         zoomOutBtn.style.cursor = 'pointer';
+        zoomOutBtn.style.width = '100%';
         zoomOutBtn.addEventListener('click', () => this.zoomOut());
-        controlDiv.appendChild(zoomOutBtn);
+        animationControls.appendChild(zoomOutBtn);
         
         // Zoom level indicator
         const zoomIndicator = document.createElement('div');
@@ -2453,11 +2448,9 @@ class QuantumFoamAnimation {
         zoomIndicator.style.fontSize = '14px';
         zoomIndicator.style.marginTop = '10px';
         zoomIndicator.style.textAlign = 'center';
-        controlDiv.appendChild(zoomIndicator);
+        animationControls.appendChild(zoomIndicator);
         
         this.zoomIndicator = zoomIndicator;
-        sceneContainer.appendChild(controlDiv);
-        this.controlDiv = controlDiv;
     }
     
     zoomIn() {
@@ -2671,9 +2664,7 @@ class QuantumFoamAnimation {
     }
     
     dispose() {
-        if (this.controlDiv && this.controlDiv.parentNode) {
-            this.controlDiv.parentNode.removeChild(this.controlDiv);
-        }
+        animationControls.innerHTML = '';
     }
 }
 
@@ -2906,43 +2897,40 @@ class HolographicAnimation {
     }
     
     addControls() {
-        const controlDiv = document.createElement('div');
-        controlDiv.className = 'verse-controls';
-        controlDiv.style.position = 'absolute';
-        controlDiv.style.left = '20px';
-        controlDiv.style.bottom = '80px';
-        controlDiv.style.zIndex = '100';
-        controlDiv.style.background = 'rgba(0,0,0,0.7)';
-        controlDiv.style.padding = '10px';
-        controlDiv.style.borderRadius = '10px';
+        const controlsTitle = document.createElement('p');
+        controlsTitle.textContent = 'Hologram controls:';
+        controlsTitle.style.marginBottom = '10px';
+        animationControls.appendChild(controlsTitle);
         
         // Project button
         const projectBtn = document.createElement('button');
         projectBtn.textContent = 'Project Hologram';
         projectBtn.style.display = 'block';
-        projectBtn.style.margin = '5px';
+        projectBtn.style.margin = '5px 0';
         projectBtn.style.padding = '8px 12px';
         projectBtn.style.background = '#ffaa22';
         projectBtn.style.color = 'white';
         projectBtn.style.border = 'none';
         projectBtn.style.borderRadius = '5px';
         projectBtn.style.cursor = 'pointer';
+        projectBtn.style.width = '100%';
         projectBtn.addEventListener('click', () => this.toggleHologram());
-        controlDiv.appendChild(projectBtn);
+        animationControls.appendChild(projectBtn);
         
         // Rotate button
         const rotateBtn = document.createElement('button');
         rotateBtn.textContent = 'Rotate Projection';
         rotateBtn.style.display = 'block';
-        rotateBtn.style.margin = '5px';
+        rotateBtn.style.margin = '5px 0';
         rotateBtn.style.padding = '8px 12px';
         rotateBtn.style.background = '#22aaff';
         rotateBtn.style.color = 'white';
         rotateBtn.style.border = 'none';
         rotateBtn.style.borderRadius = '5px';
         rotateBtn.style.cursor = 'pointer';
+        rotateBtn.style.width = '100%';
         rotateBtn.addEventListener('click', () => this.rotateHologram());
-        controlDiv.appendChild(rotateBtn);
+        animationControls.appendChild(rotateBtn);
         
         // Add emotional state buttons
         const emotionLabel = document.createElement('div');
@@ -2950,7 +2938,7 @@ class HolographicAnimation {
         emotionLabel.style.color = 'white';
         emotionLabel.style.margin = '10px 5px 5px 5px';
         emotionLabel.style.fontSize = '14px';
-        controlDiv.appendChild(emotionLabel);
+        animationControls.appendChild(emotionLabel);
         
         const emotions = [
             { name: 'Pleasant', color: '#22cc66' },
@@ -2970,12 +2958,8 @@ class HolographicAnimation {
             btn.style.borderRadius = '5px';
             btn.style.cursor = 'pointer';
             btn.addEventListener('click', () => this.changeEmotionalState(i));
-            controlDiv.appendChild(btn);
+            animationControls.appendChild(btn);
         }
-        
-        sceneContainer.appendChild(controlDiv);
-        this.controlDiv = controlDiv;
-        this.projectButton = projectBtn;
         
         // Store states
         this.isHologramVisible = false;
@@ -2988,11 +2972,15 @@ class HolographicAnimation {
         if (!this.isHologramVisible) {
             // Show hologram
             this.projectHologram();
-            this.projectButton.textContent = 'Hide Hologram';
+            // Update button text
+            const projectBtn = animationControls.children[1];
+            projectBtn.textContent = 'Hide Hologram';
         } else {
             // Hide hologram
             this.hideHologram();
-            this.projectButton.textContent = 'Project Hologram';
+            // Update button text
+            const projectBtn = animationControls.children[1];
+            projectBtn.textContent = 'Project Hologram';
         }
         
         this.isHologramVisible = !this.isHologramVisible;
@@ -3283,9 +3271,7 @@ class HolographicAnimation {
     }
     
     dispose() {
-        if (this.controlDiv && this.controlDiv.parentNode) {
-            this.controlDiv.parentNode.removeChild(this.controlDiv);
-        }
+        animationControls.innerHTML = '';
     }
 }
 
@@ -3445,19 +3431,14 @@ class UncertaintyPrincipleAnimation {
     }
     
     addControls() {
-        const controlDiv = document.createElement('div');
-        controlDiv.className = 'verse-controls';
-        controlDiv.style.position = 'absolute';
-        controlDiv.style.left = '20px';
-        controlDiv.style.bottom = '80px';
-        controlDiv.style.zIndex = '100';
-        controlDiv.style.background = 'rgba(0,0,0,0.7)';
-        controlDiv.style.padding = '10px';
-        controlDiv.style.borderRadius = '10px';
+        const controlsTitle = document.createElement('p');
+        controlsTitle.textContent = 'Adjust uncertainty:';
+        controlsTitle.style.marginBottom = '10px';
+        animationControls.appendChild(controlsTitle);
         
         // Create slider for position-momentum certainty
         const sliderContainer = document.createElement('div');
-        sliderContainer.style.margin = '10px 5px';
+        sliderContainer.style.margin = '10px 0';
         
         const sliderLabel = document.createElement('label');
         sliderLabel.textContent = 'Position-Momentum Certainty';
@@ -3481,7 +3462,7 @@ class UncertaintyPrincipleAnimation {
         
         sliderContainer.appendChild(sliderLabel);
         sliderContainer.appendChild(slider);
-        controlDiv.appendChild(sliderContainer);
+        animationControls.appendChild(sliderContainer);
         
         // Add buttons for extreme cases
         const buttonContainer = document.createElement('div');
@@ -3520,7 +3501,7 @@ class UncertaintyPrincipleAnimation {
         
         buttonContainer.appendChild(positionBtn);
         buttonContainer.appendChild(momentumBtn);
-        controlDiv.appendChild(buttonContainer);
+        animationControls.appendChild(buttonContainer);
         
         // Add explanation text
         const explanationText = document.createElement('div');
@@ -3529,11 +3510,7 @@ class UncertaintyPrincipleAnimation {
         explanationText.style.fontSize = '12px';
         explanationText.style.marginTop = '10px';
         explanationText.style.textAlign = 'center';
-        controlDiv.appendChild(explanationText);
-        
-        sceneContainer.appendChild(controlDiv);
-        this.controlDiv = controlDiv;
-        this.uncertaintySlider = slider;
+        animationControls.appendChild(explanationText);
     }
     
     updateUncertainty(value) {
@@ -3644,9 +3621,7 @@ class UncertaintyPrincipleAnimation {
     }
     
     dispose() {
-        if (this.controlDiv && this.controlDiv.parentNode) {
-            this.controlDiv.parentNode.removeChild(this.controlDiv);
-        }
+        animationControls.innerHTML = '';
     }
 }
 
@@ -3894,57 +3869,55 @@ class WaveParticleAnimation {
     }
     
     addControls() {
-        const controlDiv = document.createElement('div');
-        controlDiv.className = 'verse-controls';
-        controlDiv.style.position = 'absolute';
-        controlDiv.style.left = '20px';
-        controlDiv.style.bottom = '80px';
-        controlDiv.style.zIndex = '100';
-        controlDiv.style.background = 'rgba(0,0,0,0.7)';
-        controlDiv.style.padding = '10px';
-        controlDiv.style.borderRadius = '10px';
+        const controlsTitle = document.createElement('p');
+        controlsTitle.textContent = 'Interact with electron:';
+        controlsTitle.style.marginBottom = '10px';
+        animationControls.appendChild(controlsTitle);
         
         // Launch button
         const launchBtn = document.createElement('button');
         launchBtn.textContent = 'Launch Electron';
         launchBtn.style.display = 'block';
-        launchBtn.style.margin = '5px';
+        launchBtn.style.margin = '5px 0';
         launchBtn.style.padding = '8px 12px';
         launchBtn.style.background = '#00aaff';
         launchBtn.style.color = 'white';
         launchBtn.style.border = 'none';
         launchBtn.style.borderRadius = '5px';
         launchBtn.style.cursor = 'pointer';
+        launchBtn.style.width = '100%';
         launchBtn.addEventListener('click', () => this.launchElectron());
-        controlDiv.appendChild(launchBtn);
+        animationControls.appendChild(launchBtn);
         
         // Toggle observation button
         const observeBtn = document.createElement('button');
         observeBtn.textContent = 'Toggle Observation';
         observeBtn.style.display = 'block';
-        observeBtn.style.margin = '5px';
+        observeBtn.style.margin = '5px 0';
         observeBtn.style.padding = '8px 12px';
         observeBtn.style.background = '#ff7700';
         observeBtn.style.color = 'white';
         observeBtn.style.border = 'none';
         observeBtn.style.borderRadius = '5px';
         observeBtn.style.cursor = 'pointer';
+        observeBtn.style.width = '100%';
         observeBtn.addEventListener('click', () => this.toggleObservation());
-        controlDiv.appendChild(observeBtn);
+        animationControls.appendChild(observeBtn);
         
         // Reset button
         const resetBtn = document.createElement('button');
         resetBtn.textContent = 'Reset Experiment';
         resetBtn.style.display = 'block';
-        resetBtn.style.margin = '5px';
+        resetBtn.style.margin = '5px 0';
         resetBtn.style.padding = '8px 12px';
         resetBtn.style.background = '#444444';
         resetBtn.style.color = 'white';
         resetBtn.style.border = 'none';
         resetBtn.style.borderRadius = '5px';
         resetBtn.style.cursor = 'pointer';
+        resetBtn.style.width = '100%';
         resetBtn.addEventListener('click', () => this.resetExperiment());
-        controlDiv.appendChild(resetBtn);
+        animationControls.appendChild(resetBtn);
         
         // Status text
         const statusText = document.createElement('div');
@@ -3953,10 +3926,8 @@ class WaveParticleAnimation {
         statusText.style.marginTop = '10px';
         statusText.style.textAlign = 'center';
         statusText.style.fontSize = '14px';
-        controlDiv.appendChild(statusText);
+        animationControls.appendChild(statusText);
         
-        sceneContainer.appendChild(controlDiv);
-        this.controlDiv = controlDiv;
         this.statusText = statusText;
         this.launchButton = launchBtn;
     }
@@ -4231,9 +4202,7 @@ class WaveParticleAnimation {
     }
     
     dispose() {
-        if (this.controlDiv && this.controlDiv.parentNode) {
-            this.controlDiv.parentNode.removeChild(this.controlDiv);
-        }
+        animationControls.innerHTML = '';
     }
 }
 
@@ -4357,15 +4326,10 @@ class FieldExcitationAnimation {
     }
     
     addControls() {
-        const controlDiv = document.createElement('div');
-        controlDiv.className = 'verse-controls';
-        controlDiv.style.position = 'absolute';
-        controlDiv.style.left = '20px';
-        controlDiv.style.bottom = '80px';
-        controlDiv.style.zIndex = '100';
-        controlDiv.style.background = 'rgba(0,0,0,0.7)';
-        controlDiv.style.padding = '10px';
-        controlDiv.style.borderRadius = '10px';
+        const controlsTitle = document.createElement('p');
+        controlsTitle.textContent = 'Interact with field:';
+        controlsTitle.style.marginBottom = '10px';
+        animationControls.appendChild(controlsTitle);
         
         // Sliders container
         const slidersContainer = document.createElement('div');
@@ -4422,7 +4386,7 @@ class FieldExcitationAnimation {
         aversionContainer.appendChild(aversionSlider);
         slidersContainer.appendChild(aversionContainer);
         
-        controlDiv.appendChild(slidersContainer);
+        animationControls.appendChild(slidersContainer);
         
         // Excitation buttons
         const buttonsContainer = document.createElement('div');
@@ -4472,7 +4436,7 @@ class FieldExcitationAnimation {
         resetBtn.addEventListener('click', () => this.resetField());
         buttonsContainer.appendChild(resetBtn);
         
-        controlDiv.appendChild(buttonsContainer);
+        animationControls.appendChild(buttonsContainer);
         
         // Add explanation text
         const explanation = document.createElement('div');
@@ -4481,12 +4445,7 @@ class FieldExcitationAnimation {
         explanation.style.fontSize = '12px';
         explanation.style.color = 'rgba(255,255,255,0.8)';
         explanation.style.textAlign = 'center';
-        controlDiv.appendChild(explanation);
-        
-        sceneContainer.appendChild(controlDiv);
-        this.controlDiv = controlDiv;
-        this.desireSlider = desireSlider;
-        this.aversionSlider = aversionSlider;
+        animationControls.appendChild(explanation);
     }
     
     updateDesireLevel(level) {
@@ -4744,8 +4703,10 @@ class FieldExcitationAnimation {
     
     resetField() {
         // Reset sliders
-        this.desireSlider.value = 0;
-        this.aversionSlider.value = 0;
+        const desireSlider = animationControls.children[2];
+        desireSlider.value = 0;
+        const aversionSlider = animationControls.children[5];
+        aversionSlider.value = 0;
         
         // Reset levels
         this.desireLevel = 0;
@@ -4814,9 +4775,7 @@ class FieldExcitationAnimation {
     }
     
     dispose() {
-        if (this.controlDiv && this.controlDiv.parentNode) {
-            this.controlDiv.parentNode.removeChild(this.controlDiv);
-        }
+        animationControls.innerHTML = '';
     }
 }
 
@@ -4828,12 +4787,18 @@ function loadVerse(index) {
     
     // Update UI
     const verse = verses[index];
-    verseTitleElement.textContent = verse.title;
     verseTextElement.textContent = verse.text;
     madhyamakaConceptElement.textContent = verse.madhyamakaConcept;
     quantumParallelElement.textContent = verse.quantumParallel;
     accessibleExplanationElement.textContent = verse.accessibleExplanation;
-    verseIndicator.textContent = `${index + 1}/${verses.length}`;
+    
+    // Update active verse button
+    const verseButtons = animationControls.children;
+    for (let i = 0; i < verseButtons.length; i++) {
+        if (verseButtons[i].className === 'verse-button') {
+            verseButtons[i].classList.toggle('active', i === index);
+        }
+    }
     
     // Load the appropriate animation
     switch(verse.animationType) {
@@ -4894,35 +4859,35 @@ function prevVerse() {
 }
 
 // Event Listeners
-togglePanelBtn.addEventListener('click', () => {
-    const panelContent = document.querySelector('.panel-content');
-    if (panelContent.style.display === 'none') {
-        panelContent.style.display = 'block';
-        togglePanelBtn.textContent = 'Hide';
-    } else {
-        panelContent.style.display = 'none';
-        togglePanelBtn.textContent = 'Show';
-    }
+panelToggle.addEventListener('click', () => {
+    sidePanel.classList.toggle('collapsed');
 });
-
-nextBtn.addEventListener('click', nextVerse);
-prevBtn.addEventListener('click', prevVerse);
 
 // Initialize the application
 initScene();
 
 // Helper functions
 function clearScene(scene) {
-    while(scene.children.length > 0) { 
-        const object = scene.children[0];
+    for (let i = scene.children.length - 1; i >= 0; i--) {
+        const object = scene.children[i];
+        
+        // Keep lights and camera in the scene
+        if (object instanceof THREE.Light || object === camera) {
+            continue;
+        }
+
         if (object.geometry) object.geometry.dispose();
         if (object.material) {
             if (Array.isArray(object.material)) {
-                object.material.forEach(material => material.dispose());
+                object.material.forEach(material => {
+                    if (material.map) material.map.dispose();
+                    material.dispose();
+                });
             } else {
+                if (object.material.map) object.material.map.dispose();
                 object.material.dispose();
             }
         }
-        scene.remove(object); 
+        scene.remove(object);
     }
 }

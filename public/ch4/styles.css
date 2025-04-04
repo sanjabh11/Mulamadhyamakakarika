@@ -1,14 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Nunito:wght@300;400;600&display=swap');
 
 :root {
-    --primary-color: #8a5cf5;
-    --secondary-color: #5cc9f5;
-    --tertiary-color: #f55c9c;
-    --background-color: #050510;
-    --panel-background: rgba(20, 20, 35, 0.85);
-    --text-color: #e0e0ff;
+    /* Using colors from config.js */
+    --primary-color: #8a5cf5; /* primary */
+    --secondary-color: #5cc9f5; /* secondary */
+    --tertiary-color: #f55c9c; /* tertiary */
+    --background-color: #050510; /* background */
+    --panel-background: rgba(20, 20, 35, 0.9); /* Dark, semi-transparent */
+    --text-color: #e0e0ff; /* Light text */
+    --accent-color: var(--primary-color); /* Accent color */
+    --panel-border: rgba(138, 92, 245, 0.25); /* Accent color with alpha */
+    --panel-shadow: rgba(0, 0, 0, 0.3);
     --header-font: 'Cormorant Garamond', serif;
     --body-font: 'Nunito', sans-serif;
+    --panel-width: 320px;
+    --panel-collapsed-width: 40px;
 }
 
 * {
@@ -68,193 +74,292 @@ body {
     position: relative;
     width: 100vw;
     height: 100vh;
+    display: flex; /* Use flex for layout */
 }
 
 canvas {
     position: absolute;
     top: 0;
-    left: 0;
+    left: 0; /* Canvas takes full space behind panel */
     width: 100%;
     height: 100%;
     z-index: 1;
 }
 
-#verse-panel {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    width: calc(100% - 40px);
-    max-width: 600px;
-    background: var(--panel-background);
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
-    padding: 20px;
+/* Side Panel Styles */
+#side-panel {
+    position: relative; /* Relative to container */
+    width: var(--panel-width);
+    height: 100vh;
+    background-color: var(--panel-background);
+    backdrop-filter: blur(8px);
+    border-right: 1px solid var(--panel-border);
+    box-shadow: 3px 0 15px var(--panel-shadow);
+    transition: width 0.5s ease;
     z-index: 10;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.verse-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 10px;
+    flex-direction: column;
+    overflow: hidden; /* Hide content when collapsed */
 }
 
-.verse-number {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 14px;
+#side-panel.collapsed {
+    width: var(--panel-collapsed-width);
+}
+
+#panel-toggle {
+    position: absolute;
+    width: 30px;
+    height: 50px;
+    background-color: var(--accent-color);
+    top: 50%;
+    right: -30px; /* Position outside the panel */
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 0 8px 8px 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    z-index: 11;
+}
+
+#panel-toggle .arrow {
+    color: #fff;
+    font-size: 18px;
+    transition: transform 0.5s ease;
+}
+
+#side-panel.collapsed #panel-toggle .arrow {
+    transform: rotate(180deg);
+}
+
+#panel-content {
+    padding: 20px;
+    overflow-y: auto; /* Enable scrolling */
+    flex: 1; /* Take remaining height */
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-color) rgba(30, 30, 60, 0.5);
+    transition: opacity 0.3s ease;
+    opacity: 1;
+}
+
+#side-panel.collapsed #panel-content {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#panel-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+#panel-content::-webkit-scrollbar-track {
+    background: rgba(30, 30, 60, 0.5);
+}
+
+#panel-content::-webkit-scrollbar-thumb {
+    background-color: var(--accent-color);
+    border-radius: 3px;
+}
+
+#chapter-title {
+    color: var(--accent-color);
+    font-size: 1.3em;
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: var(--header-font);
     font-weight: 600;
 }
 
-h2 {
-    font-family: var(--header-font);
-    font-weight: 500;
-    font-size: 1.5rem;
-}
-
-.verse-content {
-    margin-bottom: 20px;
-}
-
-.verse-text {
-    font-family: var(--header-font);
-    font-size: 1.3rem;
-    line-height: 1.6;
-    font-weight: 300;
-    margin-bottom: 20px;
-    font-style: italic;
-    letter-spacing: 0.5px;
-}
-
-.explanation-container {
-    margin-top: 15px;
-}
-
-.toggle-button {
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: var(--text-color);
-    padding: 8px 15px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-family: var(--body-font);
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    transition: all 0.2s ease;
-}
-
-.toggle-button:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.toggle-icon {
-    margin-right: 8px;
-    font-weight: bold;
-    transition: transform 0.3s ease;
-}
-
-.hidden {
-    display: none;
-}
-
-.expanded .toggle-icon {
-    transform: rotate(45deg);
-}
-
-.explanation-section {
-    margin-top: 20px;
-}
-
-.explanation-section h3 {
-    font-size: 1rem;
-    margin-bottom: 8px;
-    color: var(--secondary-color);
-    font-family: var(--header-font);
-    font-weight: 500;
-}
-
-.explanation-section p {
-    font-size: 0.9rem;
-    line-height: 1.5;
-    opacity: 0.9;
-}
-
 .verse-navigation {
-    display: flex;
+    display: flex; /* Use flex for better control */
     justify-content: space-between;
-    margin-top: 20px;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--panel-border);
+    padding-bottom: 15px;
 }
 
 .nav-button {
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--accent-color);
     color: var(--text-color);
-    padding: 8px 18px;
-    border-radius: 6px;
+    padding: 6px 12px;
+    border-radius: 4px;
     cursor: pointer;
-    font-family: var(--body-font);
-    font-size: 14px;
     transition: all 0.2s ease;
+    font-size: 0.9em;
 }
 
 .nav-button:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.1);
+    background-color: rgba(138, 92, 245, 0.3); /* Accent color with alpha */
 }
 
 .nav-button:disabled {
-    opacity: 0.3;
+    opacity: 0.4;
     cursor: not-allowed;
+    border-color: rgba(138, 92, 245, 0.4);
 }
 
+.verse-number-display {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/* Collapsible Sections */
+.collapsible-section {
+    margin-bottom: 15px;
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    overflow: hidden; /* Clip content during transition */
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: rgba(138, 92, 245, 0.15); /* Accent color with alpha */
+    color: var(--accent-color);
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 1px solid var(--panel-border); /* Separator */
+}
+
+.section-header h2 {
+    margin: 0;
+    font-size: 1.1em;
+    font-family: var(--header-font);
+}
+
+.toggle-icon {
+    transition: transform 0.3s ease;
+    font-size: 1.1em;
+}
+
+.section-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+    padding: 0 15px; /* Add padding only when expanded */
+}
+
+.collapsible-section.expanded .section-content {
+    max-height: 800px; /* Adjust as needed */
+    padding: 15px;
+    overflow-y: auto; /* Scroll if content exceeds max-height */
+}
+
+.collapsible-section.expanded .toggle-icon {
+    transform: rotate(180deg);
+}
+
+.verse-text-display {
+    background-color: rgba(138, 92, 245, 0.08);
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    font-style: italic;
+    font-size: 1em;
+    line-height: 1.5;
+}
+
+.explanation-subsection {
+    margin-bottom: 15px;
+}
+
+.explanation-subsection h3 {
+    font-size: 0.9em;
+    margin-bottom: 5px;
+    color: var(--secondary-color); /* Use secondary color for sub-headers */
+    font-family: var(--header-font);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.explanation-subsection p {
+    font-size: 0.85em;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+#animation-controls p {
+    font-size: 0.9em;
+    opacity: 0.7;
+    text-align: center;
+    padding: 10px 0;
+}
+
+/* Interaction Hint */
 #interaction-hint {
     position: absolute;
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
     background: var(--panel-background);
-    padding: 10px 20px;
+    padding: 8px 15px;
     border-radius: 20px;
-    font-size: 14px;
+    font-size: 13px;
     opacity: 0.7;
-    z-index: 10;
+    z-index: 5; /* Below panel */
     transition: opacity 0.3s ease;
+    pointer-events: none; /* Allow clicks through */
 }
 
 #interaction-hint.hidden {
     opacity: 0;
 }
 
+/* Responsiveness */
 @media (max-width: 768px) {
-    #verse-panel {
-        max-width: 100%;
-        bottom: 10px;
-        left: 10px;
-        width: calc(100% - 20px);
-        padding: 15px;
+    #side-panel {
+        position: absolute; /* Overlay on mobile */
+        transform: translateX(0); /* Start expanded */
+        width: 85%; /* Take more width */
+        max-width: 320px;
+        border-right: none; /* No border needed when overlaying */
+        box-shadow: 5px 0 20px rgba(0, 0, 0, 0.4);
     }
-    
-    .verse-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .verse-number {
-        margin-top: 8px;
-    }
-    
-    .verse-text {
-        font-size: 1.1rem;
-    }
-    
-    .explanation-section p {
-        font-size: 0.85rem;
-    }
-}
 
+    #side-panel.collapsed {
+        transform: translateX(calc(-100% + var(--panel-collapsed-width))); /* Slide out mostly */
+        width: 85%; /* Keep width consistent for transition */
+    }
+
+    #panel-toggle {
+        right: -30px; /* Keep toggle outside */
+    }
+
+    #chapter-title {
+        font-size: 1.2em;
+    }
+
+    .section-header h2 {
+        font-size: 1em;
+    }
+
+    .verse-text-display {
+        font-size: 0.95em;
+    }
+
+    .explanation-subsection p {
+        font-size: 0.8em;
+    }
+
+    /* Default collapsed sections on mobile */
+    #explanation-section {
+        /* Keep expanded by default as per spec */
+    }
+    #controls-section {
+        /* Keep collapsed by default as per spec */
+    }
+    #controls-section .section-content {
+        max-height: 0;
+        padding: 0 15px;
+    }
+     #controls-section .toggle-icon {
+        transform: rotate(0deg); /* Start collapsed */
+    }
+    /* Explanation section starts expanded by default, so no changes needed here */
+}

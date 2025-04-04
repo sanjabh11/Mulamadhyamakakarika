@@ -8,8 +8,8 @@ import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { gsap } from 'gsap';
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7/+esm';
-import { verseData, animationConfig } from './config.js';
 import * as TWEEN from 'https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.6.4/dist/tween.esm.js';
+import { verseData, animationConfig } from './config.js';
 import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
 
@@ -35,12 +35,24 @@ const toggleInfoButton = document.getElementById('toggle-info');
 const toggleHelpButton = document.getElementById('toggle-help');
 const helpPanel = document.getElementById('help-panel');
 
+// DOM elements for new panel
+const leftPanel = document.getElementById('left-panel');
+const togglePanelBtn = document.getElementById('toggle-panel');
+const verseNavigation = document.querySelector('.verse-navigation');
+const verseExplanationSection = document.getElementById('verse-explanation-section');
+const animationControlsSection = document.getElementById('animation-controls-section');
+const zoomInBtn = document.getElementById('zoom-in');
+const zoomOutBtn = document.getElementById('zoom-out');
+const resetCameraBtn = document.getElementById('reset-camera');
+const animationSpeedSlider = document.getElementById('animation-speed');
+
 // Initialize the scene
 initScene();
 addPostProcessingEffects();
 animate();
 updateVerseContent();
 setupInteractions();
+setupNewPanelInteractions();
 
 // Event listeners
 prevButton.addEventListener('click', () => {
@@ -58,8 +70,11 @@ nextButton.addEventListener('click', () => {
 });
 
 toggleInfoButton.addEventListener('click', () => {
-  infoPanel.classList.toggle('hidden');
-  toggleInfoButton.innerHTML = infoPanel.classList.contains('hidden') ? 
+  // Toggle left panel instead of infoPanel
+  leftPanel.classList.toggle('collapsed');
+  leftPanel.classList.toggle('expanded');
+  
+  toggleInfoButton.innerHTML = leftPanel.classList.contains('collapsed') ? 
     '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>' : 
     '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
 });
@@ -1240,7 +1255,10 @@ function clearSceneObjects() {
 }
 
 function updateVerseContent() {
+  // Get current verse data
   const verse = verseData[currentVerse];
+  
+  // Update left panel content
   verseNumber.textContent = verse.verseNumber;
   verseText.textContent = verse.verseText;
   madhyamakaConcept.textContent = verse.madhyamakaConcept;
@@ -1250,33 +1268,36 @@ function updateVerseContent() {
 }
 
 function transitionToVerse(newVerse) {
-  // Fade out current scene
-  gsap.to(scene.children, {
-    duration: 1,
-    opacity: 0,
-    ease: "power2.out",
-    onComplete: () => {
-      // Clear scene and create new objects
-      clearSceneObjects();
-      currentVerse = newVerse;
-      updateVerseContent();
-      createSceneObjects();
-      
-      // Fade in new scene
-      scene.children.forEach(child => {
-        if (child.material && child.material.opacity !== undefined) {
-          child.material.opacity = 0;
-          gsap.to(child.material, {
-            duration: 1,
-            opacity: child.material._gsapOriginalOpacity || 1,
-            ease: "power2.in"
-          });
-        }
-      });
-      
-      isTransitioning = false;
+  // Update active verse button
+  document.querySelectorAll('.verse-button').forEach(button => {
+    const verse = parseInt(button.getAttribute('data-verse'));
+    if (verse === newVerse) {
+      button.classList.add('active');
+    } else {
+      button.classList.remove('active');
     }
   });
+  
+  // Call the original function
+  isTransitioning = true;
+  clearSceneObjects();
+  currentVerse = newVerse;
+  updateVerseContent();
+  createSceneObjects();
+  
+  // Fade in new scene
+  scene.children.forEach(child => {
+    if (child.material && child.material.opacity !== undefined) {
+      child.material.opacity = 0;
+      gsap.to(child.material, {
+        duration: 1,
+        opacity: child.material._gsapOriginalOpacity || 1,
+        ease: "power2.in"
+      });
+    }
+  });
+  
+  isTransitioning = false;
 }
 
 function updateParticles(delta) {
@@ -1777,13 +1798,127 @@ function onTouchEnd(event) {
   }
 }
 
+function setupNewPanelInteractions() {
+  // Generate verse navigation buttons
+  for (let i = 0; i < verseData.length; i++) {
+    const button = document.createElement('button');
+    button.className = 'verse-button';
+    button.textContent = i + 1;
+    button.setAttribute('data-verse', i);
+    if (i === currentVerse) {
+      button.classList.add('active');
+    }
+    button.addEventListener('click', () => {
+      if (!isTransitioning && i !== currentVerse) {
+        isTransitioning = true;
+        transitionToVerse(i);
+      }
+    });
+    verseNavigation.appendChild(button);
+  }
+  
+  // Panel toggle button
+  togglePanelBtn.addEventListener('click', () => {
+    leftPanel.classList.toggle('collapsed');
+    leftPanel.classList.toggle('expanded');
+  });
+  
+  // Section collapsible functionality
+  document.querySelectorAll('.section-header').forEach(header => {
+    header.addEventListener('click', (e) => {
+      const section = header.parentElement;
+      section.classList.toggle('expanded');
+    });
+  });
+  
+  // Camera controls
+  zoomInBtn.addEventListener('click', () => {
+    gsap.to(camera, {
+      zoom: camera.zoom * 1.2,
+      onUpdate: () => camera.updateProjectionMatrix(),
+      duration: 0.5
+    });
+  });
+  
+  zoomOutBtn.addEventListener('click', () => {
+    gsap.to(camera, {
+      zoom: camera.zoom / 1.2,
+      onUpdate: () => camera.updateProjectionMatrix(),
+      duration: 0.5
+    });
+  });
+  
+  resetCameraBtn.addEventListener('click', () => {
+    gsap.to(camera.position, {
+      x: 0,
+      y: 0,
+      z: animationConfig.cameraDistance,
+      duration: 1
+    });
+    gsap.to(camera, {
+      zoom: 1,
+      onUpdate: () => camera.updateProjectionMatrix(),
+      duration: 1
+    });
+    
+    // Reset controls target to origin
+    gsap.to(controls.target, {
+      x: 0,
+      y: 0,
+      z: 0,
+      duration: 1
+    });
+  });
+  
+  // Animation speed control
+  animationSpeedSlider.addEventListener('input', (e) => {
+    const speed = parseFloat(e.target.value);
+    animationConfig.animationSpeed = speed;
+    
+    // Adjust rotation speed
+    animationConfig.rotationSpeed = 0.001 * speed;
+    
+    // Adjust particle speed if applicable
+    if (particleSystem) {
+      const velocities = particleSystem.geometry.attributes.velocity.array;
+      const originalSpeed = animationConfig.particleSpeed;
+      
+      for (let i = 0; i < animationConfig.particleCount; i++) {
+        velocities[i * 3] *= speed / (animationConfig.currentSpeed || 1);
+        velocities[i * 3 + 1] *= speed / (animationConfig.currentSpeed || 1);
+        velocities[i * 3 + 2] *= speed / (animationConfig.currentSpeed || 1);
+      }
+      
+      animationConfig.currentSpeed = speed;
+    }
+  });
+  
+  // Set initial state for mobile
+  if (window.innerWidth < 768) {
+    leftPanel.classList.add('collapsed');
+    leftPanel.classList.remove('expanded');
+    verseExplanationSection.classList.remove('expanded');
+    animationControlsSection.classList.remove('expanded');
+  }
+  
+  // Handle window resize
+  window.addEventListener('resize', () => {
+    if (window.innerWidth < 768) {
+      if (!leftPanel.classList.contains('collapsed')) {
+        leftPanel.classList.add('collapsed');
+        leftPanel.classList.remove('expanded');
+      }
+    }
+  });
+}
+
 function animate() {
   requestAnimationFrame(animate);
   
   const delta = clock.getDelta();
   
-  // Update TWEEN animations
-  TWEEN.update();
+  // Update TWEEN animations if TWEEN is available
+  if (TWEEN) TWEEN.update();
   
   // Update controls
   controls.update();

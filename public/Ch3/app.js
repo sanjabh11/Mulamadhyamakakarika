@@ -32,7 +32,7 @@ const instructionsContent = document.getElementById('scene-instructions-content'
 const tabButtons = document.querySelectorAll('.tab-button');
 
 // Core Three.js components
-let currentScene, currentRenderer, currentCamera, currentControls;
+let currentScene, currentRenderer, currentCamera, currentControls, currentCleanupFunction;
 let currentVerseIndex = 0;
 let animationFrameId;
 let sceneCreators = [
@@ -120,6 +120,10 @@ function loadVerse(index) {
     instructionsContent.textContent = verse.instructions;
     
     // Clean up previous scene if it exists
+    if (currentCleanupFunction) {
+        currentCleanupFunction(); // Call the cleanup function from the previous verse
+        currentCleanupFunction = null;
+    }
     if (currentRenderer) {
         cancelAnimationFrame(animationFrameId);
         sceneContainer.removeChild(currentRenderer.domElement);
@@ -133,12 +137,13 @@ function loadVerse(index) {
     }
     
     // Create new scene
-    const { scene, camera, renderer, controls, animate } = sceneCreators[index]();
+    const { scene, camera, renderer, controls, animate, cleanup } = sceneCreators[index](); // Destructure cleanup
     
     currentScene = scene;
     currentCamera = camera;
     currentRenderer = renderer;
     currentControls = controls;
+    currentCleanupFunction = cleanup; // Store the new cleanup function
     
     // Add renderer to container
     sceneContainer.appendChild(renderer.domElement);

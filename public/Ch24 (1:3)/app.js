@@ -12,7 +12,6 @@ let scene, camera, renderer, composer, controls;
 let animationFrameId;
 let interactionControls = document.getElementById('interaction-controls');
 let verses1To14Scenes = [];
-let isMobile = window.innerWidth <= 768;
 
 // Initialize the application
 function init() {
@@ -21,8 +20,9 @@ function init() {
     setupPostprocessing();
     setupControls();
     setupEventListeners();
-    setupAccessibilityFeatures();
+    setupPanelControls(); 
     createScenesForAllVerses();
+    setupVerseNavigation(); 
     
     loadVerse(currentVerse);
     animate();
@@ -41,13 +41,13 @@ function setupScene() {
     scene.fog = new THREE.FogExp2(0x050505, 0.002);
     
     // Camera
-    camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 0, 5);
     
     // Renderer
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
     container.appendChild(renderer.domElement);
     
@@ -56,9 +56,6 @@ function setupScene() {
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.rotateSpeed = 0.5;
-    controls.enableZoom = true;
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.5;
 }
 
 // Set up lighting for the scene
@@ -115,31 +112,6 @@ function setupControls() {
             const verseNum = parseInt(dot.getAttribute('data-verse'));
             loadVerse(verseNum);
         });
-        
-        // Add keyboard accessibility
-        dot.setAttribute('tabindex', '0');
-        dot.setAttribute('role', 'button');
-        dot.setAttribute('aria-label', `Go to verse ${dot.getAttribute('data-verse')}`);
-        
-        dot.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                const verseNum = parseInt(dot.getAttribute('data-verse'));
-                loadVerse(verseNum);
-            }
-        });
-    });
-    
-    // Add keyboard navigation
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-            if (currentVerse < verses.length) {
-                loadVerse(currentVerse + 1);
-            }
-        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-            if (currentVerse > 1) {
-                loadVerse(currentVerse - 1);
-            }
-        }
     });
 }
 
@@ -171,87 +143,102 @@ function setupEventListeners() {
             }
         }
     }
-    
-    // Panel toggle for mobile
-    const panelToggle = document.getElementById('panel-toggle');
-    const textPanel = document.getElementById('text-panel');
-    
-    panelToggle.addEventListener('click', () => {
-        textPanel.classList.toggle('open');
-        panelToggle.textContent = textPanel.classList.contains('open') ? '×' : '≡';
-        
-        // Update aria attributes
-        if (textPanel.classList.contains('open')) {
-            panelToggle.setAttribute('aria-expanded', 'true');
-            panelToggle.setAttribute('aria-label', 'Close text panel');
-        } else {
-            panelToggle.setAttribute('aria-expanded', 'false');
-            panelToggle.setAttribute('aria-label', 'Open text panel');
-        }
-    });
-    
-    // Help button and modal
-    const helpButton = document.getElementById('help-button');
-    const helpModal = document.getElementById('help-modal');
-    const closeHelp = document.getElementById('close-help');
-    
-    helpButton.addEventListener('click', () => {
-        helpModal.style.display = 'flex';
-    });
-    
-    closeHelp.addEventListener('click', () => {
-        helpModal.style.display = 'none';
-    });
-    
-    // Close modal when clicking outside content
-    helpModal.addEventListener('click', (e) => {
-        if (e.target === helpModal) {
-            helpModal.style.display = 'none';
-        }
-    });
-    
-    // Close with escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && helpModal.style.display === 'flex') {
-            helpModal.style.display = 'none';
-        }
-    });
 }
 
-// Setup accessibility features
-function setupAccessibilityFeatures() {
-    // Add aria roles and labels
-    document.getElementById('prev-btn').setAttribute('aria-label', 'Go to previous verse');
-    document.getElementById('next-btn').setAttribute('aria-label', 'Go to next verse');
+// Set up panel controls
+function setupPanelControls() {
+    // Panel toggle
+    const panel = document.getElementById('panel');
+    const panelToggle = document.getElementById('panel-toggle');
     
-    const verseDots = document.querySelectorAll('.verse-dot');
-    verseDots.forEach(dot => {
-        const verseNum = dot.getAttribute('data-verse');
-        dot.setAttribute('aria-label', `Go to verse ${verseNum}`);
+    panelToggle.addEventListener('click', () => {
+        panel.classList.toggle('collapsed');
+        
+        // Update icon direction
+        const icon = panelToggle.querySelector('.icon');
+        if (panel.classList.contains('collapsed')) {
+            icon.textContent = '▶';
+        } else {
+            icon.textContent = '◀';
+        }
     });
     
-    document.getElementById('verse-indicator').setAttribute('role', 'navigation');
-    document.getElementById('verse-indicator').setAttribute('aria-label', 'Verse navigation');
+    // Section toggles
+    const explanationHeader = document.getElementById('explanation-header');
+    const explanationContent = document.getElementById('explanation-content');
+    const controlsHeader = document.getElementById('controls-header');
+    const controlsContent = document.getElementById('controls-content');
     
-    document.getElementById('panel-toggle').setAttribute('aria-expanded', 'false');
-    document.getElementById('panel-toggle').setAttribute('aria-label', 'Open text panel');
-    document.getElementById('panel-toggle').setAttribute('aria-controls', 'text-panel');
+    explanationHeader.addEventListener('click', () => {
+        explanationContent.classList.toggle('collapsed');
+        const icon = explanationHeader.querySelector('.toggle-icon');
+        icon.textContent = explanationContent.classList.contains('collapsed') ? '►' : '▼';
+    });
     
-    document.getElementById('text-panel').setAttribute('role', 'region');
-    document.getElementById('text-panel').setAttribute('aria-label', 'Verse information');
+    controlsHeader.addEventListener('click', () => {
+        controlsContent.classList.toggle('collapsed');
+        const icon = controlsHeader.querySelector('.toggle-icon');
+        icon.textContent = controlsContent.classList.contains('collapsed') ? '►' : '▼';
+    });
     
-    document.getElementById('interaction-controls').setAttribute('role', 'region');
-    document.getElementById('interaction-controls').setAttribute('aria-label', 'Interactive controls');
+    // Default states based on screen size
+    const setDefaultStates = () => {
+        if (window.innerWidth < 768) {
+            explanationContent.classList.add('collapsed');
+            explanationHeader.querySelector('.toggle-icon').textContent = '►';
+            controlsContent.classList.add('collapsed');
+            controlsHeader.querySelector('.toggle-icon').textContent = '►';
+        } else {
+            explanationContent.classList.remove('collapsed');
+            explanationHeader.querySelector('.toggle-icon').textContent = '▼';
+            controlsContent.classList.add('collapsed');
+            controlsHeader.querySelector('.toggle-icon').textContent = '►';
+        }
+    };
     
-    // Help modal accessibility
-    const helpModal = document.getElementById('help-modal');
-    helpModal.setAttribute('role', 'dialog');
-    helpModal.setAttribute('aria-labelledby', 'help-title');
-    helpModal.setAttribute('aria-modal', 'true');
+    setDefaultStates();
+    window.addEventListener('resize', setDefaultStates);
+}
+
+// Setup verse navigation
+function setupVerseNavigation() {
+    const verseNavigation = document.getElementById('verse-navigation');
+    const verseIndicator = document.getElementById('verse-indicator');
     
-    const helpButton = document.getElementById('help-button');
-    helpButton.setAttribute('aria-haspopup', 'dialog');
-    helpButton.setAttribute('aria-controls', 'help-modal');
+    // Clear existing verse dots
+    verseIndicator.innerHTML = '';
+    
+    // Generate verse navigation buttons
+    verses.forEach((verse, index) => {
+        // Create verse button in panel
+        const verseButton = document.createElement('button');
+        verseButton.classList.add('verse-button');
+        verseButton.textContent = verse.id;
+        verseButton.setAttribute('data-verse', verse.id);
+        if (verse.id === currentVerse) {
+            verseButton.classList.add('active');
+        }
+        
+        verseButton.addEventListener('click', () => {
+            loadVerse(verse.id);
+        });
+        
+        verseNavigation.appendChild(verseButton);
+        
+        // Create verse dot in bottom indicators
+        const verseDot = document.createElement('span');
+        verseDot.classList.add('verse-dot');
+        verseDot.setAttribute('data-verse', verse.id);
+        if (verse.id === currentVerse) {
+            verseDot.classList.add('active');
+        }
+        
+        verseDot.addEventListener('click', () => {
+            loadVerse(verse.id);
+        });
+        
+        verseIndicator.appendChild(verseDot);
+    });
 }
 
 // Create scenes for all verses
@@ -1053,9 +1040,9 @@ function createThreeJewelsNetworkScene() {
     });
     
     // Create nodes
-    const buddhaNnode = new THREE.Mesh(nodeGeometry, buddhaMaterial);
-    buddhaNnode.position.set(0, 2, 0);
-    group.add(buddhaNnode);
+    const buddhaNode = new THREE.Mesh(nodeGeometry, buddhaMaterial);
+    buddhaNode.position.set(0, 2, 0);
+    group.add(buddhaNode);
     
     const dharmaNode = new THREE.Mesh(nodeGeometry, dharmaMaterial);
     dharmaNode.position.set(-2, -1, 0);
@@ -1089,8 +1076,8 @@ function createThreeJewelsNetworkScene() {
         };
     };
     
-    const buddhaDharmaConn = createConnection(buddhaNnode, dharmaNode, 0xb4e1ff);
-    const buddhaSanghaConn = createConnection(buddhaNnode, sanghaNode, 0xffb4e1);
+    const buddhaDharmaConn = createConnection(buddhaNode, dharmaNode, 0xb4e1ff);
+    const buddhaSanghaConn = createConnection(buddhaNode, sanghaNode, 0xffb4e1);
     const dharmaSanghaConn = createConnection(dharmaNode, sanghaNode, 0xb4ffe1);
     
     // Create energy flows along connections
@@ -1139,17 +1126,17 @@ function createThreeJewelsNetworkScene() {
         return flows;
     };
     
-    const buddhaDharmaFlow = createEnergyFlow(buddhaNnode, dharmaNode, 0xb4e1ff);
-    const buddhaSanghaFlow = createEnergyFlow(buddhaNnode, sanghaNode, 0xffb4e1);
+    const buddhaDharmaFlow = createEnergyFlow(buddhaNode, dharmaNode, 0xb4e1ff);
+    const buddhaSanghaFlow = createEnergyFlow(buddhaNode, sanghaNode, 0xffb4e1);
     const dharmaSanghaFlow = createEnergyFlow(dharmaNode, sanghaNode, 0xb4ffe1);
-    const dharmaTobuddhaFlow = createEnergyFlow(dharmaNode, buddhaNnode, 0xb4e1ff);
-    const sanghaTobuddhaFlow = createEnergyFlow(sanghaNode, buddhaNnode, 0xffb4e1);
-    const sanghaTodharmaFlow = createEnergyFlow(sanghaNode, dharmaNode, 0xb4ffe1);
+    const dharmaToBuddhaFlow = createEnergyFlow(dharmaNode, buddhaNode, 0xb4e1ff);
+    const sanghaToBuddhaFlow = createEnergyFlow(sanghaNode, buddhaNode, 0xffb4e1);
+    const sanghaToDharmaFlow = createEnergyFlow(sanghaNode, dharmaNode, 0xb4ffe1);
     
     // Store interaction function
     group.userData = {
         nodes: {
-            buddha: buddhaNnode,
+            buddha: buddhaNode,
             dharma: dharmaNode,
             sangha: sanghaNode
         },
@@ -1162,9 +1149,9 @@ function createThreeJewelsNetworkScene() {
             buddhaDharma: buddhaDharmaFlow,
             buddhaSangha: buddhaSanghaFlow,
             dharmaSangha: dharmaSanghaFlow,
-            dharmaToBuddha: dharmaTobuddhaFlow,
-            sanghaToBuddha: sanghaTobuddhaFlow,
-            sanghaToDharma: sanghaTodharmaFlow
+            dharmaToBuddha: dharmaToBuddhaFlow,
+            sanghaToBuddha: sanghaToBuddhaFlow,
+            sanghaToDharma: sanghaToDharmaFlow
         },
         activateNode: (nodeName) => {
             const node = group.userData.nodes[nodeName];
@@ -1534,7 +1521,7 @@ function createQuantumMazeScene() {
     const playerMaterial = new THREE.MeshStandardMaterial({
         color: 0xffffff,
         emissive: 0xffffff,
-        emissiveIntensity: 0.8
+        emissiveIntensity: 0.5
     });
     
     const player = new THREE.Mesh(playerGeometry, playerMaterial);
@@ -1800,7 +1787,7 @@ function createQuantumCoinScene() {
         
         for (let j = 0; j <= waveSegments; j++) {
             const theta = (j / waveSegments) * Math.PI * 2;
-            const radius = coinRadius * 0.7 * (0.8 + 0.2 * Math.sin(theta * (i + 3)));
+            const radius = coinRadius * 0.8 * (0.8 + 0.2 * Math.sin(theta * (i + 3)));
             
             wavePoints.push(
                 new THREE.Vector3(
@@ -3887,21 +3874,35 @@ function loadVerse(verseNum) {
     controls.update();
     
     // Update UI
-    document.getElementById('verse-number').textContent = `Verse ${currentVerse}`;
     document.getElementById('verse-text').textContent = verses[currentVerse - 1].text;
-    document.getElementById('explanation').textContent = verses[currentVerse - 1].explanation;
     
-    // Add accessible explanation
-    const accessibilityText = createAccessibilityExplanation(currentVerse);
-    document.getElementById('accessibility-explanation').textContent = accessibilityText;
+    // Split the explanation into different sections
+    const explanationParts = verses[currentVerse - 1].explanation.split('. ');
+    let madhyamakaText = explanationParts[0] + '.';
+    let quantumText = explanationParts[1] + '.';
+    let accessibleText = '';
+    
+    if (explanationParts.length > 2) {
+        accessibleText = explanationParts.slice(2).join('. ');
+    }
+    
+    document.getElementById('madhyamaka-explanation').textContent = madhyamakaText;
+    document.getElementById('quantum-explanation').textContent = quantumText;
+    document.getElementById('accessible-explanation').textContent = accessibleText;
+    
+    // Update interaction description
+    document.getElementById('interaction-text').textContent = verses[currentVerse - 1].interaction;
+    
+    // Update verse navigation
+    const verseButtons = document.querySelectorAll('.verse-button');
+    verseButtons.forEach(button => {
+        button.classList.toggle('active', parseInt(button.getAttribute('data-verse')) === currentVerse);
+    });
     
     // Update verse dots
     const verseDots = document.querySelectorAll('.verse-dot');
     verseDots.forEach(dot => {
-        dot.classList.remove('active');
-        if (parseInt(dot.getAttribute('data-verse')) === currentVerse) {
-            dot.classList.add('active');
-        }
+        dot.classList.toggle('active', parseInt(dot.getAttribute('data-verse')) === currentVerse);
     });
     
     // Update navigation buttons
@@ -3914,87 +3915,14 @@ function loadVerse(verseNum) {
     // Update interaction controls
     updateInteractionControls();
     
-    // Close mobile panel after loading verse
-    if (isMobile) {
-        const textPanel = document.getElementById('text-panel');
-        textPanel.classList.remove('open');
-        document.getElementById('panel-toggle').textContent = '≡';
-        document.getElementById('panel-toggle').setAttribute('aria-expanded', 'false');
+    // If controls section is collapsed, expand it to show new controls
+    const controlsContent = document.getElementById('controls-content');
+    const controlsHeader = document.getElementById('controls-header');
+    
+    if (controlsContent.classList.contains('collapsed')) {
+        controlsContent.classList.remove('collapsed');
+        controlsHeader.querySelector('.toggle-icon').textContent = '▼';
     }
-    
-    // Announce verse change for screen readers
-    announceVerseChange(currentVerse);
-}
-
-// Create accessibility explanation for each verse
-function createAccessibilityExplanation(verseNum) {
-    const verse = verses[verseNum - 1];
-    
-    // Base explanation template
-    let explanation = '';
-    
-    switch (verseNum) {
-        case 1:
-            explanation = "This visualization shows a double-slit experiment. You can toggle between observing and not observing particles, demonstrating how observation affects quantum behavior - particles behave as waves when unobserved, showing an interference pattern, and as distinct particles when observed. This illustrates how emptiness means dependent existence, not non-existence.";
-            break;
-        case 2:
-            explanation = "This visualization shows a quantum circuit with qubits as glowing lines. You can apply quantum gates to transform the qubits, demonstrating how operations within a framework of emptiness make meaningful outcomes possible, just as practices within Buddhist understanding lead to liberation.";
-            break;
-        case 3:
-            explanation = "This visualization shows an atom with electron energy levels. Each level represents one of the 'four fruits' of Buddhist practice. You can add energy (photons) to make electrons jump to higher levels, demonstrating how specific conditions lead to transitions on the path to enlightenment.";
-            break;
-        case 4:
-            explanation = "This visualization shows entangled quantum particles connected by shimmering lines. Adjusting one particle affects all others instantly, demonstrating how the Sangha (community), Dharma (teachings), and Buddha are interconnected and interdependent.";
-            break;
-        case 5:
-            explanation = "This visualization shows three connected nodes representing Buddha, Dharma, and Sangha. Activating any node affects the entire system, demonstrating how properties are determined by the whole system, not individual parts, just as emptiness doesn't negate the three jewels but defines their nature.";
-            break;
-        case 6:
-            explanation = "This visualization shows a quantum particle in superposition. Using the measurement tool stabilizes its state, demonstrating how conventional properties arise from measurement, just as emptiness doesn't negate conventional reality but is the basis for it.";
-            break;
-        case 7:
-            explanation = "This visualization shows a quantum maze that shifts and changes. Using the quantum compass reveals the correct path, demonstrating how understanding emptiness leads to clarity, while misunderstanding leads to confusion.";
-            break;
-        case 8:
-            explanation = "This visualization shows a quantum coin with wave patterns on one side and particle dots on the other. Flipping the coin lets you explore both aspects, demonstrating the two truths in Buddhism: conventional and ultimate.";
-            break;
-        case 9:
-            explanation = "This visualization shows two quantum lenses (wave and particle) that must be aligned to see a clear Buddha image. This demonstrates that understanding both conventional and ultimate truths is essential for understanding the Buddha's teaching.";
-            break;
-        case 10:
-            explanation = "This visualization shows a quantum ladder with mathematical equations as steps. Solving equations lets you climb higher, demonstrating how conventional truth (the equations) is necessary to reach ultimate truth (nirvana).";
-            break;
-        case 11:
-            explanation = "This visualization shows a quantum 'snake' (wave function) that can be handled correctly or incorrectly. This demonstrates how misunderstanding emptiness can be harmful, just as misapplying quantum principles leads to errors.";
-            break;
-        case 12:
-            explanation = "This visualization shows a quantum puzzle cube with shifting pieces. Rotating the pieces in specific ways reveals a hidden Buddha image, demonstrating the profundity and elusiveness of emptiness that made the Buddha initially reluctant to teach.";
-            break;
-        case 13:
-            explanation = "This visualization shows a quantum engine with unusual behaviors. Adjusting its components shows it functioning despite quantum oddities, demonstrating that emptiness doesn't lead to nihilistic consequences but is the foundation of reality.";
-            break;
-        case 14:
-            explanation = "This visualization shows a quantum canvas where particles exist in multiple states simultaneously. When observed, they collapse to one form, demonstrating how emptiness (like superposition) enables all possibilities.";
-            break;
-    }
-    
-    return explanation;
-}
-
-// Announce verse change for screen readers
-function announceVerseChange(verseNum) {
-    // Create an aria-live region if it doesn't exist
-    let announcer = document.getElementById('verse-announcer');
-    if (!announcer) {
-        announcer = document.createElement('div');
-        announcer.id = 'verse-announcer';
-        announcer.setAttribute('aria-live', 'polite');
-        announcer.setAttribute('class', 'sr-only');
-        document.body.appendChild(announcer);
-    }
-    
-    // Announce the verse change
-    announcer.textContent = `Now viewing verse ${verseNum}. ${verses[verseNum - 1].text}`;
 }
 
 // Update interaction controls for the current verse
@@ -4018,7 +3946,6 @@ function updateInteractionControls() {
                     const button = document.createElement('button');
                     button.textContent = control.label;
                     button.classList.add('interaction-button');
-                    button.setAttribute('aria-label', control.label);
                     button.addEventListener('click', () => {
                         handleInteraction(control.id);
                     });
@@ -4031,23 +3958,17 @@ function updateInteractionControls() {
                     
                     const toggleLabel = document.createElement('label');
                     toggleLabel.textContent = control.label;
-                    toggleLabel.setAttribute('id', `${control.id}-label`);
                     toggleContainer.appendChild(toggleLabel);
                     
                     const toggle = document.createElement('button');
                     toggle.classList.add('interaction-button');
                     toggle.textContent = 'Off';
-                    toggle.setAttribute('aria-labelledby', `${control.id}-label`);
-                    toggle.setAttribute('role', 'switch');
-                    toggle.setAttribute('aria-checked', 'false');
-                    
                     let toggleState = false;
                     
                     toggle.addEventListener('click', () => {
                         toggleState = !toggleState;
                         toggle.textContent = toggleState ? 'On' : 'Off';
                         toggle.classList.toggle('active', toggleState);
-                        toggle.setAttribute('aria-checked', toggleState.toString());
                         handleInteraction(control.id, toggleState);
                     });
                     
@@ -4061,7 +3982,6 @@ function updateInteractionControls() {
                     
                     const sliderLabel = document.createElement('label');
                     sliderLabel.textContent = control.label;
-                    sliderLabel.setAttribute('for', control.id);
                     sliderContainer.appendChild(sliderLabel);
                     
                     const slider = document.createElement('input');
@@ -4069,9 +3989,7 @@ function updateInteractionControls() {
                     slider.min = '0';
                     slider.max = '100';
                     slider.value = '50';
-                    slider.id = control.id;
                     slider.classList.add('interaction-slider');
-                    slider.setAttribute('aria-labelledby', `${control.id}-label`);
                     
                     slider.addEventListener('input', () => {
                         handleInteraction(control.id, parseInt(slider.value));
@@ -4086,7 +4004,6 @@ function updateInteractionControls() {
                     const dragButton = document.createElement('button');
                     dragButton.textContent = `Apply ${control.label}`;
                     dragButton.classList.add('interaction-button');
-                    dragButton.setAttribute('aria-label', `Apply ${control.label}`);
                     dragButton.addEventListener('click', () => {
                         handleInteraction(control.id);
                     });
@@ -4233,20 +4150,17 @@ function handleInteraction(controlId, value) {
 
 // Window resize handler
 function onWindowResize() {
-    isMobile = window.innerWidth <= 768;
-    const container = document.getElementById('scene-container');
-    
-    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    composer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    composer.setSize(window.innerWidth, window.innerHeight);
     
-    // Close mobile panel when orientation changes
-    if (isMobile) {
-        const textPanel = document.getElementById('text-panel');
-        textPanel.classList.remove('open');
-        document.getElementById('panel-toggle').textContent = '≡';
-        document.getElementById('panel-toggle').setAttribute('aria-expanded', 'false');
+    // Adjust panel based on screen size
+    const panel = document.getElementById('panel');
+    if (window.innerWidth < 768 && !panel.classList.contains('collapsed')) {
+        // On mobile, collapse by default
+        panel.classList.add('collapsed');
+        panel.querySelector('#panel-toggle .icon').textContent = '▶';
     }
 }
 

@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Madhyamaka 3D Interactive Verses</title>
+    <title>Madhyamaka 3D Interactive Verses - Ch4</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -13,51 +13,62 @@
 
     <div id="container">
         <canvas id="canvas"></canvas>
-        
-        <div id="verse-panel">
-            <div class="verse-header">
-                <h2 id="verse-title">Chapter IV - Examination of the Aggregates</h2>
-                <div class="verse-number" id="verse-number">Verse 1</div>
+
+        <div id="side-panel">
+            <div id="panel-toggle">
+                <span class="arrow">◀</span>
             </div>
-            
-            <div class="verse-content">
-                <div class="verse-text" id="verse-text">
-                    "Apart from the cause of form,<br>
-                    Form cannot be conceived.<br>
-                    Apart from form,<br>
-                    The cause of form is not seen."
+            <div id="panel-content">
+                <h1 id="chapter-title">Chapter IV - Examination of the Aggregates</h1>
+
+                <div id="verse-navigation" class="verse-navigation">
+                    <!-- Verse buttons will be generated here if needed, or use prev/next -->
+                    <button id="prev-verse" class="nav-button" disabled>&larr; Previous</button>
+                    <span id="verse-number" class="verse-number-display">Verse 1</span>
+                    <button id="next-verse" class="nav-button">Next &rarr;</button>
                 </div>
-                
-                <div class="explanation-container">
-                    <button id="explanation-toggle" class="toggle-button">
-                        <span class="toggle-icon">+</span> Show Explanation
-                    </button>
-                    
-                    <div id="explanation-content" class="hidden">
-                        <div class="explanation-section">
+
+                <div class="collapsible-section expanded" id="explanation-section">
+                    <div class="section-header" id="explanation-header">
+                        <h2>Verse Explanation</h2>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="verse-text-display" id="verse-text">
+                            "Apart from the cause of form,<br>
+                            Form cannot be conceived.<br>
+                            Apart from form,<br>
+                            The cause of form is not seen."
+                        </div>
+                        <div class="explanation-subsection">
                             <h3>Madhyamaka Concept</h3>
                             <p id="madhyamaka-concept">Nagarjuna begins by examining form (rupa), the first of the five aggregates (skandhas), and its relationship with its cause. He argues that form cannot exist or even be thought of without its cause, and the cause has no identity without form. This mutual reliance illustrates shunyata (emptiness)—nothing has inherent, independent existence; everything arises dependently.</p>
                         </div>
-                        
-                        <div class="explanation-section">
+                        <div class="explanation-subsection">
                             <h3>Quantum Physics Parallel</h3>
                             <p id="quantum-parallel">This mirrors quantum entanglement, where two particles are so interconnected that the state of one depends on the other. Neither particle has a definite state by itself—only their relationship defines them, much like form and its cause.</p>
                         </div>
-                        
-                        <div class="explanation-section">
+                        <div class="explanation-subsection">
                             <h3>Accessible Explanation</h3>
                             <p id="accessible-explanation">Picture a shadow: it needs light and an object to appear. No light, no shadow; no object, no shadow. In quantum physics, entangled particles are like this—each relies on the other to "be."</p>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="verse-navigation">
-                <button id="prev-verse" class="nav-button" disabled>&larr; Previous</button>
-                <button id="next-verse" class="nav-button">Next &rarr;</button>
+
+                <div class="collapsible-section" id="controls-section">
+                    <div class="section-header" id="controls-header">
+                        <h2>Animation Controls</h2>
+                        <span class="toggle-icon">►</span>
+                    </div>
+                    <div class="section-content" id="animation-controls">
+                        <!-- Animation-specific controls will be loaded here if needed -->
+                        <p>No specific controls for this chapter's animations.</p>
+                    </div>
+                </div>
+
             </div>
         </div>
-        
+
         <div id="interaction-hint">
             Click and drag to interact with the animation
         </div>

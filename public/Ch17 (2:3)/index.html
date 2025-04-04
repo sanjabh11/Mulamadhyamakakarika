@@ -19,35 +19,57 @@
     <div id="app">
         <div id="scene-container"></div>
         
-        <div id="controls-panel">
-            <button id="prev-verse" class="nav-btn">Previous</button>
-            <span id="verse-indicator">Verse 12/22</span>
-            <button id="next-verse" class="nav-btn">Next</button>
-            <button id="toggle-text" class="toggle-btn">Hide Text</button>
-            <button id="toggle-explanation" class="toggle-btn">Show Explanation</button>
-        </div>
-        
-        <div id="text-overlay" class="overlay">
-            <div class="verse-content">
-                <h2 id="verse-title">Verse 12</h2>
-                <p id="verse-text"></p>
-                <div id="verse-concepts" class="concepts">
-                    <div class="concept">
-                        <h3>Madhyamaka Concept</h3>
-                        <p id="madhyamaka-concept"></p>
+        <div id="side-panel" class="expanded">
+            <div class="panel-toggle">
+                <button id="panel-toggle-btn" aria-label="Toggle Panel">◀</button>
+            </div>
+            
+            <div class="panel-content">
+                <h1 class="chapter-title">Madhyamaka & Quantum Physics</h1>
+                
+                <div class="verse-navigation">
+                    <!-- Verse buttons will be added dynamically -->
+                </div>
+                
+                <div class="panel-section expanded" id="explanation-section">
+                    <div class="section-header">
+                        <h2>Verse Explanation</h2>
+                        <span class="toggle-icon">▼</span>
                     </div>
-                    <div class="concept">
-                        <h3>Quantum Physics Parallel</h3>
-                        <p id="quantum-parallel"></p>
+                    <div class="section-content">
+                        <div class="verse-box">
+                            <h3 id="verse-title">Verse 12</h3>
+                            <p id="verse-text" class="verse-text"></p>
+                        </div>
+                        <div class="explanation-subsection">
+                            <h4>Madhyamaka Concept</h4>
+                            <p id="madhyamaka-concept"></p>
+                        </div>
+                        <div class="explanation-subsection">
+                            <h4>Quantum Physics Parallel</h4>
+                            <p id="quantum-parallel"></p>
+                        </div>
+                        <div class="explanation-subsection">
+                            <h4>Accessible Explanation</h4>
+                            <p id="accessible-explanation"></p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        
-        <div id="explanation-overlay" class="overlay hidden">
-            <div class="explanation-content">
-                <h3>Accessible Explanation</h3>
-                <p id="accessible-explanation"></p>
+                
+                <div class="panel-section collapsed" id="controls-section">
+                    <div class="section-header">
+                        <h2>Animation Controls</h2>
+                        <span class="toggle-icon">►</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="animation-controls-wrapper">
+                            <button id="prev-verse" class="nav-btn">Previous</button>
+                            <span id="verse-indicator">Verse 12/22</span>
+                            <button id="next-verse" class="nav-btn">Next</button>
+                            <button id="toggle-panel" class="toggle-btn">Hide Panel</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -161,7 +161,8 @@ export function createVerse2Scene() {
         
         // Adjust blur based on how much the eye is looking at itself
         // When eye tries to look back at itself, dotProduct will be close to -1
-        const selfViewingFactor = Math.max(0, (-dotProduct + 0.5) * 2);
+        // Corrected formula: Blur increases as dotProduct becomes positive (looking back)
+        const selfViewingFactor = Math.max(0, dotProduct * 2);
         blurOverlay.style.backdropFilter = `blur(${selfViewingFactor * 15}px)`;
     }
     

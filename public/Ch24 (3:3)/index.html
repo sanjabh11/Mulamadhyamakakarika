@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investigation of Nirvana - Chapter 25 (part 3/3)</title>
+    <title> Investigation of the Ennobling Truths - Chapter 24 (part 3/3)</title>
     <link rel="stylesheet" href="styles.css">
     <script type="importmap">
         {
@@ -18,38 +18,52 @@
     <div id="scene-container"></div>
     
     <div id="controls-container">
-        <button id="hide-panel-btn">Hide Panel</button>
-        <button id="show-panel-btn" class="hidden">Show Panel</button>
+        <button id="hide-panel-btn">◀</button>
         
-        <div id="verse-navigation">
-            <button id="prev-verse">Previous</button>
-            <span id="verse-indicator"></span>
-            <button id="next-verse">Next</button>
-        </div>
-        
-        <div id="interaction-panel">
-            <div id="verse-info">
-                <h2 id="verse-title">Verse <span id="verse-number"></span></h2>
-                <p id="verse-text"></p>
-                <div id="concept-container">
-                    <div class="concept">
-                        <h3>Madhyamaka Concept</h3>
-                        <p id="madhyamaka-concept"></p>
-                    </div>
-                    <div class="concept">
-                        <h3>Quantum Physics Parallel</h3>
-                        <p id="quantum-physics"></p>
-                    </div>
-                    <div class="concept">
-                        <h3>Accessible Explanation</h3>
-                        <p id="accessible-explanation"></p>
+        <div id="panel-content">
+            <h1 id="chapter-title"> Investigation of the Ennobling Truths - Chapter 24</h1>
+            
+            <div id="verse-navigation">
+                <!-- Verse buttons will be generated via JS -->
+            </div>
+            
+            <div class="collapsible-section" id="verse-explanation-section">
+                <div class="section-header">
+                    <span>Verse Explanation</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content expanded" id="verse-explanation-content">
+                    <div id="verse-info">
+                        <h2 id="verse-title">Verse <span id="verse-number"></span></h2>
+                        <p id="verse-text"></p>
+                        <div id="concept-container">
+                            <div class="concept">
+                                <h3>Madhyamaka Concept</h3>
+                                <p id="madhyamaka-concept"></p>
+                            </div>
+                            <div class="concept">
+                                <h3>Quantum Physics Parallel</h3>
+                                <p id="quantum-physics"></p>
+                            </div>
+                            <div class="concept">
+                                <h3>Accessible Explanation</h3>
+                                <p id="accessible-explanation"></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <div id="animation-controls">
-                <h3>Interaction Controls</h3>
-                <div id="custom-controls"></div>
+            <div class="collapsible-section" id="animation-controls-section">
+                <div class="section-header">
+                    <span>Animation Controls</span>
+                    <span class="toggle-icon">▶</span>
+                </div>
+                <div class="section-content" id="animation-controls-content">
+                    <div id="animation-controls">
+                        <div id="custom-controls"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

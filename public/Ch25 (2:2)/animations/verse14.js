@@ -11,6 +11,7 @@ export function initVerse14(container) {
     // Clean up any existing p5 instance
     if (p5Instance) {
         p5Instance.remove();
+        p5Instance = null; // Ensure it's nullified
     }
     
     // Ensure p5 is available
@@ -25,79 +26,105 @@ export function initVerse14(container) {
         return;
     }
     
-    // Create a new p5 instance
-    p5Instance = new p5((p) => {
-        const theme = colorThemes[1]; // Use theme for verse 14
-        const particleCount = 150;
-        
-        p.setup = () => {
-            const canvas = p.createCanvas(window.innerWidth, window.innerHeight);
-            canvas.parent(container);
+    try {
+        // Create a new p5 instance
+        p5Instance = new p5((p) => {
+            const theme = colorThemes[1]; // Use theme for verse 14
+            const particleCount = 150;
             
-            // Initialize particles
-            for (let i = 0; i < particleCount; i++) {
-                particlePositions.push({
-                    x: p.random(p.width),
-                    y: p.random(p.height),
-                    size: p.random(3, 8)
-                });
+            p.setup = () => {
+                const canvas = p.createCanvas(window.innerWidth, window.innerHeight);
+                canvas.parent(container);
                 
-                particleMomentums.push({
-                    vx: p.random(-2, 2),
-                    vy: p.random(-2, 2),
-                    color: p.color(
-                        p.random(100, 255),
-                        p.random(100, 255),
-                        p.random(100, 255)
-                    )
-                });
-            }
+                // Initialize particles
+                particlePositions = []; // Clear previous particles
+                particleMomentums = []; // Clear previous momentums
+                for (let i = 0; i < particleCount; i++) {
+                    particlePositions.push({
+                        x: p.random(p.width),
+                        y: p.random(p.height),
+                        size: p.random(3, 8)
+                    });
+                    
+                    particleMomentums.push({
+                        vx: p.random(-2, 2),
+                        vy: p.random(-2, 2),
+                        color: p.color(
+                            p.random(100, 255),
+                            p.random(100, 255),
+                            p.random(100, 255)
+                        )
+                    });
+                }
+                
+                // Reset state variables
+                sliderValue = 0.5;
+                dragging = false;
+                uncertaintyShowing = false;
+
+                // Create slider for uncertainty principle
+                createSlider(p);
+            };
             
-            // Create slider for uncertainty principle
-            createSlider(p);
-        };
-        
-        p.draw = () => {
-            p.background(0, 30);
+            p.draw = () => {
+                p.background(0, 30);
+                
+                // Draw the uncertainty principle visualization
+                drawUncertaintyVisualization(p, theme);
+                
+                // Draw the complementarity principle (light/dark)
+                drawComplementarityVisualization(p, theme);
+                
+                // Draw interactive slider
+                drawSlider(p, theme);
+            };
             
-            // Draw the uncertainty principle visualization
-            drawUncertaintyVisualization(p, theme);
+            p.mousePressed = () => {
+                // Check if mouse is on slider
+                if (p.mouseX > p.width/2 - 150 && p.mouseX < p.width/2 + 150 &&
+                    p.mouseY > p.height - 100 && p.mouseY < p.height - 80) {
+                    dragging = true;
+                }
+                
+                // Toggle uncertainty when clicking elsewhere
+                if (!dragging && p.mouseY < p.height - 120) {
+                    uncertaintyShowing = !uncertaintyShowing;
+                }
+            };
             
-            // Draw the complementarity principle (light/dark)
-            drawComplementarityVisualization(p, theme);
+            p.mouseReleased = () => {
+                dragging = false;
+            };
             
-            // Draw interactive slider
-            drawSlider(p, theme);
-        };
-        
-        p.mousePressed = () => {
-            // Check if mouse is on slider
-            if (p.mouseX > p.width/2 - 150 && p.mouseX < p.width/2 + 150 &&
-                p.mouseY > p.height - 100 && p.mouseY < p.height - 80) {
-                dragging = true;
-            }
+            p.mouseDragged = () => {
+                if (dragging) {
+                    const newX = p.constrain(p.mouseX, p.width/2 - 150, p.width/2 + 150);
+                    sliderValue = p.map(newX, p.width/2 - 150, p.width/2 + 150, 0, 1);
+                }
+            };
             
-            // Toggle uncertainty when clicking elsewhere
-            if (!dragging && p.mouseY < p.height - 120) {
-                uncertaintyShowing = !uncertaintyShowing;
-            }
-        };
-        
-        p.mouseReleased = () => {
-            dragging = false;
-        };
-        
-        p.mouseDragged = () => {
-            if (dragging) {
-                const newX = p.constrain(p.mouseX, p.width/2 - 150, p.width/2 + 150);
-                sliderValue = p.map(newX, p.width/2 - 150, p.width/2 + 150, 0, 1);
-            }
-        };
-        
-        p.windowResized = () => {
-            p.resizeCanvas(window.innerWidth, window.innerHeight);
-        };
-    });
+            p.windowResized = () => {
+                p.resizeCanvas(window.innerWidth, window.innerHeight);
+            };
+        });
+    } catch (error) {
+        console.error('Failed to initialize p5.js instance for Verse 14:', error);
+        const errorMessage = document.createElement('div');
+        errorMessage.textContent = `Error initializing Verse 14 animation: ${error.message}. Please try refreshing.`;
+        errorMessage.style.color = 'red'; // Make error more visible
+        errorMessage.style.padding = '20px';
+        errorMessage.style.textAlign = 'center';
+        // Clear container before adding error message
+        while (container.firstChild) {
+            container.removeChild(container.firstChild);
+        }
+        container.appendChild(errorMessage);
+        // Ensure p5Instance is null if initialization failed
+        if (p5Instance && typeof p5Instance.remove === 'function') {
+             p5Instance.remove();
+        }
+        p5Instance = null;
+    }
 }
 
 function createSlider(p) {
