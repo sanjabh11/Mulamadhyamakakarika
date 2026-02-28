@@ -1,0 +1,247 @@
+/**
+ * Fallback Components Styles
+ * For Video and Static fallback modes
+ */
+
+/* Video Fallback */
+.videoFallback {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+}
+
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.playButton {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  width: 48px;
+  height: 48px;
+  background: rgba(139, 92, 246, 0.9);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.playButton:hover {
+  background: #8B5CF6;
+  transform: scale(1.1);
+}
+
+/* Static Fallback */
+.staticFallback {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+  overflow: auto;
+}
+
+.imageContainer {
+  flex: 0 0 auto;
+  width: 100%;
+  max-height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.staticImage {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.imagePlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #94A3B8;
+  font-size: 16px;
+}
+
+.placeholderIcon {
+  font-size: 48px;
+}
+
+.staticContent {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.staticTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #E2E8F0;
+  margin: 0 0 16px 0;
+}
+
+.staticDescription {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #CBD5E1;
+}
+
+.staticDescription p {
+  margin: 0 0 16px 0;
+}
+
+.staticDescription strong {
+  color: #8B5CF6;
+}
+
+.staticDescription em {
+  color: #C4B5FD;
+}
+
+.interactionHint {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(139, 92, 246, 0.1);
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.hintIcon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.interactionHint span:last-child {
+  font-size: 15px;
+  color: #C4B5FD;
+  line-height: 1.5;
+}
+
+/* Shared Fallback Banner */
+.fallbackBanner {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(30, 41, 59, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  z-index: 10;
+}
+
+.bannerIcon {
+  font-size: 16px;
+}
+
+.bannerText {
+  font-size: 13px;
+  color: #94A3B8;
+}
+
+/* Enhanced Fallback UI */
+.enhancedFallback {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+  padding: 32px;
+  text-align: center;
+}
+
+.fallbackIcon {
+  font-size: 64px;
+  margin-bottom: 24px;
+}
+
+.fallbackTitle {
+  font-size: 22px;
+  font-weight: 600;
+  color: #E2E8F0;
+  margin: 0 0 12px 0;
+}
+
+.fallbackMessage {
+  font-size: 16px;
+  color: #94A3B8;
+  line-height: 1.6;
+  max-width: 400px;
+  margin: 0 0 24px 0;
+}
+
+.fallbackSuggestion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: rgba(139, 92, 246, 0.1);
+  border-radius: 8px;
+  font-size: 15px;
+  color: #C4B5FD;
+}
+
+.fallbackSuggestion .suggestionIcon {
+  font-size: 18px;
+}
+
+/* Capability indicator */
+.capabilityIndicator {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+  font-size: 12px;
+  color: #64748B;
+}
+
+.capabilityDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.capabilityDot.high {
+  background: #10B981;
+}
+
+.capabilityDot.medium {
+  background: #F59E0B;
+}
+
+.capabilityDot.low {
+  background: #EF4444;
+}

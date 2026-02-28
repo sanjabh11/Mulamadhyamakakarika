@@ -1,0 +1,260 @@
+/**
+ * QuizDropdown Styles
+ * Design Guidelines: 8px grid, #8B5CF6 accent
+ */
+
+.container {
+  background: rgba(30, 27, 75, 0.4);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 8px;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  backdrop-filter: blur(4px);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #e2e8f0;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.header:hover {
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.icon {
+  font-size: 16px;
+}
+
+.title {
+  flex: 1;
+}
+
+.tierBadge {
+  background: #8B5CF6;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.chevron {
+  color: #a78bfa;
+  font-size: 10px;
+}
+
+.content {
+  padding: 0 16px 16px;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.empty {
+  color: #94a3b8;
+  font-size: 14px;
+  text-align: center;
+  padding: 16px 0;
+}
+
+.tierSelector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tierLabel {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.tierSelect {
+  flex: 1;
+  padding: 8px 12px;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.tierSelect:focus {
+  outline: none;
+  border-color: #8B5CF6;
+}
+
+.questionBox {
+  background: rgba(15, 23, 42, 0.4);
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid rgba(139, 92, 246, 0.15);
+}
+
+.questionText {
+  color: #e2e8f0;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.5;
+  margin: 0 0 16px 0;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  color: #cbd5e1;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: all 0.2s ease;
+}
+
+.option:hover:not(:disabled) {
+  background: rgba(139, 92, 246, 0.12);
+  border-color: #8B5CF6;
+}
+
+.option.selected {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: #8B5CF6;
+  color: #e2e8f0;
+}
+
+.option.correct {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: #10B981;
+  color: #34d399;
+}
+
+.option.incorrect {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: #EF4444;
+  color: #f87171;
+}
+
+.option:disabled {
+  cursor: default;
+}
+
+.optionMarker {
+  color: #8B5CF6;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.optionText {
+  flex: 1;
+}
+
+.result {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 6px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.result.success {
+  background: rgba(16, 185, 129, 0.15);
+  border-left: 3px solid #10B981;
+}
+
+.result.failure {
+  background: rgba(239, 68, 68, 0.1);
+  border-left: 3px solid #EF4444;
+}
+
+.resultText {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.result.success .resultText {
+  color: #10B981;
+}
+
+.result.failure .resultText {
+  color: #EF4444;
+}
+
+.explanation {
+  color: #cbd5e1;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.submitBtn,
+.resetBtn {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submitBtn {
+  background: #8B5CF6;
+  color: white;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: #7C3AED;
+}
+
+.submitBtn:disabled {
+  background: rgba(100, 116, 139, 0.3);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.resetBtn {
+  background: rgba(15, 23, 42, 0.5);
+  color: #cbd5e1;
+}
+
+.resetBtn:hover {
+  background: rgba(139, 92, 246, 0.2);
+}

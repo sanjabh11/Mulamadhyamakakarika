@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://storage.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.fal.ai https://cdn.jsdelivr.net; frame-src 'self';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    
+    
+    <title>Collapsed Navigation Example</title>
+    <style>
+        :root {
+            --panel-width: 320px;
+            --panel-collapsed-width: 40px;
+            --accent-color: #8B5CF6;
+            --panel-bg: rgba(15, 23, 42, 0.8);
+            --text-color: #f8fafc;
+            --transition-speed: 0.3s;
+            --panel-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            overflow: hidden;
+            background: #0f172a;
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+        }
+
+        #animation-container {
+            flex-grow: 1;
+            background: #000011;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: white;
+        }
+
+        /* Left Panel Styles */
+        #left-panel {
+            width: var(--panel-width);
+            height: 100vh;
+            background: var(--panel-bg);
+            position: relative;
+            transition: transform var(--transition-speed) ease;
+            overflow: hidden;
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            transform: translateX(0);
+        }
+
+        #left-panel.collapsed {
+            transform: translateX(calc(-100% + var(--panel-collapsed-width)));
+        }
+
+        /* Panel Toggle */
+        .panel-toggle {
+            position: absolute;
+            top: 50%;
+            width: 20px;
+            height: 60px;
+            background-color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transform: translateY(-50%);
+            z-index: 1001;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .left-toggle {
+            right: -20px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .toggle-arrow {
+            transition: transform 0.3s ease;
+            color: white;
+        }
+
+        #left-panel.collapsed .toggle-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Hover effect */
+        .panel-toggle:hover {
+            background-color: #9d6eff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Regular Panel Content */
+        .panel-content {
+            padding: 20px;
+            transition: opacity 0.2s ease;
+        }
+
+        #left-panel.collapsed .panel-content {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .chapter-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+        }
+
+        .verse-navigation {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .verse-button {
+            background: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--accent-color);
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .verse-button:hover {
+            background: rgba(139, 92, 246, 0.3);
+        }
+
+        .verse-button.active {
+            background: var(--accent-color);
+        }
+
+        /* Collapsed Navigation */
+        .verse-nav-collapsed {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: var(--panel-collapsed-width);
+            height: 100%;
+        }
+
+        #left-panel.collapsed .verse-nav-collapsed {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 5px;
+            margin-top: 60px;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color) transparent;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #left-panel.collapsed .verse-nav-collapsed::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        #left-panel.collapsed .verse-nav-collapsed::-webkit-scrollbar-thumb {
+            background-color: var(--accent-color);
+            border-radius: 4px;
+        }
+
+        #left-panel.collapsed .verse-nav-collapsed .verse-button {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        #left-panel.collapsed .chapter-info {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9rem;
+            writing-mode: vertical-lr;
+            transform: rotate(180deg);
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="left-panel">
+        <div class="panel-toggle left-toggle">
+            <span class="toggle-arrow">◀</span>
+        </div>
+
+        <!-- Regular panel content (hidden when collapsed) -->
+        <div class="panel-content">
+            <h1 class="chapter-title">Chapter Example</h1>
+            <div class="verse-navigation" id="verse-navigation">
+                <!-- Regular verse buttons will be generated here -->
+            </div>
+            <div class="verse-text">
+                <p>This is an example of a verse text that would appear in the expanded panel.</p>
+            </div>
+        </div>
+
+        <!-- Collapsed state navigation (shown only when collapsed) -->
+        <div class="verse-nav-collapsed">
+            <div class="chapter-info">Chapter X</div>
+            <!-- Verse buttons for collapsed state will be generated here -->
+        </div>
+    </div>
+
+    <div id="animation-container">
+        Animation Area
+    </div>
+
+    <script>
+        // Sample verses data
+        const verses = [
+            { number: 1, text: "Verse 1 text" },
+            { number: 2, text: "Verse 2 text" },
+            { number: 3, text: "Verse 3 text" },
+            { number: 4, text: "Verse 4 text" },
+            { number: 5, text: "Verse 5 text" },
+            { number: 6, text: "Verse 6 text" },
+            { number: 7, text: "Verse 7 text" },
+            { number: 8, text: "Verse 8 text" },
+            { number: 9, text: "Verse 9 text" },
+            { number: 10, text: "Verse 10 text" }
+        ];
+
+        let currentVerseIndex = 0;
+
+        // Initialize the UI
+        function initUI() {
+            setupPanelToggle();
+            createVerseButtons();
+            createCollapsedNavigation();
+        }
+
+        // Set up panel toggle functionality
+        function setupPanelToggle() {
+            const leftPanel = document.getElementById('left-panel');
+            const leftPanelToggle = document.querySelector('.left-toggle');
+
+            if (leftPanelToggle && leftPanel) {
+                leftPanelToggle.addEventListener('click', () => {
+                    leftPanel.classList.toggle('collapsed');
+                    console.log('Panel toggled:', leftPanel.classList.contains('collapsed') ? 'collapsed' : 'expanded');
+                });
+            } else {
+                console.error('Panel toggle button or panel not found');
+            }
+        }
+
+        // Create regular verse buttons
+        function createVerseButtons() {
+            const verseNavigation = document.getElementById('verse-navigation');
+
+            verses.forEach((verse, index) => {
+                const button = document.createElement('button');
+                button.className = 'verse-button';
+                if (index === currentVerseIndex) button.classList.add('active');
+                button.textContent = index + 1;
+
+                button.addEventListener('click', () => {
+                    currentVerseIndex = index;
+                    updateVerseButtons();
+                    // In a real implementation, you would load the verse content here
+                });
+
+                verseNavigation.appendChild(button);
+            });
+        }
+
+        // Create collapsed navigation
+        function createCollapsedNavigation() {
+            const leftPanel = document.getElementById('left-panel');
+            const verseNavCollapsed = document.querySelector('.verse-nav-collapsed');
+
+            // Update chapter info
+            const chapterInfo = verseNavCollapsed.querySelector('.chapter-info');
+            chapterInfo.textContent = 'Chapter X'; // Replace X with actual chapter number
+
+            // Create verse buttons for collapsed state
+            verses.forEach((verse, index) => {
+                const button = document.createElement('button');
+                button.className = 'verse-button';
+                if (index === currentVerseIndex) button.classList.add('active');
+                button.textContent = index + 1;
+
+                button.addEventListener('click', () => {
+                    currentVerseIndex = index;
+                    updateVerseButtons();
+                    // In a real implementation, you would load the verse content here
+                });
+
+                verseNavCollapsed.appendChild(button);
+            });
+        }
+
+        // Update all verse buttons to reflect current selection
+        function updateVerseButtons() {
+            const allButtons = document.querySelectorAll('.verse-button');
+            allButtons.forEach((button, index) => {
+                // Use modulo to handle both sets of buttons
+                if (index % verses.length === currentVerseIndex) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+        }
+
+        // Initialize when the DOM is ready
+        document.addEventListener('DOMContentLoaded', initUI);
+    </script>
+</body>
+</html>

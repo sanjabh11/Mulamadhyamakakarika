@@ -1,0 +1,23 @@
+{
+  "3d_models": {
+    "shared": {
+      "_comment": "Shared 3D models will be listed here during migration."
+    }
+  },
+  "images": {
+    "shared": {
+        "_comment": "Shared images will be listed here during migration."
+    }
+  },
+  "fonts": {
+    "shared": {
+        "_comment": "Shared fonts will be listed here during migration."
+    }
+  },
+  "audio": {
+    "shared": {
+        "_comment": "Shared audio files will be listed here during migration."
+    }
+  },
+  "_comment_chapters": "Chapter-specific assets will be added under keys like 'ch1', 'ch26', etc., within each asset type during migration."
+}

@@ -1,0 +1,260 @@
+/**
+ * Center Panel Styles
+ * This is the main 3D canvas area - 70% of screen width
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  background: linear-gradient(135deg, #0f172a 0%, #1e1e2e 100%);
+}
+
+.canvasWrapper {
+  flex: 1;
+  position: relative;
+  min-height: 400px;
+}
+
+.canvasWrapper canvas {
+  border-radius: 0;
+}
+
+/* Loading State */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #94A3B8;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(139, 92, 246, 0.2);
+  border-top-color: #8B5CF6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading p {
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Fallback State */
+.fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 32px;
+  text-align: center;
+  color: #E2E8F0;
+}
+
+.fallbackIcon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.fallback h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #8B5CF6;
+  margin: 0 0 8px 0;
+}
+
+.fallback p {
+  font-size: 14px;
+  color: #94A3B8;
+  margin: 0 0 16px 0;
+  max-width: 300px;
+}
+
+.fallbackHint {
+  padding: 12px 16px;
+  background: rgba(139, 92, 246, 0.1);
+  border-radius: 8px;
+  font-size: 14px;
+  color: #C4B5FD;
+}
+
+/* Message Overlay */
+.messageOverlay {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 16px 24px;
+  background: rgba(139, 92, 246, 0.95);
+  border-radius: 12px;
+  text-align: center;
+  z-index: 10;
+  max-width: 80%;
+  animation: slideIn 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.messageText {
+  font-size: 16px;
+  font-weight: 500;
+  color: #FFFFFF;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.messageSanskrit {
+  font-size: 14px;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 8px 0 0 0;
+}
+
+/* Interaction Bar */
+.interactionBar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 24px;
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.interactionButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 20px;
+  min-height: 48px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.interactionButton:hover {
+  background: rgba(139, 92, 246, 0.2);
+  border-color: #8B5CF6;
+  transform: translateY(-2px);
+}
+
+.interactionButton:active {
+  transform: translateY(0);
+}
+
+.solutionButton {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.solutionButton:hover {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #10B981;
+}
+
+.buttonLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #E2E8F0;
+}
+
+.buttonSanskrit {
+  font-size: 12px;
+  font-style: italic;
+  color: #94A3B8;
+  margin-top: 4px;
+}
+
+/* Helper Text */
+.helperText {
+  position: absolute;
+  bottom: 80px;
+  right: 16px;
+  font-size: 12px;
+  color: #64748B;
+  background: rgba(15, 23, 42, 0.8);
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+/* Capability Indicator */
+.capabilityIndicator {
+  position: absolute;
+  bottom: 80px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 6px;
+  font-size: 12px;
+  color: #94A3B8;
+}
+
+.capabilityDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.capabilityDot.high {
+  background: #10B981;
+}
+
+.capabilityDot.medium {
+  background: #F59E0B;
+}
+
+.capabilityDot.low {
+  background: #EF4444;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .interactionBar {
+    padding: 12px 16px;
+    gap: 6px;
+  }
+  
+  .interactionButton {
+    padding: 10px 14px;
+    min-height: 44px;
+  }
+  
+  .buttonLabel {
+    font-size: 13px;
+  }
+  
+  .buttonSanskrit {
+    display: none;
+  }
+  
+  .helperText {
+    display: none;
+  }
+}

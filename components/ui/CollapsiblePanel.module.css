@@ -1,0 +1,100 @@
+/**
+ * CollapsiblePanel Styles
+ * Design Guidelines: 8px grid, #8B5CF6 accent, light theme
+ */
+
+.panel {
+  background: rgba(30, 27, 75, 0.4);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  border: 1px solid var(--chapter-border-color, rgba(139, 92, 246, 0.2));
+  backdrop-filter: blur(4px);
+  transition: border-color 0.6s ease, box-shadow 0.6s ease;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  transition: background 0.2s ease;
+}
+
+.header:hover {
+  background: var(--chapter-panel-glow, rgba(139, 92, 246, 0.1));
+  animation: panel-header-glow 3s infinite ease-in-out;
+}
+
+@keyframes panel-header-glow {
+
+  0%,
+  100% {
+    box-shadow: none;
+  }
+
+  50% {
+    box-shadow: inset 0 0 12px var(--chapter-panel-glow, rgba(139, 92, 246, 0.15));
+  }
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon {
+  font-size: 16px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.chevron {
+  color: #a78bfa;
+  font-size: 10px;
+  transition: transform 0.2s ease;
+}
+
+.chevron.open {
+  transform: rotate(180deg);
+}
+
+.content {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+}
+
+.content.show {
+  max-height: 2000px;
+  opacity: 1;
+  padding: 0 16px 16px;
+  animation: slideDown 0.2s ease;
+}
+
+.content.hide {
+  max-height: 0;
+  opacity: 0;
+  padding: 0 16px;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

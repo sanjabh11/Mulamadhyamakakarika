@@ -1,0 +1,86 @@
+/**
+ * Auth Validation Endpoint
+ * CRITICAL: Validates session tokens and returns user data
+ */
+
+import { sessionStore } from './callback';
+import { userStore } from '../webhooks/whop';
+
+export default async function handler(req, res) {
+  if (req.method !== 'GET' && req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  try {
+    // Get session token from header or cookie
+    const authHeader = req.headers.authorization;
+    const cookieToken = parseCookie(req.headers.cookie, 'whop_session');
+    
+    const token = authHeader?.replace('Bearer ', '') || cookieToken;
+
+    if (!token) {
+      return res.status(401).json({ 
+        valid: false, 
+        error: 'No session token provided' 
+      });
+    }
+
+    // Look up session
+    const session = sessionStore.get(token);
+
+    if (!session) {
+      return res.status(401).json({ 
+        valid: false, 
+        error: 'Invalid or expired session' 
+      });
+    }
+
+    // Check if session expired
+    if (session.expiresAt && Date.now() > session.expiresAt) {
+      sessionStore.delete(token);
+      return res.status(401).json({ 
+        valid: false, 
+        error: 'Session expired' 
+      });
+    }
+
+    // Get latest user data
+    const userData = userStore.get(session.userId) || {};
+
+    // Return user data
+    return res.status(200).json({
+      valid: true,
+      id: session.userId,
+      email: session.email,
+      name: session.name || userData.name,
+      tier: userData.tier || session.tier || 'free',
+      membershipId: userData.membershipId || session.membershipId,
+      createdAt: session.createdAt,
+      // Include progress data if available
+      progress: userData.progress || null,
+      animationsUsedToday: userData.animationsUsedToday || 0
+    });
+
+  } catch (error) {
+    console.error('[AUTH VALIDATE] Error:', error);
+    return res.status(500).json({ 
+      valid: false, 
+      error: 'Validation failed' 
+    });
+  }
+}
+
+/**
+ * Parse cookie value from cookie header
+ */
+function parseCookie(cookieHeader, name) {
+  if (!cookieHeader) return null;
+  
+  const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
+    const [key, value] = cookie.trim().split('=');
+    acc[key] = value;
+    return acc;
+  }, {});
+  
+  return cookies[name] || null;
+}

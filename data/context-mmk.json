@@ -1,0 +1,251 @@
+{
+  "meta": {
+    "version": "1.0",
+    "created": "2025-01-01T00:00:00Z",
+    "last_updated": "2025-01-01T00:00:00Z",
+    "chapters_completed": 0,
+    "total_verses_generated": 0,
+    "total_chapters": 28,
+    "total_verses_target": 560
+  },
+
+  "philosophical_foundation": {
+    "core_terms_introduced": {},
+    "arguments_established": [],
+    "opponent_views_refuted": [],
+    "prāsaṅgika_techniques_used": {
+      "reductio_ad_absurdum": [],
+      "dilemma": [],
+      "regress": [],
+      "unwanted_consequence": [],
+      "catuṣkoṭi": []
+    }
+  },
+
+  "quantum_usage_tracker": {
+    "concepts_used": {},
+    "available_concepts": [
+      "bells_theorem",
+      "wave_function_collapse",
+      "superposition",
+      "quantum_entanglement",
+      "delayed_choice",
+      "quantum_contextuality",
+      "uncertainty_principle",
+      "quantum_tunneling",
+      "decoherence",
+      "quantum_zeno_effect",
+      "many_worlds",
+      "quantum_eraser",
+      "hardy_paradox",
+      "kochen_specker",
+      "leggett_garg",
+      "vacuum_fluctuations",
+      "virtual_particles",
+      "quantum_interference",
+      "complementarity",
+      "non_locality",
+      "holographic_principle",
+      "quantum_field_theory",
+      "path_integral",
+      "quantum_measurement",
+      "observer_effect",
+      "wavefunction_delocalization",
+      "quantum_coherence",
+      "spontaneous_symmetry_breaking",
+      "spin_statistics",
+      "pauli_exclusion"
+    ],
+    "concepts_reserved_for": {
+      "quantum_tunneling": "Ch2 (motion through barriers)",
+      "decoherence": "Ch6 (desire/attachment dissolution)",
+      "many_worlds": "Ch25 (nirvana/liberation)",
+      "uncertainty_principle": "Ch3 (perception)",
+      "vacuum_fluctuations": "Ch7 (arising/cessation)",
+      "spontaneous_symmetry_breaking": "Ch15 (essence/nature)"
+    }
+  },
+
+  "animation_registry": {
+    "global_animation_count": {
+      "entanglement": 0,
+      "superposition": 0,
+      "wave_function": 0,
+      "double_slit": 0,
+      "decoherence": 0,
+      "non_locality": 0,
+      "observer_effect": 0,
+      "fluctuations": 0,
+      "dependent_origination": 0,
+      "emptiness": 0,
+      "complementarity": 0,
+      "catuskoti_tetrahedron": 0,
+      "holographic_projection": 0,
+      "magnifying_zoom": 0,
+      "circuit_flow": 0,
+      "timeline_retroactive": 0,
+      "schrodinger_box": 0,
+      "indras_net": 0,
+      "particle_wave_duality": 0,
+      "probability_cloud": 0,
+      "measurement_collapse": 0,
+      "tunneling_barrier": 0
+    },
+    "uniqueness_rules": {
+      "max_same_type_per_chapter": 2,
+      "max_global_per_type": 20,
+      "rotate_color_palettes": true,
+      "avoid_consecutive_same_type": true,
+      "min_verses_between_same_type": 3
+    },
+    "color_palettes": [
+      {
+        "id": "quantum_purple",
+        "colors": ["#8B5CF6", "#06B6D4", "#10B981"],
+        "used_in_chapters": []
+      },
+      {
+        "id": "cosmic_blue",
+        "colors": ["#3B82F6", "#8B5CF6", "#EC4899"],
+        "used_in_chapters": []
+      },
+      {
+        "id": "dharma_gold",
+        "colors": ["#F59E0B", "#EF4444", "#8B5CF6"],
+        "used_in_chapters": []
+      },
+      {
+        "id": "emptiness_gray",
+        "colors": ["#64748B", "#94A3B8", "#CBD5E1"],
+        "used_in_chapters": []
+      },
+      {
+        "id": "nirvana_white",
+        "colors": ["#F8FAFC", "#E2E8F0", "#CBD5E1"],
+        "used_in_chapters": []
+      },
+      {
+        "id": "samsara_fire",
+        "colors": ["#EF4444", "#F97316", "#FBBF24"],
+        "used_in_chapters": []
+      },
+      {
+        "id": "wisdom_emerald",
+        "colors": ["#10B981", "#14B8A6", "#06B6D4"],
+        "used_in_chapters": []
+      }
+    ]
+  },
+
+  "learning_progression": {
+    "concepts_mastered": [],
+    "pedagogical_scaffolding": {
+      "current_level": "foundational",
+      "level_thresholds": {
+        "foundational": { "chapters": [1, 2, 3, 4, 5, 6, 7], "description": "Basic Madhyamaka concepts" },
+        "intermediate": { "chapters": [8, 9, 10, 11, 12, 13, 14], "description": "Self, other, world analysis" },
+        "advanced": { "chapters": [15, 16, 17, 18, 19, 20, 21], "description": "Nature, karma, time" },
+        "synthesis": { "chapters": [22, 23, 24, 25, 26, 27], "description": "Liberation and conclusion" }
+      }
+    },
+    "prerequisite_chains": {
+      "causation_empty": { "established_in": null, "required_for": ["motion_empty", "self_empty"] },
+      "motion_empty": { "established_in": null, "required_for": ["time_empty"] },
+      "self_empty": { "established_in": null, "required_for": ["tathagata_analysis"] }
+    }
+  },
+
+  "cross_references": {
+    "forward_references": {},
+    "back_references": {},
+    "thematic_clusters": {
+      "causation": [],
+      "identity": [],
+      "time": [],
+      "liberation": []
+    }
+  },
+
+  "chapter_summaries": {},
+
+  "certification_data": {
+    "certificates": [
+      {
+        "id": "foundation_certificate",
+        "title": "Conditions & Motion Mastery",
+        "chapters": [1, 2, 3, 4, 5, 6, 7],
+        "requirements": {
+          "all_verses_completed": true,
+          "chapter_exams_passed": true,
+          "min_quiz_average": 0.75
+        },
+        "badge_icon": "quantum_tetrahedron",
+        "color_scheme": ["#8B5CF6", "#06B6D4"]
+      },
+      {
+        "id": "self_other_certificate",
+        "title": "Identity & World Understanding",
+        "chapters": [8, 9, 10, 11, 12, 13, 14],
+        "requirements": {
+          "all_verses_completed": true,
+          "chapter_exams_passed": true,
+          "min_quiz_average": 0.75,
+          "prerequisite": "foundation_certificate"
+        },
+        "badge_icon": "entangled_spheres",
+        "color_scheme": ["#10B981", "#3B82F6"]
+      },
+      {
+        "id": "buddha_certificate",
+        "title": "Nature & Freedom Realization",
+        "chapters": [15, 16, 17, 18, 19, 20, 21],
+        "requirements": {
+          "all_verses_completed": true,
+          "chapter_exams_passed": true,
+          "min_quiz_average": 0.80,
+          "prerequisite": "self_other_certificate"
+        },
+        "badge_icon": "lotus_quantum",
+        "color_scheme": ["#F59E0B", "#EC4899"]
+      },
+      {
+        "id": "master_certificate",
+        "title": "Madhyamaka-Quantum Scholar",
+        "chapters": [22, 23, 24, 25, 26, 27],
+        "requirements": {
+          "all_verses_completed": true,
+          "chapter_exams_passed": true,
+          "min_quiz_average": 0.85,
+          "capstone_essay": true,
+          "prerequisite": "buddha_certificate"
+        },
+        "badge_icon": "indras_net_animated",
+        "color_scheme": ["#8B5CF6", "#F59E0B", "#10B981"]
+      }
+    ]
+  },
+
+  "generation_log": {
+    "sessions": [],
+    "issues_tracker": [],
+    "quality_notes": []
+  },
+
+  "whop_integration": {
+    "tier_chapter_mapping": {
+      "explorer": [1],
+      "seeker": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      "practitioner": "all",
+      "scholar": "all"
+    },
+    "gated_features": {
+      "quantum_parallel_2_3": "seeker",
+      "advanced_quiz": "seeker",
+      "hd_animation": "practitioner",
+      "animation_download": "practitioner",
+      "certificate": "practitioner",
+      "ai_tutor": "scholar",
+      "scholar_commentary": "scholar"
+    }
+  }
+}

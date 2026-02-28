@@ -1,0 +1,5 @@
+# Redirect all HTTP traffic to HTTPS
+http://* https://:splat 301!
+
+# Redirect www to non-www
+https://www.mulamadhyamakakarika-quanta.netlify.app/* https://mulamadhyamakakarika-quanta.netlify.app/:splat 301!

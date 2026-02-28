@@ -1,0 +1,121 @@
+.container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.animationContainer {
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 2rem;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.controlPanel {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.controlButton {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #4a5568;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.controlButton:hover {
+  background-color: #2d3748;
+}
+
+.explanationContainer {
+  width: 100%;
+  max-width: 800px;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.explanationContainer h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #2d3748;
+}
+
+.explanationContent {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.explanationContent h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: #4a5568;
+}
+
+.explanationContent p {
+  line-height: 1.6;
+  color: #4a5568;
+}
+
+.mobileControls {
+  position: fixed;
+  bottom: 1rem;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem;
+  z-index: 100;
+}
+
+.mobileButton {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 30px;
+  background-color: #4a5568;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+  
+  .explanationContainer {
+    padding: 1rem;
+  }
+  
+  .controlPanel {
+    flex-wrap: wrap;
+  }
+} 

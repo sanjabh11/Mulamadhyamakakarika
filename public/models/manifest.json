@@ -1,0 +1,179 @@
+{
+  "version": "1.0",
+  "generated": "2025-12-11T17:05:28.399Z",
+  "totalModels": 5,
+  "chapters": [
+    {
+      "chapter": 1,
+      "verseCount": 14,
+      "theme": "conditions"
+    },
+    {
+      "chapter": 2,
+      "verseCount": 25,
+      "theme": "motion"
+    },
+    {
+      "chapter": 3,
+      "verseCount": 9,
+      "theme": "perception"
+    },
+    {
+      "chapter": 4,
+      "verseCount": 9,
+      "theme": "aggregates"
+    },
+    {
+      "chapter": 5,
+      "verseCount": 8,
+      "theme": "elements"
+    },
+    {
+      "chapter": 6,
+      "verseCount": 10,
+      "theme": "desire"
+    },
+    {
+      "chapter": 7,
+      "verseCount": 35,
+      "theme": "arising"
+    },
+    {
+      "chapter": 8,
+      "verseCount": 13,
+      "theme": "agent-action"
+    },
+    {
+      "chapter": 9,
+      "verseCount": 12,
+      "theme": "prior-entity"
+    },
+    {
+      "chapter": 10,
+      "verseCount": 16,
+      "theme": "fire-fuel"
+    },
+    {
+      "chapter": 11,
+      "verseCount": 8,
+      "theme": "temporal-limits"
+    },
+    {
+      "chapter": 12,
+      "verseCount": 10,
+      "theme": "suffering"
+    },
+    {
+      "chapter": 13,
+      "verseCount": 8,
+      "theme": "compounded"
+    },
+    {
+      "chapter": 14,
+      "verseCount": 8,
+      "theme": "association"
+    },
+    {
+      "chapter": 15,
+      "verseCount": 11,
+      "theme": "essence"
+    },
+    {
+      "chapter": 16,
+      "verseCount": 10,
+      "theme": "bondage"
+    },
+    {
+      "chapter": 17,
+      "verseCount": 33,
+      "theme": "karma"
+    },
+    {
+      "chapter": 18,
+      "verseCount": 12,
+      "theme": "self"
+    },
+    {
+      "chapter": 19,
+      "verseCount": 6,
+      "theme": "time"
+    },
+    {
+      "chapter": 20,
+      "verseCount": 24,
+      "theme": "cause-effect"
+    },
+    {
+      "chapter": 21,
+      "verseCount": 21,
+      "theme": "becoming"
+    },
+    {
+      "chapter": 22,
+      "verseCount": 16,
+      "theme": "tathagata"
+    },
+    {
+      "chapter": 23,
+      "verseCount": 25,
+      "theme": "error"
+    },
+    {
+      "chapter": 24,
+      "verseCount": 40,
+      "theme": "noble-truths"
+    },
+    {
+      "chapter": 25,
+      "verseCount": 24,
+      "theme": "nirvana"
+    },
+    {
+      "chapter": 26,
+      "verseCount": 12,
+      "theme": "twelve-links"
+    },
+    {
+      "chapter": 27,
+      "verseCount": 30,
+      "theme": "views"
+    }
+  ],
+  "models": [
+    {
+      "chapter": 1,
+      "verse": 1,
+      "filename": "ch01_v01.glb",
+      "concept": "Measurement",
+      "status": "pending"
+    },
+    {
+      "chapter": 1,
+      "verse": 2,
+      "filename": "ch01_v02.glb",
+      "concept": "Correlation",
+      "status": "pending"
+    },
+    {
+      "chapter": 1,
+      "verse": 3,
+      "filename": "ch01_v03.glb",
+      "concept": "Entanglement",
+      "status": "pending"
+    },
+    {
+      "chapter": 1,
+      "verse": 4,
+      "filename": "ch01_v04.glb",
+      "concept": "Observer Effect",
+      "status": "pending"
+    },
+    {
+      "chapter": 1,
+      "verse": 5,
+      "filename": "ch01_v05.glb",
+      "concept": "Fluctuations",
+      "status": "pending"
+    }
+  ]
+}

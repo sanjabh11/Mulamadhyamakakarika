@@ -1,0 +1,15 @@
+{
+    "name": "Nagarjuna Quantum Reflections",
+    "short_name": "MMK Quantum",
+    "description": "Interactive exploration of Mūlamadhyamakakārikā through quantum physics parallels",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0a0e27",
+    "theme_color": "#00ffc8",
+    "orientation": "any",
+    "categories": [
+        "education",
+        "books",
+        "philosophy"
+    ]
+}
