@@ -37,3 +37,10 @@ yarn-error.log*
 
 # Backups
 *.bak
+
+.agents/
+.git_broken_backup/
+legacy_backup/
+legacy_static/
+pages_archive/
+build_log.txt
