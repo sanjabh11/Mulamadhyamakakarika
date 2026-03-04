@@ -7,6 +7,7 @@
  */
 
 import React, { useState, useEffect, createContext, useContext } from 'react';
+import { trackMonetizationEvent, EVENTS } from '../../lib/analytics';
 
 // Membership tier definitions — must stay in sync with lib/whop-auth.js
 export const TIERS = {
@@ -220,6 +221,11 @@ export function MembershipProvider({ children }) {
   // Upgrade tier (for testing)
   function upgradeTier(newTier) {
     if (TIERS[newTier.toUpperCase()]) {
+      trackMonetizationEvent(EVENTS.CHECKOUT_COMPLETED, {
+        user_tier_current: tier,
+        selectedTier: newTier,
+        checkoutProvider: 'manual_dev_toggle'
+      });
       setTier(newTier);
       localStorage.setItem('mmk_membership_tier', newTier);
     }
@@ -418,6 +424,13 @@ export function UpgradePrompt({ requiredTier = 'seeker' }) {
 export function PricingTable() {
   const { tier, upgradeTier } = useMembership();
 
+  useEffect(() => {
+    trackMonetizationEvent(EVENTS.PRICING_VIEWED, {
+      user_tier_current: tier || 'free',
+      source: 'pricing_table'
+    });
+  }, [tier]);
+
   return (
     <div className="pricing-table">
       <h2>Choose Your Path</h2>
@@ -457,7 +470,14 @@ export function PricingTable() {
 
             <button
               className={`select-btn ${tier === tierConfig.id ? 'current' : ''}`}
-              onClick={() => upgradeTier(tierConfig.id)}
+              onClick={() => {
+                trackMonetizationEvent(EVENTS.UPGRADE_CTA_CLICKED, {
+                  user_tier_current: tier || 'free',
+                  selectedTier: tierConfig.id,
+                  cta: 'pricing_select_plan'
+                });
+                upgradeTier(tierConfig.id);
+              }}
               disabled={tier === tierConfig.id}
             >
               {tier === tierConfig.id ? 'Current Plan' : tierConfig.price === 0 ? 'Get Started' : 'Subscribe'}

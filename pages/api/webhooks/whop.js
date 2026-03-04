@@ -24,6 +24,15 @@ export const config = {
 const userStore = globalThis.userStore || new Map();
 globalThis.userStore = userStore;
 
+function emitBillingEvent(eventName, payload = {}) {
+  console.log('[ANALYTICS_EVENT]', JSON.stringify({
+    eventName,
+    category: 'billing',
+    timestamp: new Date().toISOString(),
+    ...payload
+  }));
+}
+
 /**
  * Get raw body from request
  */
@@ -102,8 +111,12 @@ async function handlePaymentSucceeded(payment) {
     planId: payment.plan_id
   });
   
-  // Track payment in analytics
-  // In production, save to database
+  emitBillingEvent('payment_succeeded', {
+    userId: payment.user_id,
+    planId: payment.plan_id,
+    amount: payment.amount
+  });
+
   
   const userId = payment.user_id;
   const tier = planIdToTier(payment.plan_id);
@@ -146,6 +159,13 @@ async function handleMembershipActivated(membership) {
     validUntil: membership.renewal_period_end || null
   });
   
+  emitBillingEvent('subscription_started', {
+    userId,
+    tier,
+    planId: membership.plan_id,
+    membershipId: membership.id
+  });
+
   console.log(`[USER ACTIVATED] User ${userId} now has tier: ${tier}`);
 }
 
@@ -171,6 +191,12 @@ async function handleMembershipDeactivated(membership) {
     deactivationReason: membership.cancellation_reason
   });
   
+  emitBillingEvent('subscription_cancelled', {
+    userId,
+    previousTier: existingUser.tier || 'unknown',
+    reason: membership.cancellation_reason
+  });
+
   console.log(`[USER DEACTIVATED] User ${userId} downgraded to free tier`);
 }
 

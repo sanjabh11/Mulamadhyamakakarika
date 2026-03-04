@@ -8,7 +8,7 @@
 import React from 'react';
 import { useUser } from '../contexts/UserContext';
 import { getUpgradeRecommendation, getTierPrice, formatTierName, TIERS } from '../lib/whop-auth';
-import { trackPaywallHit } from '../lib/analytics';
+import { trackPaywallHit, trackMonetizationEvent, EVENTS } from '../lib/analytics';
 
 /**
  * PaywallGate - Wraps content and shows upgrade CTA if user lacks access
@@ -36,6 +36,25 @@ export function PaywallGate({ chapterNumber, children, preview = null }) {
   React.useEffect(() => {
     trackPaywallHit(chapterNumber, user.tier, upgrade?.recommendedTier);
   }, [chapterNumber, user.tier, upgrade?.recommendedTier]);
+
+  const handleUpgradeClick = React.useCallback(() => {
+    if (!upgrade) return;
+    trackMonetizationEvent(EVENTS.UPGRADE_CTA_CLICKED, {
+      chapterNumber,
+      user_tier_current: user.tier || 'free',
+      recommendedTier: upgrade.recommendedTier,
+      productId: upgrade.productId,
+      cta: 'paywall_upgrade_now'
+    });
+
+    trackMonetizationEvent(EVENTS.CHECKOUT_STARTED, {
+      chapterNumber,
+      user_tier_current: user.tier || 'free',
+      recommendedTier: upgrade.recommendedTier,
+      productId: upgrade.productId,
+      checkoutProvider: 'whop'
+    });
+  }, [chapterNumber, upgrade, user.tier]);
   
   return (
     <div className="paywall-container">
@@ -88,6 +107,7 @@ export function PaywallGate({ chapterNumber, children, preview = null }) {
               
               <a 
                 href={`https://whop.com/checkout/${upgrade.productId}`}
+                onClick={handleUpgradeClick}
                 className="paywall-button primary"
                 target="_blank"
                 rel="noopener noreferrer"

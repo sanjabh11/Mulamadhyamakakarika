@@ -15,6 +15,15 @@ import { userStore } from '../webhooks/whop';
 const sessionStore = globalThis.__mmk_sessionStore || new Map();
 globalThis.__mmk_sessionStore = sessionStore;
 
+function emitAuthEvent(eventName, payload = {}) {
+  console.log('[ANALYTICS_EVENT]', JSON.stringify({
+    eventName,
+    category: 'auth',
+    timestamp: new Date().toISOString(),
+    ...payload
+  }));
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -78,6 +87,12 @@ export default async function handler(req, res) {
       userId: userInfo.id,
       email: userInfo.email,
       tier
+    });
+
+    emitAuthEvent('login_succeeded', {
+      userId: userInfo.id,
+      tier,
+      membershipId: membership?.id || null
     });
 
     // Set session cookie and redirect
