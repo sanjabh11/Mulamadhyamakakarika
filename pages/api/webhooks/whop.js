@@ -8,21 +8,7 @@
  * - membership.deactivated
  */
 
-import { validateWebhook, planIdToTier } from '../../../lib/whop-sdk';
-
-// Disable body parsing - we need raw body for signature validation
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
-/**
- * In-memory user store (replace with database in production)
- * Structure: { odId: { tier, membershipId, validUntil, ... } }
- */
-const userStore = globalThis.userStore || new Map();
-globalThis.userStore = userStore;
+import { getUser, setUser } from '../../../lib/redis-store';
 
 /**
  * Get raw body from request
@@ -43,14 +29,14 @@ export default async function handler(req, res) {
   try {
     // Get raw body for signature validation
     const rawBody = await getRawBody(req);
-    
+
     // Validate webhook signature
     const headers = {
       'webhook-id': req.headers['webhook-id'],
       'webhook-timestamp': req.headers['webhook-timestamp'],
       'webhook-signature': req.headers['webhook-signature'],
     };
-    
+
     let webhookData;
     try {
       webhookData = validateWebhook(rawBody, headers);
@@ -60,7 +46,7 @@ export default async function handler(req, res) {
     }
 
     const { type, data } = webhookData;
-    
+
     console.log(`[WHOP WEBHOOK] Received: ${type}`, data);
 
     // Handle different event types
@@ -68,22 +54,22 @@ export default async function handler(req, res) {
       case 'payment.succeeded':
         await handlePaymentSucceeded(data);
         break;
-        
+
       case 'membership.activated':
         await handleMembershipActivated(data);
         break;
-        
+
       case 'membership.deactivated':
         await handleMembershipDeactivated(data);
         break;
-        
+
       default:
         console.log(`[WHOP WEBHOOK] Unhandled event type: ${type}`);
     }
 
     // Always return 200 quickly to prevent retries
     return res.status(200).json({ received: true });
-    
+
   } catch (error) {
     console.error('[WHOP WEBHOOK] Error:', error);
     // Still return 200 to prevent infinite retries
@@ -101,16 +87,16 @@ async function handlePaymentSucceeded(payment) {
     amount: payment.amount,
     planId: payment.plan_id
   });
-  
+
   // Track payment in analytics
   // In production, save to database
-  
+
   const userId = payment.user_id;
   const tier = planIdToTier(payment.plan_id);
-  
+
   // Update user store
-  const existingUser = userStore.get(userId) || {};
-  userStore.set(userId, {
+  const existingUser = await getUser(userId) || {};
+  await setUser(userId, {
     ...existingUser,
     tier,
     lastPayment: {
@@ -131,12 +117,12 @@ async function handleMembershipActivated(membership) {
     productId: membership.product_id,
     planId: membership.plan_id
   });
-  
+
   const userId = membership.user_id;
   const tier = planIdToTier(membership.plan_id);
-  
+
   // Update user store
-  userStore.set(userId, {
+  await setUser(userId, {
     id: userId,
     tier,
     membershipId: membership.id,
@@ -145,7 +131,7 @@ async function handleMembershipActivated(membership) {
     activatedAt: new Date().toISOString(),
     validUntil: membership.renewal_period_end || null
   });
-  
+
   console.log(`[USER ACTIVATED] User ${userId} now has tier: ${tier}`);
 }
 
@@ -158,23 +144,19 @@ async function handleMembershipDeactivated(membership) {
     userId: membership.user_id,
     reason: membership.cancellation_reason
   });
-  
+
   const userId = membership.user_id;
-  
+
   // Update user store - downgrade to free
-  const existingUser = userStore.get(userId) || {};
-  userStore.set(userId, {
+  const existingUser = await getUser(userId) || {};
+  await setUser(userId, {
     ...existingUser,
     tier: 'free',
     status: 'inactive',
     deactivatedAt: new Date().toISOString(),
     deactivationReason: membership.cancellation_reason
   });
-  
+
   console.log(`[USER DEACTIVATED] User ${userId} downgraded to free tier`);
 }
 
-/**
- * Export user store for use in other API routes
- */
-export { userStore };

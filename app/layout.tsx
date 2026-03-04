@@ -43,8 +43,36 @@ import RootProviders from '../components/providers/RootProviders';
 
 export default function RootLayout({ children }) {
     return (
-        <html lang="en" suppressHydrationWarning className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${notoSans.variable} `}>
-            <body className="bg-quantum-deep text-slate-200 antialiased min-h-screen selection:bg-quantum-neon/30 selection:text-white overflow-x-hidden">
+        <html lang="en" suppressHydrationWarning className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${notoSans.variable}`}>
+            <head>
+                {/*
+                 * BLOCKING THEME SCRIPT — Must run before any CSS or React code.
+                 * Reads localStorage synchronously and applies the correct class
+                 * to <html> before the browser first paints, eliminating FOUC.
+                 * This also prevents React reconciliation from overwriting the class
+                 * because the script fires before React hydrates.
+                 */}
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `
+(function() {
+  try {
+    var theme = localStorage.getItem('mmk_theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var resolved = theme === 'light' ? 'light' : (theme === 'dark' ? 'dark' : (prefersDark ? 'dark' : 'light'));
+    document.documentElement.classList.toggle('dark', resolved === 'dark');
+    document.documentElement.setAttribute('data-theme', resolved);
+  } catch(e) {
+    // localStorage blocked (private mode) — default to dark
+    document.documentElement.classList.add('dark');
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
+                        `
+                    }}
+                />
+            </head>
+            <body suppressHydrationWarning className="text-slate-200 antialiased min-h-screen selection:bg-quantum-neon/30 selection:text-white overflow-x-hidden" style={{ backgroundColor: 'var(--color-void-deep)' }}>
                 <DynamicUIWrapper />
                 <ServiceWorkerRegister />
                 <InstallPrompt />

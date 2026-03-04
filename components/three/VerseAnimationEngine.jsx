@@ -1500,13 +1500,17 @@ export default function VerseAnimationEngine({
   onError,
   onReveal,
   onInteraction,
+  speed = 1,
+  complexity = 0.5,
+  zoom = 1,
+  accentColor = null,
 }) {
   const [animState, setAnimState] = useState('idle');
   const controlsRef = useRef();
   const loadedRef = useRef(false); // Guard to prevent multiple onLoad calls
   const { invalidate } = useThree(); // For demand rendering
 
-  // Resolve base component
+
   const { Component: BaseComponent, mode } = resolveBase(verseData, animationType);
 
   // Extract animation config
@@ -1651,6 +1655,10 @@ export default function VerseAnimationEngine({
           deviceProfile={deviceProfile} // Pass down for adaptive quality
           onReveal={handleReveal}
           onInteraction={handleInteraction}
+          speed={speed}
+          complexity={complexity}
+          zoom={zoom}
+          accentColor={accentColor}
         />
       </Float>
 

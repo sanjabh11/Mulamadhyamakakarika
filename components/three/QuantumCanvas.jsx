@@ -127,8 +127,14 @@ export default function QuantumCanvas({
   style = {},
   chapter = null,
   verseData = null,
+  speed = 1,
+  complexity = 0.5,
+  zoom = 1,
+  accentColor = null,
 }) {
   const canvasRef = useRef();
+  const glRef = useRef(null); // Stores WebGL renderer for disposal on unmount
+  const disposalTimerRef = useRef(null); // Stores pending disposal timer — cancelled on rapid re-mounts
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [errorBoundaryKey, setErrorBoundaryKey] = useState(0);
@@ -176,6 +182,69 @@ export default function QuantumCanvas({
       perfMonitor.stopFPSTracking();
     };
   }, []);
+
+  // ── BUG-R5-00 FIX pt1: Pause animation loop when tab is hidden ─────
+  // Switching frameloop to 'never' stops requestAnimationFrame calls,
+  // preventing GPU/memory runaway when the tab is backgrounded.
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setFrameloop('never');
+        logger.log('[QuantumCanvas] Tab hidden — pausing WebGL frameloop');
+      } else {
+        setFrameloop(deviceProfile.frameloop || 'always');
+        logger.log('[QuantumCanvas] Tab visible — resuming WebGL frameloop');
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deviceProfile.frameloop]);
+
+  // ── BUG-R7-00 FIX pt2: Force GPU cleanup on React UNMOUNT ───────────
+  // CRITICAL: Next.js client-side navigation triggers React unmount but
+  // does NOT fire 'visibilitychange'. This dedicated empty-dep useEffect
+  // destructor is the ONLY hook that reliably fires on every unmount.
+  // Without this the WebGL context lingers, blocking the JS thread for
+  // 3+ minutes after navigating away from /verse/* routes.
+  useEffect(() => {
+    return () => {
+      // Stop the animation loop immediately
+      setFrameloop('never');
+
+      // Cancel any previous pending disposal timer (prevents timer pile-up on rapid navigation)
+      if (disposalTimerRef.current) {
+        clearTimeout(disposalTimerRef.current);
+        disposalTimerRef.current = null;
+      }
+
+      // ── BUG-R8-01 / FLAW-3 / FLAW-7 FIX: Non-blocking, cancel-safe GPU disposal ────
+      // gl.forceContextLoss() blocks the JS thread for 2-3s on loaded GPUs.
+      // setTimeout yields the main thread so new page paints immediately.
+      // disposalTimerRef lets us cancel the timer if the component fast-remounts
+      // (e.g. verse-to-verse navigation), preventing cross-canvas context corruption.
+      const gl = glRef.current;
+      glRef.current = null; // Null AFTER capture to prevent double-disposal
+      if (gl) {
+        disposalTimerRef.current = setTimeout(() => {
+          disposalTimerRef.current = null;
+          try {
+            gl.forceContextLoss();
+            gl.dispose();
+            logger.log('[QuantumCanvas] WebGL context disposed asynchronously');
+          } catch (e) {
+            logger.warn('[QuantumCanvas] Dispose error (safe):', e?.message);
+          }
+        }, 150);
+      }
+    };
+    // Empty deps = runs destructor exactly once, on React unmount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  // ────────────────────────────────────────────────────────────────────
 
   // Chapters with gold-standard data use the new VerseAnimationEngine
   const chapterNum = typeof chapter === 'string' ? parseInt(chapter) : chapter;
@@ -384,7 +453,13 @@ export default function QuantumCanvas({
             far: 1000
           }}
           onCreated={({ gl, scene, camera, invalidate }) => {
-            gl.setClearColor('#0f172a', 1);
+            // ── FLAW-8 FIX: theme-reactive clear color ────────────
+            // Read the actual CSS variable value so light mode shows a light canvas
+            const clearColor = typeof window !== 'undefined'
+              ? getComputedStyle(document.documentElement).getPropertyValue('--color-void-deep').trim() || '#0f172a'
+              : '#0f172a';
+            gl.setClearColor(clearColor || '#0f172a', 1);
+            glRef.current = gl; // Store ref for disposal on unmount
             registerRenderer(gl); // For memory tracking
 
             // Add context loss listeners
@@ -438,6 +513,10 @@ export default function QuantumCanvas({
                 onError={handleError}
                 onReveal={handleReveal}
                 onInteraction={handleInteraction}
+                speed={speed}
+                complexity={complexity}
+                zoom={zoom}
+                accentColor={accentColor}
               />
             ) : (
               <QuantumScene
@@ -447,6 +526,10 @@ export default function QuantumCanvas({
                 autoRotate={autoRotate}
                 onLoad={handleLoad}
                 onError={handleError}
+                speed={speed}
+                complexity={complexity}
+                zoom={zoom}
+                accentColor={accentColor}
               />
             )}
           </Suspense>

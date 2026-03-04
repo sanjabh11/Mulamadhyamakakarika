@@ -14,6 +14,8 @@
 
 import React, { useState } from 'react';
 import styles from './RightPanel.module.css';
+import { CHAPTER_QUIZZES } from '../../../data/quiz-questions';
+import QuantumCompanion from '../../companion/QuantumCompanion';
 
 export default function RightPanel({
   chapter,
@@ -24,7 +26,8 @@ export default function RightPanel({
   showOnlyQuiz = false
 }) {
   const [quizOpen, setQuizOpen] = useState(false); // Collapsed by default
-  const [deeperDiveOpen, setDeeperDiveOpen] = useState(true);
+  const [deeperDiveOpen, setDeeperDiveOpen] = useState(false); // Changed to false to save space
+  const [companionOpen, setCompanionOpen] = useState(true); // Open by default
   const [selectedTier, setSelectedTier] = useState('beginner');
 
   if (collapsed) {
@@ -46,6 +49,8 @@ export default function RightPanel({
     return (
       <div className={styles.panel}>
         <CompactQuizPanel
+          chapterId={chapter}
+          verseId={verse}
           verseData={verseData}
           tier={selectedTier}
           isExpanded={true}
@@ -61,7 +66,25 @@ export default function RightPanel({
 
   return (
     <div className={styles.panel}>
-      {/* Deeper Dive FAQs - Moved to top per new layout */}
+      {/* Quantum Companion - AI Guide */}
+      <section className={styles.section}>
+        <button
+          className={styles.collapseHeader}
+          onClick={() => setCompanionOpen(!companionOpen)}
+        >
+          <span>{companionOpen ? '▼' : '▶'}</span>
+          <h3 className="flex items-center gap-2">
+            <span className="text-quantum-neon">✧</span> Quantum Companion
+          </h3>
+        </button>
+        {companionOpen && (
+          <div className="mt-4">
+            <QuantumCompanion chapterId={chapter} verseId={verse} verseData={verseData} />
+          </div>
+        )}
+      </section>
+
+      {/* Deeper Dive FAQs */}
       <section className={styles.section}>
         <button
           className={styles.collapseHeader}
@@ -87,6 +110,8 @@ export default function RightPanel({
           onChange={setSelectedTier}
         />
         <CompactQuizPanel
+          chapterId={chapter}
+          verseId={verse}
           verseData={verseData}
           tier={selectedTier}
           isExpanded={quizOpen}
@@ -170,13 +195,23 @@ function ProgressWidget() {
  * DATA SCHEMA: verseData.quiz = { beginner: {...}, intermediate: {...}, advanced: {...} }
  * Each tier contains a SINGLE question object: { question, options[], correct, explanation }
  */
-function CompactQuizPanel({ verseData, tier, isExpanded, onToggle }) {
+function CompactQuizPanel({ chapterId, verseId, verseData, tier, isExpanded, onToggle }) {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showResult, setShowResult] = useState(false);
 
   // Get quiz question for this tier from the correct schema
   const quiz = verseData?.quiz || {};
-  const question = quiz[tier]; // Single question per tier
+  let question = quiz[tier]; // Single question per tier
+
+  // Fallback to chapter-level quiz if verse-level quiz is missing
+  if (!question && chapterId && CHAPTER_QUIZZES[chapterId]?.questions) {
+    const questions = CHAPTER_QUIZZES[chapterId].questions;
+    if (questions && questions.length > 0) {
+      const qIndex = (verseId - 1) % questions.length;
+      question = questions[qIndex];
+    }
+  }
+
   const hasQuestion = question && question.question;
 
   const handleCheck = () => {
@@ -188,9 +223,11 @@ function CompactQuizPanel({ verseData, tier, isExpanded, onToggle }) {
     setSelectedAnswer(null);
   };
 
-  // Match correct answer letter (e.g. "B") to option index (e.g. "B) ...")
+  // Match correct answer letter (e.g. "B") to option index, or use numeric index directly
   const correctIndex = hasQuestion
-    ? question.options.findIndex(opt => opt.trim().startsWith(question.correct + ')'))
+    ? (typeof question.correct === 'number'
+      ? question.correct
+      : question.options.findIndex(opt => opt.trim().startsWith(question.correct + ')')))
     : -1;
   const isCorrect = selectedAnswer === correctIndex;
 

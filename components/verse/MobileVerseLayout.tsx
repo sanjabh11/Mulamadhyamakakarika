@@ -11,6 +11,7 @@ import ProgressiveQuantumCanvas from '../ProgressiveQuantumCanvas';
 import EducationalRevealOverlay from '../ui/EducationalRevealOverlay';
 import { useHaptic } from '../../hooks/useHaptic';
 import AuroraBackground from '../ui/AuroraBackground';
+import QuantumCompanion from '../companion/QuantumCompanion';
 
 export default function MobileVerseLayout({ verseData, chapterId, verseId, chapterTitle, totalVerses }: any) {
     const router = useRouter();
@@ -19,6 +20,7 @@ export default function MobileVerseLayout({ verseData, chapterId, verseId, chapt
     const [isPlaying, setIsPlaying] = useState(true);
     const [showControls, setShowControls] = useState(false);
     const [showReveal, setShowReveal] = useState(false);
+    const [showCompanion, setShowCompanion] = useState(false);
     const [swipeHint, setSwipeHint] = useState(true);
 
     // Animation controls state
@@ -164,39 +166,96 @@ export default function MobileVerseLayout({ verseData, chapterId, verseId, chapt
                 )}
             </AnimatePresence>
 
-            {/* Canvas Area — height = 100vh minus collapsed sheet (35vh) minus bottom bar (4rem) */}
-            <div className="absolute top-0 left-0 w-full z-0" style={{ height: 'calc(100vh - 35vh - 4rem)' }}>
+            {/* Mobile Quantum Companion Slide-up Panel */}
+            <AnimatePresence>
+                {showCompanion && (
+                    <motion.div
+                        className="absolute bottom-16 left-0 w-full z-50 pointer-events-auto"
+                        initial={{ y: '100%', opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: '100%', opacity: 0 }}
+                        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                    >
+                        <div className="mx-3 mb-2 rounded-2xl relative shadow-[0_-8px_32px_rgba(0,255,255,0.15)] overflow-hidden pointer-events-auto">
+                            <button
+                                onClick={() => { setShowCompanion(false); haptic.tap(); }}
+                                className="absolute right-4 top-4 z-50 w-8 h-8 rounded-full bg-black/50 border border-white/10 flex items-center justify-center text-slate-300 hover:text-white"
+                            >
+                                <X size={16} />
+                            </button>
+                            <QuantumCompanion chapterId={chapterId} verseId={verseId} verseData={verseData} />
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Canvas Area — dynamic height based on open panels */}
+            <div className="absolute top-0 left-0 w-full z-0 transition-all duration-500 ease-in-out"
+                style={{ height: (showControls || showCompanion) ? '45vh' : 'calc(100vh - 4rem)' }}>
                 <AuroraBackground chapterId={chapterId} />
                 <ProgressiveQuantumCanvas
                     chapter={chapterId}
                     verseData={verseData}
                     autoRotate={isPlaying}
                     animationType={verseData?.animation?.type || 'nebula'}
+                    speed={speed}
+                    complexity={complexity}
+                    zoom={zoom}
                 />
                 {/* Gradient overlay for text readability */}
                 <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-quantum-void/80 to-transparent pointer-events-none" />
             </div>
 
-            {/* Top Bar */}
+            {/* Top Bar with Persistent Next/Prev Arrows */}
             <header className="absolute top-0 left-0 w-full z-10 p-4 flex justify-between items-start pointer-events-none text-white/80">
-                <div className="pointer-events-auto">
+                <div className="pointer-events-auto flex items-center gap-2">
                     <a
                         href="/"
-                        className="flex items-center gap-2 text-xs font-mono bg-black/30 backdrop-blur px-3 py-1.5 rounded-full border border-white/10"
+                        className="flex items-center justify-center w-8 h-8 bg-black/40 backdrop-blur rounded-full border border-white/10 hover:bg-white/10 transition-colors"
+                        aria-label="Back to chapters"
                     >
-                        ← Ch {chapterId}
+                        <X size={14} />
                     </a>
+
+                    {/* Chapter / Verse Indicator */}
+                    <div className="bg-black/40 backdrop-blur px-3 py-1.5 rounded-full border border-white/10 text-xs font-mono font-bold">
+                        Ch {chapterId} : {verseId}
+                    </div>
                 </div>
-                {/* Reveal button — Item 7 */}
-                <div className="pointer-events-auto">
-                    <button
-                        onClick={() => { setShowReveal(true); haptic.success(); }}
-                        className="flex items-center gap-1.5 text-xs font-mono bg-black/30 backdrop-blur px-3 py-1.5 rounded-full border border-white/10 text-quantum-cool hover:text-white transition-colors micro-tap"
-                        aria-label="Reveal educational insights"
-                    >
-                        <Sparkles size={12} />
-                        Reveal
-                    </button>
+
+                <div className="pointer-events-auto flex gap-2">
+                    {/* Mobile Navigation Arrows */}
+                    <div className="flex bg-black/40 backdrop-blur rounded-full border border-white/10 overflow-hidden">
+                        <button
+                            onClick={() => verseId > 1 && router.push(`/verse/${chapterId}-${verseId - 1}`)}
+                            disabled={verseId <= 1}
+                            className="p-2 hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+                            aria-label="Previous verse"
+                        >
+                            <ChevronLeft size={16} />
+                        </button>
+                        <div className="w-[1px] bg-white/10" />
+                        <button
+                            onClick={() => verseId < totalVerses && router.push(`/verse/${chapterId}-${verseId + 1}`)}
+                            disabled={verseId >= totalVerses}
+                            className="p-2 hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+                            aria-label="Next verse"
+                        >
+                            <ChevronRight size={16} />
+                        </button>
+                    </div>
+
+                    {/* Reveal button */}
+                    <div className="pointer-events-auto">
+                        <button
+                            onClick={() => { setShowReveal(true); haptic.success(); }}
+                            className="flex items-center gap-1.5 text-xs font-mono bg-black/30 backdrop-blur px-3 py-1.5 rounded-full border border-white/10 text-quantum-cool hover:text-white transition-colors micro-tap"
+                            aria-label="Reveal educational insights"
+                        >
+                            <Sparkles size={12} />
+                            Reveal
+                        </button>
+                    </div>
                 </div>
             </header>
 
@@ -329,21 +388,22 @@ export default function MobileVerseLayout({ verseData, chapterId, verseId, chapt
 
                 {/* Play/Pause — Item 8: pulsing glow */}
                 <button
-                    onClick={() => { setIsPlaying(!isPlaying); haptic.tap(); }}
+                    onClick={(e) => { e.stopPropagation(); setIsPlaying(!isPlaying); haptic.tap(); }}
                     className={cn(
-                        "w-12 h-12 rounded-full border flex items-center justify-center transition-all transform active:scale-95 micro-tap",
+                        "w-12 h-12 rounded-full border flex items-center justify-center transition-all transform active:scale-95 micro-tap focus:outline-none select-none touch-manipulation",
                         isPlaying
                             ? "bg-quantum-neon/10 border-quantum-neon/50 text-quantum-neon shadow-[0_0_15px_rgba(0,255,255,0.2)] animate-pulse-glow-full"
                             : "bg-white/10 border-white/20 text-white"
                     )}
+                    style={{ WebkitTapHighlightColor: 'transparent' }}
                     aria-label={isPlaying ? 'Pause animation' : 'Play animation'}
                 >
-                    {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" className="ml-0.5" />}
+                    {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-0.5" />}
                 </button>
 
                 {/* Config — Item 4: opens real slider panel */}
                 <button
-                    onClick={() => { setShowControls(!showControls); haptic.tap(); }}
+                    onClick={() => { setShowControls(!showControls); setShowCompanion(false); haptic.tap(); }}
                     className={cn(
                         "flex flex-col items-center gap-1 transition-colors micro-tap",
                         showControls ? "text-quantum-cool" : "text-slate-400 hover:text-white"
@@ -352,6 +412,19 @@ export default function MobileVerseLayout({ verseData, chapterId, verseId, chapt
                 >
                     <Settings size={20} className={showControls ? "animate-spin" : ""} style={{ animationDuration: '3s' }} />
                     <span className="text-[10px] uppercase tracking-wider">Config</span>
+                </button>
+
+                {/* Companion - opens AI chat */}
+                <button
+                    onClick={() => { setShowCompanion(!showCompanion); setShowControls(false); haptic.tap(); }}
+                    className={cn(
+                        "flex flex-col items-center gap-1 transition-colors micro-tap",
+                        showCompanion ? "text-quantum-neon drop-shadow-[0_0_8px_rgba(0,255,255,0.6)]" : "text-slate-400 hover:text-white"
+                    )}
+                    aria-label="Quantum Companion"
+                >
+                    <MessageCircle size={20} />
+                    <span className="text-[10px] uppercase tracking-wider">AI Guide</span>
                 </button>
             </div>
         </div>

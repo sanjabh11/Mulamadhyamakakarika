@@ -184,8 +184,10 @@ export default function InteractiveBackground() {
             renderFrame(10000); // Render state at a specific time
         };
 
+        let isPaused = false;
+
         const loop = (time: number) => {
-            if (isStatic) return;
+            if (isStatic || isPaused) return;
 
             // ~30 FPS Throttle
             if (time - lastFrame < 33) {
@@ -197,6 +199,21 @@ export default function InteractiveBackground() {
             renderFrame(time);
             animationFrameId = requestAnimationFrame(loop);
         };
+
+        // Pause when tab is hidden to prevent runaway RAF / OOM
+        const handleVisibility = () => {
+            if (document.hidden) {
+                isPaused = true;
+                cancelAnimationFrame(animationFrameId);
+            } else {
+                isPaused = false;
+                if (!isStatic) {
+                    lastFrame = performance.now();
+                    loop(lastFrame);
+                }
+            }
+        };
+        document.addEventListener('visibilitychange', handleVisibility);
 
         // Init
         resize();
@@ -212,16 +229,17 @@ export default function InteractiveBackground() {
             canvas.removeEventListener('mousemove', handleMouseMove);
             canvas.removeEventListener('mouseleave', handleMouseLeave);
             mediaQuery.removeEventListener('change', handleMotionPreference);
+            document.removeEventListener('visibilitychange', handleVisibility);
             cancelAnimationFrame(animationFrameId);
         };
     }, []);
 
     return (
-        <div className="absolute inset-0 z-0 h-full w-full pointer-events-auto bg-[#050810] overflow-hidden">
+        <div className="absolute inset-0 z-0 h-full w-full pointer-events-none overflow-hidden">
             <canvas
                 ref={canvasRef}
                 className="w-full h-full block"
-                style={{ touchAction: 'none' }}
+                style={{ touchAction: 'none', pointerEvents: 'none' }}
                 aria-hidden="true"
             />
         </div>

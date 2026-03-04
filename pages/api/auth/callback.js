@@ -4,16 +4,7 @@
  */
 
 import { whopSdk, getUserMembership, planIdToTier } from '../../../lib/whop-sdk';
-import { userStore } from '../webhooks/whop';
-
-// ⚠️  PRODUCTION WARNING: This in-memory Map is wiped on every serverless cold start.
-// Replace with a persistent store before launch:
-//   - Vercel KV: import { kv } from '@vercel/kv'
-//   - Upstash Redis: import { Redis } from '@upstash/redis'
-//   - Edge Config or a database session table
-// The Map below is safe for local dev and staging only.
-const sessionStore = globalThis.__mmk_sessionStore || new Map();
-globalThis.__mmk_sessionStore = sessionStore;
+import { setSession, setUser } from '../../../lib/redis-store';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -35,14 +26,14 @@ export default async function handler(req, res) {
   try {
     // Exchange code for tokens
     const tokenResponse = await exchangeCodeForTokens(code);
-    
+
     if (!tokenResponse.access_token) {
       throw new Error('No access token received');
     }
 
     // Get user info from Whop
     const userInfo = await getUserInfo(tokenResponse.access_token);
-    
+
     // Get user's membership/tier
     const membership = await getUserMembership(userInfo.id);
     const tier = membership ? planIdToTier(membership.plan_id) : 'free';
@@ -62,10 +53,10 @@ export default async function handler(req, res) {
     };
 
     // Store session
-    sessionStore.set(sessionToken, session);
+    await setSession(sessionToken, session);
 
     // Also update user store
-    userStore.set(userInfo.id, {
+    await setUser(userInfo.id, {
       id: userInfo.id,
       email: userInfo.email,
       name: userInfo.name,
@@ -104,7 +95,7 @@ export default async function handler(req, res) {
 async function exchangeCodeForTokens(code) {
   const clientId = process.env.NEXT_PUBLIC_WHOP_CLIENT_ID;
   const clientSecret = process.env.WHOP_CLIENT_SECRET;
-  const redirectUri = process.env.NEXT_PUBLIC_APP_URL 
+  const redirectUri = process.env.NEXT_PUBLIC_APP_URL
     ? `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`
     : 'http://localhost:3000/api/auth/callback';
 
@@ -155,5 +146,3 @@ function generateSessionToken() {
   return crypto.randomBytes(32).toString('hex');
 }
 
-// Export session store for other routes
-export { sessionStore };

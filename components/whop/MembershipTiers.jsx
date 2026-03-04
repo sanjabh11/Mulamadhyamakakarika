@@ -7,6 +7,7 @@
  */
 
 import React, { useState, useEffect, createContext, useContext } from 'react';
+import { WHOP_PRODUCTS } from '../../lib/whop-auth';
 
 // Membership tier definitions — must stay in sync with lib/whop-auth.js
 export const TIERS = {
@@ -330,7 +331,14 @@ export function UpgradePrompt({ requiredTier = 'seeker' }) {
         </ul>
       </div>
 
-      <button className="upgrade-btn">
+      <button
+        className="upgrade-btn"
+        onClick={() => {
+          if (requiredTier && WHOP_PRODUCTS[requiredTier.toUpperCase()]) {
+            window.location.href = `https://whop.com/checkout/${WHOP_PRODUCTS[requiredTier.toUpperCase()]}`;
+          }
+        }}
+      >
         Upgrade for ${tierConfig?.price}/month
       </button>
 
@@ -457,7 +465,11 @@ export function PricingTable() {
 
             <button
               className={`select-btn ${tier === tierConfig.id ? 'current' : ''}`}
-              onClick={() => upgradeTier(tierConfig.id)}
+              onClick={() => {
+                if (tierConfig.price > 0 && WHOP_PRODUCTS[tierConfig.id.toUpperCase()]) {
+                  window.location.href = `https://whop.com/checkout/${WHOP_PRODUCTS[tierConfig.id.toUpperCase()]}`;
+                }
+              }}
               disabled={tier === tierConfig.id}
             >
               {tier === tierConfig.id ? 'Current Plan' : tierConfig.price === 0 ? 'Get Started' : 'Subscribe'}

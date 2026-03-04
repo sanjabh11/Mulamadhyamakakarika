@@ -4,6 +4,41 @@ const path = require('path');
 const nextConfig = {
   reactStrictMode: false,
 
+  // Required headers for Whop iframe embedding
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'ALLOWALL', // Allows embedding in Whop iframe
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors https://*.whop.com https://whop.com 'self'",
+          },
+        ],
+      },
+    ];
+  },
+
+  // BUG-6 FIX: Redirect /verse and /verse/:chapterId to valid chapter-verse format
+  async redirects() {
+    return [
+      {
+        source: '/verse',
+        destination: '/verse/1-1',
+        permanent: false,
+      },
+      {
+        source: '/verse/:id(\\d+)',
+        destination: '/verse/:id-1',
+        permanent: false,
+      },
+    ];
+  },
+
   // Optimize R3F and drei imports for faster HMR
   webpack: (config, { dev, isServer }) => {
     // Enable persistent filesystem cache in development (CRITICAL for performance)

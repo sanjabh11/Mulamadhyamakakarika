@@ -1,0 +1,8 @@
+[build]
+  base = "/"
+  publish = ".next"
+  command = "npm run build"
+
+[context.production]
+  command = "npm run build"
+  environment = { NODE_ENV = "production" }

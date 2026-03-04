@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Play, Pause, Maximize2, HelpCircle, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Lightbulb, BookOpen, Sparkles, Lock } from 'lucide-react';
+import { Play, Pause, Maximize2, HelpCircle, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Lightbulb, BookOpen, Sparkles, Lock, Bot } from 'lucide-react';
 import { cn } from '../../lib/utils';
 // @ts-ignore
 import ProgressiveQuantumCanvas from '../ProgressiveQuantumCanvas';
@@ -13,6 +13,9 @@ import EducationalRevealOverlay from '../ui/EducationalRevealOverlay';
 import AuroraBackground from '../ui/AuroraBackground';
 // @ts-ignore
 import { useMembership } from '../whop/MembershipTiers';
+// @ts-ignore
+import QuantumCompanion from '../companion/QuantumCompanion';
+import { CHAPTER_QUIZZES } from '../../data/quiz-questions';
 
 interface DesktopVerseLayoutProps {
     chapterId: number;
@@ -29,7 +32,7 @@ interface QuizPanelProps {
     quiz: {
         question: string;
         options: string[];
-        correct: string;
+        correct: string | number;
         explanation: string;
     } | null | undefined;
     tier: string;
@@ -48,8 +51,10 @@ function QuizPanel({ quiz, tier, onClose }: QuizPanelProps) {
         );
     }
 
-    // Match correct answer letter (e.g. "B") to option index (e.g. "B) ...")
-    const correctIndex = quiz.options.findIndex(opt => opt.trim().startsWith(quiz.correct + ')'));
+    // Match correct answer letter (e.g. "B") to option index, or use numeric index directly
+    const correctIndex = typeof quiz.correct === 'number'
+        ? quiz.correct
+        : quiz.options.findIndex((opt: string) => opt.trim().startsWith(quiz.correct + ')'));
     const isCorrect = selectedAnswer === correctIndex;
 
     const handleReset = () => {
@@ -442,6 +447,19 @@ export default function DesktopVerseLayout({ verseData, chapterId, verseId, chap
                     }}
                 >
                     <div className="space-y-6">
+
+                        {/* ─── AI COMPANION SECTION ─── */}
+                        <div>
+                            <h3 className="flex items-center gap-2 text-quantum-neon font-bold uppercase text-xs mb-4">
+                                <Bot size={14} /> AI Guide
+                            </h3>
+                            <QuantumCompanion
+                                chapterId={chapterId}
+                                verseId={verseId}
+                                verseData={verseData}
+                            />
+                        </div>
+
                         {/* ─── DEEPER DIVE SECTION ─── */}
                         <div>
                             <h3 className="flex items-center gap-2 text-quantum-neon font-bold uppercase text-xs mb-4">
@@ -547,11 +565,23 @@ export default function DesktopVerseLayout({ verseData, chapterId, verseId, chap
                                     </button>
                                 </div>
                             ) : (
-                                <QuizPanel
-                                    quiz={verseData?.quiz?.[selectedTier]}
-                                    tier={selectedTier}
-                                    onClose={() => setQuizOpen(false)}
-                                />
+                                (() => {
+                                    let currentQuiz = verseData?.quiz?.[selectedTier];
+                                    if (!currentQuiz && CHAPTER_QUIZZES[chapterId as keyof typeof CHAPTER_QUIZZES]?.questions) {
+                                        const questions = CHAPTER_QUIZZES[chapterId as keyof typeof CHAPTER_QUIZZES].questions;
+                                        if (questions && questions.length > 0) {
+                                            const qIndex = (verseId - 1) % questions.length;
+                                            currentQuiz = questions[qIndex];
+                                        }
+                                    }
+                                    return (
+                                        <QuizPanel
+                                            quiz={currentQuiz}
+                                            tier={selectedTier}
+                                            onClose={() => setQuizOpen(false)}
+                                        />
+                                    );
+                                })()
                             )}
                         </div>
                     </div>
@@ -560,7 +590,7 @@ export default function DesktopVerseLayout({ verseData, chapterId, verseId, chap
             </main>
 
             {/* Footer Navigation: Prev/Next Buttons */}
-            <div className="absolute bottom-6 right-6 flex items-center gap-3 z-20">
+            <div className="absolute bottom-6 right-6 flex items-center gap-3 z-30">
                 {/* Progress Indicator */}
                 <span className="text-xs font-mono text-slate-400 bg-black/30 backdrop-blur px-3 py-1.5 rounded-full border border-white/10">
                     Verse {verseId} of {totalVerses}
