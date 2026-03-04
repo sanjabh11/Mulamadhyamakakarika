@@ -9,6 +9,7 @@
  */
 
 import { validateWebhook, planIdToTier } from '../../../lib/whop-sdk';
+import { emitServerAnalyticsEvent } from '../../../lib/server-analytics';
 
 // Disable body parsing - we need raw body for signature validation
 export const config = {
@@ -23,15 +24,6 @@ export const config = {
  */
 const userStore = globalThis.userStore || new Map();
 globalThis.userStore = userStore;
-
-function emitBillingEvent(eventName, payload = {}) {
-  console.log('[ANALYTICS_EVENT]', JSON.stringify({
-    eventName,
-    category: 'billing',
-    timestamp: new Date().toISOString(),
-    ...payload
-  }));
-}
 
 /**
  * Get raw body from request
@@ -111,7 +103,7 @@ async function handlePaymentSucceeded(payment) {
     planId: payment.plan_id
   });
   
-  emitBillingEvent('payment_succeeded', {
+  emitServerAnalyticsEvent('payment_succeeded', {
     userId: payment.user_id,
     planId: payment.plan_id,
     amount: payment.amount
@@ -159,7 +151,7 @@ async function handleMembershipActivated(membership) {
     validUntil: membership.renewal_period_end || null
   });
   
-  emitBillingEvent('subscription_started', {
+  emitServerAnalyticsEvent('subscription_started', {
     userId,
     tier,
     planId: membership.plan_id,
@@ -191,7 +183,7 @@ async function handleMembershipDeactivated(membership) {
     deactivationReason: membership.cancellation_reason
   });
   
-  emitBillingEvent('subscription_cancelled', {
+  emitServerAnalyticsEvent('subscription_cancelled', {
     userId,
     previousTier: existingUser.tier || 'unknown',
     reason: membership.cancellation_reason

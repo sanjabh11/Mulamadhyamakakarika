@@ -5,6 +5,7 @@
 
 import { whopSdk, getUserMembership, planIdToTier } from '../../../lib/whop-sdk';
 import { userStore } from '../webhooks/whop';
+import { emitServerAnalyticsEvent } from '../../../lib/server-analytics';
 
 // ⚠️  PRODUCTION WARNING: This in-memory Map is wiped on every serverless cold start.
 // Replace with a persistent store before launch:
@@ -14,15 +15,6 @@ import { userStore } from '../webhooks/whop';
 // The Map below is safe for local dev and staging only.
 const sessionStore = globalThis.__mmk_sessionStore || new Map();
 globalThis.__mmk_sessionStore = sessionStore;
-
-function emitAuthEvent(eventName, payload = {}) {
-  console.log('[ANALYTICS_EVENT]', JSON.stringify({
-    eventName,
-    category: 'auth',
-    timestamp: new Date().toISOString(),
-    ...payload
-  }));
-}
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -89,7 +81,7 @@ export default async function handler(req, res) {
       tier
     });
 
-    emitAuthEvent('login_succeeded', {
+    emitServerAnalyticsEvent('login_succeeded', {
       userId: userInfo.id,
       tier,
       membershipId: membership?.id || null

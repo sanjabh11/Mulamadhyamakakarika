@@ -37,6 +37,18 @@ export function PaywallGate({ chapterNumber, children, preview = null }) {
     trackPaywallHit(chapterNumber, user.tier, upgrade?.recommendedTier);
   }, [chapterNumber, user.tier, upgrade?.recommendedTier]);
 
+
+  React.useEffect(() => {
+    if (!upgrade) return;
+    trackMonetizationEvent(EVENTS.UPGRADE_CTA_SHOWN, {
+      chapterNumber,
+      user_tier_current: user.tier || 'free',
+      recommendedTier: upgrade.recommendedTier,
+      productId: upgrade.productId,
+      surface: 'paywall_gate'
+    });
+  }, [chapterNumber, upgrade, user.tier]);
+
   const handleUpgradeClick = React.useCallback(() => {
     if (!upgrade) return;
     trackMonetizationEvent(EVENTS.UPGRADE_CTA_CLICKED, {
@@ -93,7 +105,14 @@ export function PaywallGate({ chapterNumber, children, preview = null }) {
                 Sign in to access free chapters or upgrade for full access
               </p>
               <button 
-                onClick={login}
+                onClick={() => {
+                  trackMonetizationEvent(EVENTS.UPGRADE_CTA_CLICKED, {
+                    chapterNumber,
+                    user_tier_current: user.tier || 'free',
+                    cta: 'paywall_signin'
+                  });
+                  login();
+                }}
                 className="paywall-button primary"
               >
                 Sign In with Whop

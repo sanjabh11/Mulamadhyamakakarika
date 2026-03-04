@@ -6,7 +6,7 @@
  * Defines membership tiers and integrates with Whop SDK for access control
  */
 
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
 import { trackMonetizationEvent, EVENTS } from '../../lib/analytics';
 
 // Membership tier definitions — must stay in sync with lib/whop-auth.js
@@ -221,10 +221,10 @@ export function MembershipProvider({ children }) {
   // Upgrade tier (for testing)
   function upgradeTier(newTier) {
     if (TIERS[newTier.toUpperCase()]) {
-      trackMonetizationEvent(EVENTS.CHECKOUT_COMPLETED, {
+      trackMonetizationEvent(EVENTS.SUBSCRIPTION_PLAN_CHANGED, {
         user_tier_current: tier,
         selectedTier: newTier,
-        checkoutProvider: 'manual_dev_toggle'
+        source: 'manual_dev_toggle'
       });
       setTier(newTier);
       localStorage.setItem('mmk_membership_tier', newTier);
@@ -424,7 +424,12 @@ export function UpgradePrompt({ requiredTier = 'seeker' }) {
 export function PricingTable() {
   const { tier, upgradeTier } = useMembership();
 
+  const hasTrackedPricingView = useRef(false);
+
   useEffect(() => {
+    if (hasTrackedPricingView.current) return;
+    hasTrackedPricingView.current = true;
+
     trackMonetizationEvent(EVENTS.PRICING_VIEWED, {
       user_tier_current: tier || 'free',
       source: 'pricing_table'
