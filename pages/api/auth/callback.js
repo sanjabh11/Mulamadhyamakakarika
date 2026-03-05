@@ -5,6 +5,7 @@
 
 import { whopSdk, getUserMembership, planIdToTier } from '../../../lib/whop-sdk';
 import { setSession, setUser } from '../../../lib/redis-store';
+import { emitServerAnalyticsEvent } from '../../../lib/server-analytics';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -52,10 +53,8 @@ export default async function handler(req, res) {
       createdAt: new Date().toISOString()
     };
 
-    // Store session
+    // Persist session and user with durable store
     await setSession(sessionToken, session);
-
-    // Also update user store
     await setUser(userInfo.id, {
       id: userInfo.id,
       email: userInfo.email,
@@ -63,6 +62,15 @@ export default async function handler(req, res) {
       tier,
       membershipId: membership?.id || null,
       lastLogin: new Date().toISOString()
+    });
+
+    // Emit server-side analytics event for attribution
+    emitServerAnalyticsEvent('login_succeeded', {
+      userId: userInfo.id,
+      tier,
+      membershipId: membership?.id || null,
+      // Link checkout intent cookie if present for attribution
+      checkoutIntentId: req.cookies?.checkout_intent_id || null
     });
 
     console.log('[AUTH CALLBACK] User authenticated:', {
@@ -101,9 +109,7 @@ async function exchangeCodeForTokens(code) {
 
   const response = await fetch('https://api.whop.com/oauth/token', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       grant_type: 'authorization_code',
       client_id: clientId,
@@ -126,9 +132,7 @@ async function exchangeCodeForTokens(code) {
  */
 async function getUserInfo(accessToken) {
   const response = await fetch('https://api.whop.com/me', {
-    headers: {
-      'Authorization': `Bearer ${accessToken}`
-    }
+    headers: { 'Authorization': `Bearer ${accessToken}` }
   });
 
   if (!response.ok) {
@@ -145,4 +149,3 @@ function generateSessionToken() {
   const crypto = require('crypto');
   return crypto.randomBytes(32).toString('hex');
 }
-

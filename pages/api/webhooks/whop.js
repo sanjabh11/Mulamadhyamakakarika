@@ -1,14 +1,23 @@
 /**
  * Whop Webhook Handler
  * CRITICAL: Handles payment and membership events from Whop
- * 
+ *
  * Events handled:
  * - payment.succeeded
  * - membership.activated
  * - membership.deactivated
  */
 
+import { validateWebhook, planIdToTier } from '../../../lib/whop-sdk';
 import { getUser, setUser } from '../../../lib/redis-store';
+import { emitServerAnalyticsEvent } from '../../../lib/server-analytics';
+
+// Disable body parsing - we need raw body for signature validation
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 /**
  * Get raw body from request
@@ -46,7 +55,6 @@ export default async function handler(req, res) {
     }
 
     const { type, data } = webhookData;
-
     console.log(`[WHOP WEBHOOK] Received: ${type}`, data);
 
     // Handle different event types
@@ -78,7 +86,7 @@ export default async function handler(req, res) {
 }
 
 /**
- * Handle successful payment
+ * Handle successful payment - persist to durable store + emit analytics
  */
 async function handlePaymentSucceeded(payment) {
   console.log('[PAYMENT SUCCEEDED]', {
@@ -88,13 +96,10 @@ async function handlePaymentSucceeded(payment) {
     planId: payment.plan_id
   });
 
-  // Track payment in analytics
-  // In production, save to database
-
   const userId = payment.user_id;
   const tier = planIdToTier(payment.plan_id);
 
-  // Update user store
+  // Persist to durable redis-backed store
   const existingUser = await getUser(userId) || {};
   await setUser(userId, {
     ...existingUser,
@@ -105,10 +110,18 @@ async function handlePaymentSucceeded(payment) {
       date: new Date().toISOString()
     }
   });
+
+  // Emit server analytics event for attribution pipeline
+  emitServerAnalyticsEvent('payment_succeeded', {
+    userId,
+    planId: payment.plan_id,
+    amount: payment.amount,
+    tier
+  });
 }
 
 /**
- * Handle membership activation
+ * Handle membership activation - persist to durable store + emit analytics
  */
 async function handleMembershipActivated(membership) {
   console.log('[MEMBERSHIP ACTIVATED]', {
@@ -121,7 +134,7 @@ async function handleMembershipActivated(membership) {
   const userId = membership.user_id;
   const tier = planIdToTier(membership.plan_id);
 
-  // Update user store
+  // Persist to durable redis-backed store
   await setUser(userId, {
     id: userId,
     tier,
@@ -132,11 +145,19 @@ async function handleMembershipActivated(membership) {
     validUntil: membership.renewal_period_end || null
   });
 
+  // Emit server analytics event for join-rate attribution
+  emitServerAnalyticsEvent('subscription_started', {
+    userId,
+    tier,
+    planId: membership.plan_id,
+    membershipId: membership.id
+  });
+
   console.log(`[USER ACTIVATED] User ${userId} now has tier: ${tier}`);
 }
 
 /**
- * Handle membership deactivation
+ * Handle membership deactivation - downgrade in durable store + emit analytics
  */
 async function handleMembershipDeactivated(membership) {
   console.log('[MEMBERSHIP DEACTIVATED]', {
@@ -146,9 +167,9 @@ async function handleMembershipDeactivated(membership) {
   });
 
   const userId = membership.user_id;
-
-  // Update user store - downgrade to free
   const existingUser = await getUser(userId) || {};
+
+  // Downgrade to free in durable store
   await setUser(userId, {
     ...existingUser,
     tier: 'free',
@@ -157,6 +178,12 @@ async function handleMembershipDeactivated(membership) {
     deactivationReason: membership.cancellation_reason
   });
 
+  // Emit analytics for churn analysis
+  emitServerAnalyticsEvent('subscription_cancelled', {
+    userId,
+    previousTier: existingUser.tier || 'unknown',
+    reason: membership.cancellation_reason
+  });
+
   console.log(`[USER DEACTIVATED] User ${userId} downgraded to free tier`);
 }
-

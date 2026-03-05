@@ -6,8 +6,10 @@
  * Defines membership tiers and integrates with Whop SDK for access control
  */
 
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useEffect, useRef, createContext, useContext } from 'react';
 import { WHOP_PRODUCTS } from '../../lib/whop-auth';
+import { trackMonetizationEvent, EVENTS } from '../../lib/analytics';
+
 
 // Membership tier definitions — must stay in sync with lib/whop-auth.js
 export const TIERS = {
@@ -221,6 +223,11 @@ export function MembershipProvider({ children }) {
   // Upgrade tier (for testing)
   function upgradeTier(newTier) {
     if (TIERS[newTier.toUpperCase()]) {
+      trackMonetizationEvent(EVENTS.SUBSCRIPTION_PLAN_CHANGED, {
+        user_tier_current: tier,
+        selectedTier: newTier,
+        source: 'manual_dev_toggle'
+      });
       setTier(newTier);
       localStorage.setItem('mmk_membership_tier', newTier);
     }
@@ -426,6 +433,18 @@ export function UpgradePrompt({ requiredTier = 'seeker' }) {
 export function PricingTable() {
   const { tier, upgradeTier } = useMembership();
 
+  const hasTrackedPricingView = useRef(false);
+
+  useEffect(() => {
+    if (hasTrackedPricingView.current) return;
+    hasTrackedPricingView.current = true;
+
+    trackMonetizationEvent(EVENTS.PRICING_VIEWED, {
+      user_tier_current: tier || 'free',
+      source: 'pricing_table'
+    });
+  }, [tier]);
+
   return (
     <div className="pricing-table">
       <h2>Choose Your Path</h2>
@@ -466,6 +485,11 @@ export function PricingTable() {
             <button
               className={`select-btn ${tier === tierConfig.id ? 'current' : ''}`}
               onClick={() => {
+                trackMonetizationEvent(EVENTS.UPGRADE_CTA_CLICKED, {
+                  user_tier_current: tier || 'free',
+                  selectedTier: tierConfig.id,
+                  cta: 'pricing_select_plan'
+                });
                 if (tierConfig.price > 0 && WHOP_PRODUCTS[tierConfig.id.toUpperCase()]) {
                   window.location.href = `https://whop.com/checkout/${WHOP_PRODUCTS[tierConfig.id.toUpperCase()]}`;
                 }

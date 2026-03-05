@@ -1,0 +1,63 @@
+name: Analytics Contract Check
+
+on:
+  pull_request:
+    paths:
+      - 'lib/analytics.js'
+      - 'lib/server-analytics.js'
+      - 'components/PaywallGate.jsx'
+      - 'pages/api/**'
+      - 'schemas/**'
+
+jobs:
+  analytics-contract:
+    name: Validate Analytics Schema & Instrumentation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run analytics schema contract check
+        run: node scripts/validate-analytics-contract.js
+
+      - name: Check required events are instrumented
+        run: |
+          echo "Checking that required monetization events are present in analytics.js..."
+          grep -q "upgrade_cta_shown" lib/analytics.js || (echo "MISSING: upgrade_cta_shown event" && exit 1)
+          grep -q "upgrade_cta_clicked" lib/analytics.js || (echo "MISSING: upgrade_cta_clicked event" && exit 1)
+          grep -q "checkout_started" lib/analytics.js || (echo "MISSING: checkout_started event" && exit 1)
+          grep -q "paywall_hit" lib/analytics.js || (echo "MISSING: paywall_hit event" && exit 1)
+          echo "✅ All required monetization events found"
+
+      - name: Check checkout intent API exists
+        run: |
+          test -f pages/api/checkout/intent.js || (echo "MISSING: pages/api/checkout/intent.js" && exit 1)
+          echo "✅ Checkout intent API present"
+
+      - name: Check server analytics emitter exists
+        run: |
+          test -f lib/server-analytics.js || (echo "MISSING: lib/server-analytics.js" && exit 1)
+          echo "✅ Server analytics emitter present"
+
+      - name: Check webhook emits analytics events
+        run: |
+          grep -q "emitServerAnalyticsEvent" pages/api/webhooks/whop.js || (echo "MISSING: analytics in webhook handler" && exit 1)
+          echo "✅ Webhook emits analytics events"
+
+      - name: Check auth callback emits login_succeeded
+        run: |
+          grep -q "login_succeeded" pages/api/auth/callback.js || (echo "MISSING: login_succeeded in auth callback" && exit 1)
+          echo "✅ Auth callback emits login_succeeded"
+
+      - name: Summary
+        run: echo "✅ All analytics contract checks passed"
