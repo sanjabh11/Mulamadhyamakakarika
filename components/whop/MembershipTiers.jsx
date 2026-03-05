@@ -341,8 +341,10 @@ export function UpgradePrompt({ requiredTier = 'seeker' }) {
       <button
         className="upgrade-btn"
         onClick={() => {
-          if (requiredTier && WHOP_PRODUCTS[requiredTier.toUpperCase()]) {
-            window.location.href = `https://whop.com/checkout/${WHOP_PRODUCTS[requiredTier.toUpperCase()]}`;
+          // WHOP_PRODUCTS is keyed by lowercase tier id (e.g. 'seeker', 'practitioner')
+          const productId = WHOP_PRODUCTS[requiredTier] || WHOP_PRODUCTS[requiredTier?.toLowerCase()];
+          if (requiredTier && productId) {
+            window.location.href = `https://whop.com/checkout/${productId}`;
           }
         }}
       >

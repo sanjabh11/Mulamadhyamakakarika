@@ -45,48 +45,64 @@ export function UserProvider({ children }) {
     try {
       setUser(prev => ({ ...prev, isLoading: true }));
 
-      // Check for existing session token
+      // PRIMARY: Always call /api/auth/validate — it reads the HttpOnly whop_session
+      // cookie set by the OAuth callback. Do NOT gate on localStorage, which the
+      // server-side callback never writes.
+      const response = await fetch('/api/auth/validate', {
+        credentials: 'include' // ensure HttpOnly cookie is sent
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+
+        // Identify user in analytics
+        identify(userData.id, {
+          email: userData.email,
+          tier: userData.tier,
+          createdAt: userData.createdAt
+        });
+
+        setUser({
+          id: userData.id,
+          email: userData.email,
+          tier: userData.tier || TIERS.FREE,
+          isAuthenticated: true,
+          isLoading: false,
+          animationsUsedToday: userData.animationsUsedToday || 0
+        });
+        return;
+      }
+
+      // FALLBACK: Try legacy localStorage token (for backwards compat only)
       const token = typeof window !== 'undefined'
         ? localStorage.getItem('whop_session_token')
         : null;
 
-      if (!token) {
-        setUser({ ...DEFAULT_USER, isLoading: false });
-        return;
-      }
+      if (token) {
+        const legacyResp = await fetch('/api/auth/validate', {
+          headers: { 'Authorization': `Bearer ${token}` },
+          credentials: 'include'
+        });
 
-      // Validate token with backend
-      // Replace with actual Whop API call
-      const response = await fetch('/api/auth/validate', {
-        headers: {
-          'Authorization': `Bearer ${token}`
+        if (legacyResp.ok) {
+          const userData = await legacyResp.json();
+          identify(userData.id, { email: userData.email, tier: userData.tier });
+          setUser({
+            id: userData.id,
+            email: userData.email,
+            tier: userData.tier || TIERS.FREE,
+            isAuthenticated: true,
+            isLoading: false,
+            animationsUsedToday: userData.animationsUsedToday || 0
+          });
+          return;
         }
-      });
-
-      if (!response.ok) {
-        // Token invalid, clear and reset
+        // Token is stale — remove it
         localStorage.removeItem('whop_session_token');
-        setUser({ ...DEFAULT_USER, isLoading: false });
-        return;
       }
 
-      const userData = await response.json();
-
-      // Identify user in analytics
-      identify(userData.id, {
-        email: userData.email,
-        tier: userData.tier,
-        createdAt: userData.createdAt
-      });
-
-      setUser({
-        id: userData.id,
-        email: userData.email,
-        tier: userData.tier || TIERS.FREE,
-        isAuthenticated: true,
-        isLoading: false,
-        animationsUsedToday: userData.animationsUsedToday || 0
-      });
+      // No valid session found — unauthenticated
+      setUser({ ...DEFAULT_USER, isLoading: false });
 
     } catch (err) {
       console.error('Auth check failed:', err);

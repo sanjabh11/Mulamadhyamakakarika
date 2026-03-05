@@ -111,10 +111,20 @@ const TIERS = [
     },
 ];
 
+// Static env lookup — Next.js can only inline NEXT_PUBLIC_ vars accessed statically,
+// not via dynamic indexing like process.env[key]. Map each plan key explicitly.
+const WHOP_PLAN_IDS: Record<string, string> = {
+    NEXT_PUBLIC_WHOP_PLAN_SEEKER: process.env.NEXT_PUBLIC_WHOP_PLAN_SEEKER || '',
+    NEXT_PUBLIC_WHOP_PLAN_PRACTITIONER: process.env.NEXT_PUBLIC_WHOP_PLAN_PRACTITIONER || '',
+    NEXT_PUBLIC_WHOP_PLAN_TEACHER: process.env.NEXT_PUBLIC_WHOP_PLAN_TEACHER || '',
+    NEXT_PUBLIC_WHOP_PLAN_ENLIGHTENED: process.env.NEXT_PUBLIC_WHOP_PLAN_ENLIGHTENED || '',
+};
+
 function TierCard({ tier }: { tier: typeof TIERS[0] }) {
     const handleSubscribe = () => {
         if (!tier.planEnvKey) return;
-        const planId = process.env[tier.planEnvKey] || '';
+        // Use the static map to avoid Next.js dynamic env var inlining failure
+        const planId = WHOP_PLAN_IDS[tier.planEnvKey] || '';
         if (planId) {
             window.location.href = `https://whop.com/checkout/${planId}`;
         } else {
