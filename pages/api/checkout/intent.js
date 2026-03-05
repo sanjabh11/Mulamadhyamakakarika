@@ -4,10 +4,14 @@
  *
  * Captures a user's checkout intent before they are redirected to Whop,
  * persisting an intent ID for join-rate attribution linkage after webhook activation.
+ *
+ * Request body: { checkoutIntentId, selectedTier, userId?, anonymousId?, sessionId?, utmSource?, utmMedium?, utmCampaign? }
+ * Returns: { ok: true, checkoutIntentId }
  */
 
 import { emitServerAnalyticsEvent } from '../../../lib/server-analytics';
 import { PersistentMap } from '../../../lib/persistent-map';
+import crypto from 'crypto';
 
 // Use a persistent file-backed map for intent storage (replace with Redis/KV in production)
 const intentStore = new PersistentMap('checkout-intents');
@@ -18,11 +22,19 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { checkoutIntentId, selectedTier, userId, anonymousId, sessionId, utmSource, utmMedium, utmCampaign } = req.body;
+        const {
+            checkoutIntentId: clientIntentId,
+            selectedTier,
+            userId,
+            anonymousId,
+            sessionId,
+            utmSource,
+            utmMedium,
+            utmCampaign
+        } = req.body;
 
-        if (!checkoutIntentId) {
-            return res.status(400).json({ error: 'checkoutIntentId is required' });
-        }
+        // Use client-provided ID or generate a secure fallback
+        const checkoutIntentId = clientIntentId || `intent_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
 
         const intent = {
             checkoutIntentId,

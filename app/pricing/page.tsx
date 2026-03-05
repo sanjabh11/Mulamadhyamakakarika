@@ -120,16 +120,55 @@ const WHOP_PLAN_IDS: Record<string, string> = {
     NEXT_PUBLIC_WHOP_PLAN_ENLIGHTENED: process.env.NEXT_PUBLIC_WHOP_PLAN_ENLIGHTENED || '',
 };
 
+function generateIntentId(): string {
+    return `intent_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+}
+
 function TierCard({ tier }: { tier: typeof TIERS[0] }) {
-    const handleSubscribe = () => {
+    const [subscribing, setSubscribing] = React.useState(false);
+
+    // Bug #4 fix: free tier navigates to chapter 1 instead of being disabled
+    const handleFreeStart = () => {
+        window.location.href = '/verse/1-1';
+    };
+
+    // Bug #2 fix: async-POST to /api/checkout/intent BEFORE redirecting to Whop
+    // This captures intent, emits analytics, and persists to .state/checkout-intents.json
+    const handleSubscribe = async () => {
         if (!tier.planEnvKey) return;
-        // Use the static map to avoid Next.js dynamic env var inlining failure
         const planId = WHOP_PLAN_IDS[tier.planEnvKey] || '';
-        if (planId) {
-            window.location.href = `https://whop.com/checkout/${planId}`;
-        } else {
-            alert(`Payment integration is in development mode.\n\nPlease set ${tier.planEnvKey} in .env.local to the correct Whop Plan ID.`);
+
+        // Validate we have a real Whop plan ID before proceeding
+        if (!planId || planId.startsWith('plan_') && planId.length < 20) {
+            alert(`⚠️ Development mode: Please set ${tier.planEnvKey} in .env.local\nto your real Whop Plan ID from your seller dashboard.\n\nGet it from: whop.com → Dashboard → Settings → Plans`);
+            return;
         }
+
+        setSubscribing(true);
+        const checkoutIntentId = generateIntentId();
+
+        try {
+            // Step 1: Capture intent server-side (analytics + persistent-map write)
+            await fetch('/api/checkout/intent', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    checkoutIntentId,
+                    selectedTier: tier.id,
+                    sessionId: sessionStorage.getItem('mmk_session_id') || null,
+                    anonymousId: localStorage.getItem('mmk_anonymous_id') || null,
+                    utmSource: new URLSearchParams(window.location.search).get('utm_source') || document.referrer || null,
+                    utmMedium: new URLSearchParams(window.location.search).get('utm_medium') || null,
+                    utmCampaign: new URLSearchParams(window.location.search).get('utm_campaign') || null,
+                })
+            });
+        } catch (err) {
+            // Non-blocking: intent capture failure must not block checkout
+            console.warn('[pricing] Intent capture failed (non-blocking):', err);
+        }
+
+        // Step 2: Redirect to Whop checkout with intent ID as URL param for attribution
+        window.location.href = `https://whop.com/checkout/${planId}/?checkout_intent=${checkoutIntentId}`;
     };
 
     return (
@@ -171,15 +210,15 @@ function TierCard({ tier }: { tier: typeof TIERS[0] }) {
             </ul>
 
             <button
-                onClick={handleSubscribe}
-                disabled={tier.price === 0}
+                onClick={tier.price === 0 ? handleFreeStart : handleSubscribe}
+                disabled={subscribing}
                 className={`w-full py-3 rounded-xl font-semibold text-sm transition-all duration-200 mt-2
                     ${tier.price === 0
-                        ? 'bg-white/10 border border-white/20 text-slate-300 cursor-default'
+                        ? 'bg-gradient-to-r from-emerald-500/80 to-teal-600/80 hover:from-emerald-400 hover:to-teal-500 text-white active:scale-95 cursor-pointer'
                         : `bg-gradient-to-r ${tier.popular ? 'from-purple-500 to-indigo-500 hover:from-purple-400 hover:to-indigo-400' : 'from-slate-600 to-slate-500 hover:from-slate-500 hover:to-slate-400'} text-white hover:shadow-[0_4px_20px_rgba(139,92,246,0.4)] active:scale-95`
-                    }`}
+                    } disabled:opacity-50 disabled:cursor-wait`}
             >
-                {tier.price === 0 ? 'Get Started Free' : `Subscribe — $${tier.price}/mo`}
+                {subscribing ? 'Preparing checkout…' : tier.price === 0 ? 'Get Started Free →' : `Subscribe — $${tier.price}/mo`}
             </button>
         </div>
     );
