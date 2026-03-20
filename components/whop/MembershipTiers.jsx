@@ -492,8 +492,8 @@ export function PricingTable() {
                   selectedTier: tierConfig.id,
                   cta: 'pricing_select_plan'
                 });
-                if (tierConfig.price > 0 && WHOP_PRODUCTS[tierConfig.id.toUpperCase()]) {
-                  window.location.href = `https://whop.com/checkout/${WHOP_PRODUCTS[tierConfig.id.toUpperCase()]}`;
+                if (tierConfig.price > 0 && WHOP_PRODUCTS[tierConfig.id]) {
+                  window.location.href = `https://whop.com/checkout/${WHOP_PRODUCTS[tierConfig.id]}`;
                 }
               }}
               disabled={tier === tierConfig.id}

@@ -103,9 +103,12 @@ export default async function handler(req, res) {
 async function exchangeCodeForTokens(code) {
   const clientId = process.env.NEXT_PUBLIC_WHOP_CLIENT_ID;
   const clientSecret = process.env.WHOP_CLIENT_SECRET;
+  if (!clientId || !clientSecret) {
+    throw new Error('Missing Whop OAuth config: NEXT_PUBLIC_WHOP_CLIENT_ID and/or WHOP_CLIENT_SECRET');
+  }
   const redirectUri = process.env.NEXT_PUBLIC_APP_URL
     ? `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/callback`
-    : 'http://localhost:3000/api/auth/callback';
+    : 'http://localhost:3004/api/auth/callback';
 
   const response = await fetch('https://api.whop.com/oauth/token', {
     method: 'POST',

@@ -3,7 +3,7 @@
  * Clears session and cookies
  */
 
-import { sessionStore } from './callback';
+import { deleteSession } from '../../../lib/redis-store';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -16,13 +16,15 @@ export default async function handler(req, res) {
     
     if (cookieToken) {
       // Remove from session store
-      sessionStore.delete(cookieToken);
+      await deleteSession(cookieToken);
     }
 
     // Clear cookies
+    const isProduction = process.env.NODE_ENV === 'production';
+    const secureFlag = isProduction ? '; Secure' : '';
     res.setHeader('Set-Cookie', [
-      'whop_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0',
-      'whop_user_id=; Path=/; SameSite=Lax; Max-Age=0'
+      `whop_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secureFlag}`,
+      `whop_user_id=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secureFlag}`
     ]);
 
     return res.status(200).json({ success: true });

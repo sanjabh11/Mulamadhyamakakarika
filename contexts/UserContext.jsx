@@ -117,6 +117,10 @@ export function UserProvider({ children }) {
    */
   const login = useCallback(() => {
     const whopClientId = process.env.NEXT_PUBLIC_WHOP_CLIENT_ID;
+    if (!whopClientId) {
+      setError('Missing NEXT_PUBLIC_WHOP_CLIENT_ID');
+      return;
+    }
     const redirectUri = typeof window !== 'undefined'
       ? `${window.location.origin}/api/auth/callback`
       : '';

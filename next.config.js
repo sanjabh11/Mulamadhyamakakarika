@@ -3,6 +3,7 @@ const path = require('path');
 
 const nextConfig = {
   reactStrictMode: false,
+  outputFileTracingRoot: __dirname,
 
   // Required headers for Whop iframe embedding
   async headers() {
@@ -82,6 +83,9 @@ const nextConfig = {
         'three': path.resolve(__dirname, 'node_modules/three'),
         '@react-three/fiber': path.resolve(__dirname, 'node_modules/@react-three/fiber'),
         '@react-three/drei': path.resolve(__dirname, 'node_modules/@react-three/drei'),
+        'framer-motion': path.resolve(__dirname, 'node_modules/framer-motion'),
+        'motion-dom': path.resolve(__dirname, 'node_modules/motion-dom'),
+        'motion-utils': path.resolve(__dirname, 'node_modules/motion-utils'),
       };
     }
 

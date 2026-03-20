@@ -88,27 +88,6 @@ const TIERS = [
         ],
         planEnvKey: 'NEXT_PUBLIC_WHOP_PLAN_TEACHER',
     },
-    {
-        id: 'enlightened',
-        name: 'Enlightened',
-        price: 299,
-        icon: '🌌',
-        popular: false,
-        gradient: 'from-yellow-400/20 via-pink-500/15 to-purple-600/20',
-        borderColor: 'border-yellow-400/60',
-        accentColor: 'text-yellow-300',
-        description: 'Unlimited institutional access for dharma centers & universities',
-        features: [
-            'Everything in Teacher',
-            'Unlimited seats / team accounts',
-            'Custom branding & domain',
-            'Dedicated account manager',
-            'Curriculum integration support',
-            'Research data export API',
-            'Early access to new chapters',
-        ],
-        planEnvKey: 'NEXT_PUBLIC_WHOP_PLAN_ENLIGHTENED',
-    },
 ];
 
 // Static env lookup — Next.js can only inline NEXT_PUBLIC_ vars accessed statically,
@@ -117,7 +96,6 @@ const WHOP_PLAN_IDS: Record<string, string> = {
     NEXT_PUBLIC_WHOP_PLAN_SEEKER: process.env.NEXT_PUBLIC_WHOP_PLAN_SEEKER || '',
     NEXT_PUBLIC_WHOP_PLAN_PRACTITIONER: process.env.NEXT_PUBLIC_WHOP_PLAN_PRACTITIONER || '',
     NEXT_PUBLIC_WHOP_PLAN_TEACHER: process.env.NEXT_PUBLIC_WHOP_PLAN_TEACHER || '',
-    NEXT_PUBLIC_WHOP_PLAN_ENLIGHTENED: process.env.NEXT_PUBLIC_WHOP_PLAN_ENLIGHTENED || '',
 };
 
 function generateIntentId(): string {

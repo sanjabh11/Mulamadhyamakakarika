@@ -3,12 +3,12 @@
 import React, { use } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Award, Share2, Download } from 'lucide-react';
-import { useUser } from '../../contexts/UserContext';
-import { useMembership } from '../../components/whop/MembershipTiers';
+import { useUser } from '../../../contexts/UserContext';
+import { useMembership } from '../../../components/whop/MembershipTiers';
 
 export default function CertificatePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
-    const { userData } = useUser();
+    const { user } = useUser();
     const { tier } = useMembership();
 
     const handleDownload = () => {
@@ -55,7 +55,7 @@ export default function CertificatePage({ params }: { params: Promise<{ id: stri
                         <p className="text-lg text-slate-600 mb-4">This acknowledges that</p>
 
                         <div className="text-3xl md:text-5xl font-bold font-serif text-slate-900 border-b-2 border-slate-200 px-12 pb-2 mb-8 inline-block min-w-[300px]">
-                            {userData?.name || 'Dedicated Seeker'}
+                            {user?.email || 'Dedicated Seeker'}
                         </div>
 
                         <p className="text-lg text-slate-600 max-w-lg mx-auto mb-12">
