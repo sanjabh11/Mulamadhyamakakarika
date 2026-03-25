@@ -1,20 +1,20 @@
-# Conference Presentation Plan: Nagarjuna Quantum Reflections
+# Execution Checklist: Sprint 1 & 2 (Academic Dissemination)
 
-## Phase 1: Deep Research & Alignment Analysis
-- [ ] Analyze conference themes and identify strong intersections with our platform.
-- [ ] Review codebase architecture to isolate key features demonstrating AI in Indian Knowledge Systems (e.g., Gemini prompts, R3F visualizations).
-- [ ] Research academic paper standards for presenting AI platforms in Humanities/Tech conferences.
+## Sprint 1: Fix URLs and H-Buddhism
+- [/] **Agent:** Check `git status` for `app/iks-conference/` and `app/research/data/`.
+- [ ] **Agent:** Commit these directories to git and push to `origin main` to trigger Netlify.
+- [ ] **Agent:** Verify live URLs (`/iks-conference` and `/research/data`) return HTTP 200.
+- [ ] **Agent:** Generate exact text block for the H-Buddhism announcement (no commercial language).
+- [ ] **User:** Submit the generated announcement text to the H-Net Commons portal.
 
-## Phase 2: Paper & Methodology Formulation
-- [ ] Draft the Paper Abstract tailored to the conference sub-themes.
-- [ ] Define the Research Methodology (e.g., Design-Based Research, Pedagogical efficacy of 3D/AI in philosophy).
-- [ ] Outline the Paper Structure (Introduction, Literature Review, Architecture, Methodology, Results/Observations, Conclusion).
+## Sprint 2: Create Citable Academic Record
+- [ ] **Agent:** Create `docs/zenodo_upload/` directory.
+- [ ] **Agent:** Copy `docs/paper.md` into the Zenodo folder as `Nagarjuna_Quantum_Reflections_Paper.md/pdf`.
+- [ ] **Agent:** Generate `metadata.txt` with Title, Description, Keywords, Authors, and License.
+- [ ] **User:** Upload the folder to `https://zenodo.org/uploads/new` and retrieve DOI.
+- [ ] **Agent:** Generate OSF Wiki text incorporating the new Zenodo DOI.
+- [ ] **User:** Create OSF project at `https://osf.io` and paste Wiki text.
+- [ ] **User:** Add app to "Digital Projects" on `https://philpeople.org`.
 
-## Phase 3: Step-by-Step Execution Plan for the Web App
-- [ ] Identify necessary adjustments to the web app to highlight its educational and research-oriented facets (e.g., dedicated landing page for reviewers).
-- [ ] Formulate a plan for data collection (telemetry) to support the paper's claims.
-- [ ] Create an execution roadmap for generating the final paper and accompanying presentation deck.
-
-## Phase 4: Review & Finalization
-- [ ] Present the comprehensive analysis and plan to the user.
-- [ ] Refine based on user feedback.
+## Ongoing Tracking
+- [ ] **Lessons Learned:** Capture any workflow friction or success into `tasks/lessons.md`.
