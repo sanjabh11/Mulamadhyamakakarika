@@ -4,10 +4,7 @@
 [build.environment]
   NODE_VERSION = "18"
 
-[build.ignore]
-  node_modules = true
-  ".next" = true
-
+# Netlify handles Next.js redirects automatically. 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 

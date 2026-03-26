@@ -7,9 +7,10 @@ import DesktopVerseLayout from './DesktopVerseLayout';
 
 interface VerseClientWrapperProps {
     data: any; // Using any for now to avoid strict typing friction during migration
+    isShowcase?: boolean;
 }
 
-export default function VerseClientWrapper({ data }: VerseClientWrapperProps) {
+export default function VerseClientWrapper({ data, isShowcase = false }: VerseClientWrapperProps) {
     const [isMobile, setIsMobile] = useState(false);
     const [mounted, setMounted] = useState(false);
 
@@ -38,6 +39,7 @@ export default function VerseClientWrapper({ data }: VerseClientWrapperProps) {
                 chapterTitle={chapterTitle}
                 totalVerses={totalVerses}
                 verseData={verseData}
+                isShowcase={isShowcase}
             />
         );
     }
@@ -49,6 +51,7 @@ export default function VerseClientWrapper({ data }: VerseClientWrapperProps) {
             chapterTitle={chapterTitle}
             totalVerses={totalVerses}
             verseData={verseData}
+            researchModeEnabled={isShowcase}
         />
     );
 }

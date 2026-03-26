@@ -23,6 +23,7 @@ interface DesktopVerseLayoutProps {
     chapterTitle: string;
     totalVerses: number;
     verseData: any;
+    researchModeEnabled?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -140,14 +141,14 @@ function QuizPanel({ quiz, tier, onClose }: QuizPanelProps) {
 // ---------------------------------------------------------------------------
 // Main Desktop Layout
 // ---------------------------------------------------------------------------
-export default function DesktopVerseLayout({ verseData, chapterId, verseId, chapterTitle, totalVerses }: DesktopVerseLayoutProps) {
+export default function DesktopVerseLayout({ verseData, chapterId, verseId, chapterTitle, totalVerses, researchModeEnabled = false }: DesktopVerseLayoutProps) {
     const [isPlaying, setIsPlaying] = useState(true);
     const [quizOpen, setQuizOpen] = useState(false);
     const [selectedTier, setSelectedTier] = useState<'beginner' | 'intermediate' | 'advanced'>('beginner');
     const [expandedDive, setExpandedDive] = useState<number | null>(null);
     const [animControls, setAnimControls] = useState({ rotation: true, speed: 50, complexity: 50, zoom: 100, accentColor: '#8B5CF6' });
     const [showReveal, setShowReveal] = useState(false);
-    const [researchMode, setResearchMode] = useState(false);
+    const [researchMode, setResearchMode] = useState(researchModeEnabled);
     const { tier, canHavePhysicsSliders } = useMembership();
     const hasPhysicsSliders = canHavePhysicsSliders();
 

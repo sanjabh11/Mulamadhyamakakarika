@@ -13,7 +13,7 @@ import { useHaptic } from '../../hooks/useHaptic';
 import AuroraBackground from '../ui/AuroraBackground';
 import QuantumCompanion from '../companion/QuantumCompanion';
 
-export default function MobileVerseLayout({ verseData, chapterId, verseId, chapterTitle, totalVerses }: any) {
+export default function MobileVerseLayout({ verseData, chapterId, verseId, chapterTitle, totalVerses, isShowcase = false }: any) {
     const router = useRouter();
     const haptic = useHaptic();
     const [sheetOpen, setSheetOpen] = useState(false);
@@ -22,7 +22,7 @@ export default function MobileVerseLayout({ verseData, chapterId, verseId, chapt
     const [showReveal, setShowReveal] = useState(false);
     const [showCompanion, setShowCompanion] = useState(false);
     const [swipeHint, setSwipeHint] = useState(true);
-    const [researchMode, setResearchMode] = useState(false);
+    const [researchMode, setResearchMode] = useState(isShowcase);
 
     // Animation controls state
     const [speed, setSpeed] = useState(50);

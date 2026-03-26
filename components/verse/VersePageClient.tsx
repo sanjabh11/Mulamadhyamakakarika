@@ -48,5 +48,5 @@ export default function VersePageClient({ data, isShowcase, chapterId }: VersePa
         }
     }, [data?.verse?.chapter]);
 
-    return <VerseClientWrapper data={data} />;
+    return <VerseClientWrapper data={data} isShowcase={isShowcase} />;
 }
