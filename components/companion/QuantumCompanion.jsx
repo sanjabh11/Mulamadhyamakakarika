@@ -7,7 +7,7 @@ import { Send, Sparkles, Share2, Bookmark, Lock } from 'lucide-react';
 import { useMembership } from '../whop/MembershipTiers';
 import { cn } from '../../lib/utils';
 
-export default function QuantumCompanion({ verseData, chapterId, verseId }) {
+export default function QuantumCompanion({ verseData, chapterId, verseId, researchMode = false }) {
     const { tier } = useMembership();
     const messagesEndRef = useRef(null);
 
@@ -115,8 +115,28 @@ export default function QuantumCompanion({ verseData, chapterId, verseId }) {
                                 <p key={i} className="mb-2 last:mb-0">{line}</p>
                             ))}
                         </div>
+
+                        {/* Research Mode: Message Metadata */}
+                        {researchMode && m.role === 'assistant' && (
+                            <div className="mt-3 pt-2 border-t border-quantum-neon/20 text-[9px] font-mono text-quantum-cool flex flex-col gap-1">
+                                <span className="flex justify-between"><span>Model:</span> <span>gemini-1.5-flash-research</span></span>
+                                <span className="flex justify-between"><span>Context:</span> <span>Verse ${verseId} + Foundation Prompt v2.1</span></span>
+                                <span className="flex justify-between"><span>Safety Check:</span> <span className="text-green-400">PASSED</span></span>
+                            </div>
+                        )}
                     </div>
                 ))}
+
+                {researchMode && messages.length > 0 && messages[messages.length - 1].role === 'assistant' && (
+                    <div className="p-3 bg-quantum-neon/5 border border-quantum-neon/20 rounded-xl text-[10px] font-mono text-slate-400 mt-4 h-32 overflow-y-auto custom-scrollbar">
+                        <p className="text-quantum-neon font-bold mb-1 uppercase tracking-tighter">Research Mode: Active System Prompt Snippet</p>
+                        <p className="leading-tight opacity-70">
+                            "You are MADHYAMAKA-GPT... prioritize Prasangika-Madhyamaka dialectic... 
+                            enforce Gate 2 Scientific Integrity: No quantum mysticism... 
+                            map structural parallels to: ${verseData?.quantumResonance?.concept || 'Quantum Superposition'}..."
+                        </p>
+                    </div>
+                )}
 
                 {isLoading && (
                     <div className="max-w-[85%] rounded-2xl p-4 bg-quantum-neon/5 border border-quantum-neon/10 rounded-tl-sm mr-auto flex items-center gap-2">

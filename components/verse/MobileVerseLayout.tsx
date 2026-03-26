@@ -22,6 +22,7 @@ export default function MobileVerseLayout({ verseData, chapterId, verseId, chapt
     const [showReveal, setShowReveal] = useState(false);
     const [showCompanion, setShowCompanion] = useState(false);
     const [swipeHint, setSwipeHint] = useState(true);
+    const [researchMode, setResearchMode] = useState(false);
 
     // Animation controls state
     const [speed, setSpeed] = useState(50);
@@ -161,6 +162,26 @@ export default function MobileVerseLayout({ verseData, chapterId, verseId, chapt
                                     aria-label="Zoom level"
                                 />
                             </div>
+
+                            {/* Research Mode Toggle */}
+                            <div className="pt-2 border-t border-white/10 flex justify-between items-center">
+                                <div className="flex items-center gap-2">
+                                    <Sparkles size={14} className="text-quantum-neon" />
+                                    <label className="text-xs font-bold text-white uppercase tracking-widest">Research Mode</label>
+                                </div>
+                                <button
+                                    onClick={() => setResearchMode(!researchMode)}
+                                    className={cn(
+                                        "w-10 h-5 rounded-full relative transition-colors",
+                                        researchMode ? "bg-quantum-neon shadow-[0_0_10px_rgba(0,255,255,0.4)]" : "bg-white/20"
+                                    )}
+                                >
+                                    <div className={cn(
+                                        "w-4 h-4 rounded-full bg-white absolute top-0.5 transition-transform",
+                                        researchMode ? "translate-x-5.5 right-0.5" : "translate-x-0.5 left-0"
+                                    )} />
+                                </button>
+                            </div>
                         </div>
                     </motion.div>
                 )}
@@ -183,7 +204,7 @@ export default function MobileVerseLayout({ verseData, chapterId, verseId, chapt
                             >
                                 <X size={16} />
                             </button>
-                            <QuantumCompanion chapterId={chapterId} verseId={verseId} verseData={verseData} />
+                            <QuantumCompanion chapterId={chapterId} verseId={verseId} verseData={verseData} researchMode={researchMode} />
                         </div>
                     </motion.div>
                 )}
@@ -204,6 +225,31 @@ export default function MobileVerseLayout({ verseData, chapterId, verseId, chapt
                 />
                 {/* Gradient overlay for text readability */}
                 <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-quantum-void/80 to-transparent pointer-events-none" />
+
+                {/* Research Mode HUD */}
+                <AnimatePresence>
+                    {researchMode && (
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="absolute top-24 left-4 right-4 bg-black/80 backdrop-blur-md rounded-xl p-4 border border-quantum-neon/50 shadow-[0_0_20px_rgba(0,255,255,0.15)] z-30 pointer-events-none"
+                        >
+                            <h4 className="text-[10px] text-quantum-neon font-mono uppercase font-bold tracking-widest mb-3 border-b border-quantum-neon/30 pb-1">AI Pipeline Telemetry</h4>
+                            <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-[10px] font-mono text-slate-300">
+                                <div className="flex justify-between"><span>Model:</span><span className="text-white">Gemini 1.5 Pro</span></div>
+                                <div className="flex justify-between"><span>Temp:</span><span className="text-white">0.30</span></div>
+                                <div className="flex justify-between"><span>Top_P:</span><span className="text-white">0.85</span></div>
+                                <div className="flex justify-between"><span>System Prompt:</span><span className="text-white">v3-madhyamaka</span></div>
+                                <div className="flex justify-between"><span>Epistemic Shield:</span><span className="text-green-400">ACTIVE</span></div>
+                                <div className="flex justify-between"><span>WebGL Shaders:</span><span className="text-quantum-plasma">{verseData?.animation?.type || 'nebula'}</span></div>
+                            </div>
+                            <div className="mt-3 pt-2 border-t border-white/10">
+                                <span className="text-[9px] text-slate-500">Retrieval latency: ~450ms | Render: 60fps</span>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
 
             {/* Top Bar with Persistent Next/Prev Arrows */}

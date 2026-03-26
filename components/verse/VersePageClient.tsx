@@ -1,7 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
+// @ts-ignore
+import { useMembership } from '../whop/MembershipTiers';
 
 // Dynamic import the verse viewer with ssr: false to prevent hydration mismatch.
 // The verse viewer uses Canvas API, WebGL, Three.js, and window-dependent code
@@ -23,9 +26,21 @@ const VerseClientWrapper = dynamic(
 
 interface VersePageClientProps {
     data: any;
+    isShowcase?: boolean;
+    chapterId: number;
 }
 
-export default function VersePageClient({ data }: VersePageClientProps) {
+export default function VersePageClient({ data, isShowcase, chapterId }: VersePageClientProps) {
+    const router = useRouter();
+    const { canAccessChapter, loading } = useMembership();
+
+    useEffect(() => {
+        if (!loading && chapterId > 3 && !isShowcase && !canAccessChapter(chapterId)) {
+            // Unauthorized direct access pattern detected. Redirecting to paywall.
+            router.push('/pricing');
+        }
+    }, [loading, chapterId, isShowcase, canAccessChapter, router]);
+
     useEffect(() => {
         if (typeof window !== 'undefined' && data?.verse?.chapter) {
             document.body.setAttribute('data-chapter', data.verse.chapter.toString());

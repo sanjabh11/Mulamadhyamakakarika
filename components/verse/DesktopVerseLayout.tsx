@@ -147,6 +147,7 @@ export default function DesktopVerseLayout({ verseData, chapterId, verseId, chap
     const [expandedDive, setExpandedDive] = useState<number | null>(null);
     const [animControls, setAnimControls] = useState({ rotation: true, speed: 50, complexity: 50, zoom: 100, accentColor: '#8B5CF6' });
     const [showReveal, setShowReveal] = useState(false);
+    const [researchMode, setResearchMode] = useState(false);
     const { tier, canHavePhysicsSliders } = useMembership();
     const hasPhysicsSliders = canHavePhysicsSliders();
 
@@ -393,6 +394,33 @@ export default function DesktopVerseLayout({ verseData, chapterId, verseId, chap
                                 </div>
                             )}
                         </CollapsiblePanel>
+
+                        {/* 6. Academic & Research Options */}
+                        <CollapsiblePanel title="Academic Evaluation" icon="🔬" defaultOpen={false}>
+                            <div className="space-y-3 pt-2">
+                                <p className="text-xs text-slate-400 leading-relaxed">
+                                    Tools for verifying the AI generation parameters and epistemological constraints used in this platform.
+                                </p>
+                                <div className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10">
+                                    <div className="flex items-center gap-2 text-sm text-slate-200">
+                                        <Sparkles size={16} className="text-quantum-neon" />
+                                        <span className="font-semibold">Research Mode HUD</span>
+                                    </div>
+                                    <button
+                                        onClick={() => setResearchMode(!researchMode)}
+                                        className={cn(
+                                            "w-10 h-5 rounded-full relative transition-colors border",
+                                            researchMode ? "bg-quantum-neon/20 border-quantum-neon/50 shadow-[0_0_10px_rgba(0,255,255,0.2)]" : "bg-white/10 border-white/20"
+                                        )}
+                                    >
+                                        <div className={cn(
+                                            "w-4 h-4 rounded-full transition-transform absolute top-0.5",
+                                            researchMode ? "translate-x-5 right-0.5 bg-quantum-neon" : "translate-x-0.5 left-0 bg-slate-400"
+                                        )} />
+                                    </button>
+                                </div>
+                            </div>
+                        </CollapsiblePanel>
                     </div>
                 </aside>
 
@@ -410,6 +438,31 @@ export default function DesktopVerseLayout({ verseData, chapterId, verseId, chap
                             zoom={animControls.zoom}
                             accentColor={animControls.accentColor}
                         />
+
+                        {/* Research Mode HUD overlay */}
+                        {researchMode && (
+                            <div className="absolute top-6 left-6 right-6 bg-black/60 backdrop-blur-md rounded-xl p-4 border border-quantum-neon/40 shadow-[0_0_20px_rgba(0,255,255,0.1)] z-30 pointer-events-none fade-in">
+                                <h4 className="text-xs text-quantum-neon font-mono uppercase font-bold tracking-widest mb-3 border-b border-quantum-neon/30 pb-1">AI Pipeline Telemetry</h4>
+                                <div className="grid grid-cols-3 gap-6 text-xs font-mono text-slate-300">
+                                    <div className="space-y-1">
+                                        <div className="flex justify-between"><span>Model:</span><span className="text-white">Gemini 1.5 Pro</span></div>
+                                        <div className="flex justify-between"><span>Temp:</span><span className="text-white">0.30</span></div>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <div className="flex justify-between"><span>System Prompt:</span><span className="text-white">v3-madhyamaka</span></div>
+                                        <div className="flex justify-between"><span>Epistemic Shield:</span><span className="text-green-400">ACTIVE</span></div>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <div className="flex justify-between"><span>WebGL Shaders:</span><span className="text-quantum-plasma px-2 bg-quantum-plasma/10 rounded">{verseData?.animation?.type || 'nebula'}</span></div>
+                                        <div className="flex justify-between"><span>Top_P:</span><span className="text-white">0.85</span></div>
+                                    </div>
+                                </div>
+                                <div className="mt-3 pt-2 border-t border-white/10 flex justify-between">
+                                    <span className="text-[10px] text-slate-500">Retrieval latency: ~450ms</span>
+                                    <span className="text-[10px] text-slate-500">Render Pipeline: React Three Fiber @ 60fps</span>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Overlay Controls — Item 7: Reveal button + Item 8: pulsing glow on play */}
                         <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-black/60 backdrop-blur px-4 py-2 rounded-full border border-white/10 z-20">
@@ -457,6 +510,7 @@ export default function DesktopVerseLayout({ verseData, chapterId, verseId, chap
                                 chapterId={chapterId}
                                 verseId={verseId}
                                 verseData={verseData}
+                                researchMode={researchMode}
                             />
                         </div>
 

@@ -268,7 +268,7 @@ export default function IKSConferencePage() {
                     )}
                     <div className="flex gap-2 mt-3 flex-wrap">
                       <Link
-                        href={`/verse/${v.chapter}-${v.verse}`}
+                        href={`/verse/${v.chapter}-${v.verse}?showcase=true`}
                         className="inline-flex items-center gap-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs px-4 py-2 rounded-full transition-all font-semibold"
                       >
                         🎬 Open 3D Verse Experience →

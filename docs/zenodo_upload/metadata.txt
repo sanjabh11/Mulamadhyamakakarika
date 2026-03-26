@@ -1,0 +1,33 @@
+# Zenodo Upload Metadata
+
+**Instructions:**
+Go to https://zenodo.org/uploads/new
+Drag and drop the contents of this folder (`Nagarjuna_Quantum_Reflections_Paper.md`) into the file section.
+Copy and paste the following metadata perfectly into fields provided:
+
+---
+
+**Upload Type:**
+Software (or Dataset, depending on preference, but Software fits best for digital humanities platforms)
+
+**Title:**
+Nagarjuna Quantum Reflections: An Interactive AI & 3D WebGL Platform for Teaching the Mūlamadhyamakakārikā
+
+**Creators:**
+Sanjay Bhargava
+
+**Description:**
+Nagarjuna Quantum Reflections is an open-access Digital Humanities and EdTech platform that utilizes generative AI and procedural 3D WebGL to teach ancient Indian philosophy. The platform specifically translates and maps Nāgārjuna’s *Mūlamadhyamakakārikā* (MMK)—exploring concepts like *śūnyatā* (emptiness) and *pratītyasamutpāda* (dependent origination)—using structural analogies from quantum mechanics. 
+
+Built on a Next.js architecture with React Three Fiber, the platform introduces the **ATOM Framework** (for real-time philosophical 3D visualization) and the **RESONANCE metric system** (to maintain epistemic guardrails and prevent "quantum mysticism"). It is designed for academic researchers, philosophy students, and digital pedagogy scholars.
+
+Included in this repository is the primary architectural paper documenting the methodology, technical stack, and epistemic guardrails.
+
+**Keywords:**
+Buddhist Studies, Digital Humanities, Madhyamaka, Quantum Physics, EdTech, Artificial Intelligence, Indian Knowledge Systems
+
+**License:**
+Creative Commons Attribution 4.0 International (CC-BY 4.0)
+
+---
+*Once published, copy the DOI and save it to `docs/zenodo_doi.txt` so we can embed it in the OSF project.*
