@@ -1,61 +1,96 @@
 # Nagarjuna Quantum Reflections (Mūlamadhyamakakārikā)
 
-Welcome to **Nagarjuna Quantum Reflections**, an immersive, interactive, and beautifully animated web platform dedicated to exploring the profound wisdom of Nagarjuna's *Mūlamadhyamakakārikā* (The Fundamental Verses of the Middle Way). 
+Welcome to **Nagarjuna Quantum Reflections**, a digital humanities and educational web platform for studying Nāgārjuna’s *Mūlamadhyamakakārikā* (MMK) through structured verse data, interactive visual pedagogy, and AI-assisted explanation.
 
-By blending ancient Buddhist philosophy with modern quantum mechanics themes, 3D visualizations, and cutting-edge AI, this platform provides users with a unique, deeply engaging educational journey.
+The project is best understood as an in-progress **research-facing teaching tool** rather than a generic consumer app. It is designed to help researchers, educators, students, and independent learners engage one of the most difficult works in Buddhist philosophy through browser-native interfaces, transparent methodology, and carefully caveated cross-domain analogy.
 
 ---
 
 ## 🌟 Platform Overview
 
-The platform consists of **27 chapters** encompassing **400+ verses** of classical philosophy, reimagined for the digital age. It features progressive enhancement, moving from elegant typography to fully interactive 3D WebGL scenes.
+The current repository contains **27 canonical chapter files** and **448 configured verse slots** across the MMK corpus. Each canonical verse is designed to carry structured teaching and research metadata, including philosophical explanation, quantum-resonance framing, animation metadata, deeper-dive Q&A, and quizzes.
+
+For academic review, the project currently includes:
+
+- **A dedicated reviewer route:** `/iks-conference`
+- **Showcase verse access:** reviewer links can open verse pages with `?showcase=true`
+- **Research-mode overlays:** desktop and mobile verse layouts expose AI and rendering metadata
+- **A transparency-oriented companion experience:** the AI route loads a documented prompt file from `docs/system_prompt_gemini_v2_enhanced.md`
 
 ### Key Features
-- **Interactive 3D Verse Animations:** Built with React Three Fiber (R3F). Each verse features quantum-themed visualizations representing concepts like *Superposition*, *Entanglement*, *Causation*, and *Emptiness*.
-- **AI Companion & Contextual Explanations:** Powered by the Google Gemini API (`@ai-sdk/google`) to deliver deep, interactive philosophical discourse.
-- **Dynamic Procedural Generation:** AI-driven animation generation via Fal.ai (`@fal-ai/client`) for dynamic, verse-specific visual representations.
-- **Educational Tools:** Quizzes, structured learning paths, and printable completion certificates for users.
-- **Premium Monetization (Whop):** Fully integrated with the Whop platform, offering a structured 5-tier freemium SaaS model (Free, Seeker, Practitioner, Teacher, Enlightened) with secure chapter gating.
-- **Robust Telemetry:** Built-in analytics tracking for monetization funnels and deep engagement analysis, capable of routing to PostHog, Mixpanel, or Amplitude.
+- **Canonical verse data model:** chapter files in `data/chapters/` act as the main scholarly content layer.
+- **Interactive 3D verse experiences:** verse pages use React Three Fiber to turn difficult arguments into manipulable visual objects.
+- **AI companion with research mode:** the companion uses the Gemini API and loads a documented system prompt file from the repo.
+- **Verse-level teaching scaffolding:** verses include six-step `deeperDive` sequences and three-tier quizzes.
+- **Anti-pseudoscience framing:** verse data stores caveats and the research UI frames quantum links as structural analogies, not metaphysical proof.
+- **Progress tracking:** local reading progress and streak data support long-form learning journeys.
+- **Research dashboard prototype:** `/research/data` is an academic-facing prototype surface for aggregated pedagogical reporting.
+- **Dissemination toolkit:** Complete outreach materials in `docs/` for academic publication and faculty pilot recruitment.
 
 ---
 
 ## 🛠️ Technology Stack
 
 - **Framework:** Next.js 15 (App Router)
-- **UI & Styling:** React, Tailwind CSS, Framer Motion (`11.18.2`)
+- **UI & Styling:** React 19, Tailwind CSS, Framer Motion (`11.18.2`)
 - **3D / Visualization:** Three.js, React Three Fiber (R3F), Drei, Postprocessing (Bloom, Chromatic Aberration)
-- **Authentication & Payments:** Whop SDK (`@whop-sdk/core`, `@whop-sdk/browser`)
+- **Authentication & Access Control:** Whop-based membership and chapter gating
 - **AI Integration:** Google Generative AI (`@ai-sdk/google`), Fal.ai (`@fal-ai/client`)
 - **State Persistence:** Local storage, File-backed persistent maps (for dev/intent capture), and Redis (via `ioredis` / Upstash).
 
 ---
 
-## 💸 Monetization Model
+## 🎓 Current Access Model & Academic Positioning
 
-The application operates on a 5-tier freemium model managed via [Whop](https://whop.com):
+The current application still contains a **Whop-based consumer access model** in the main user flow. In the repository as it stands, ordinary access is tiered roughly as follows:
 
 1. **Explorer (Free):** ($0) Access to Chapters 1–3, basic 3D visualizations, and introductory quizzes.
 2. **Seeker:** ($19/mo) Access to Chapters 1–15, 10 daily AI animation generations, certificates, and downloadable PDFs.
 3. **Practitioner:** ($45/mo) Full access to all 27 chapters, unlimited AI features, live Q&A, and Discord community access.
 4. **Teacher:** ($149/mo) Full access + white-label capabilities, API access, and an affiliate dashboard.
-5. **Enlightened:** ($299/mo) Institutional tier offering custom domains and team seats.
 
-*Note: Access control is strictly enforced on the server and client sides, utilizing an HTTP-only cookie validation check ensuring maximum security. Paywall gating triggers intent-capture analytics.*
+For academic dissemination, however, the stronger positioning is:
+
+- **Reviewer and evaluator access first** via `/iks-conference`
+- **Citable research record** via Zenodo and OSF
+- **Transparent methodology** via repository documentation and research-mode UI
+- **Institutional outreach** to faculty, DH centers, librarians, contemplative-science groups, and aligned Buddhist studies networks
+
+In short: the codebase currently supports consumer gating, but the most credible scholarly framing is as a DH teaching/research instrument with open reviewer access and increasing epistemic transparency.
 
 ---
 
-## 📂 Architecture & Directory Structure
+## � Academic Dissemination & Outreach
 
-- **`app/`**: Next.js App Router root. Contains all main routes (`/pricing`, `/profile`, `/verse/[id]`) and API endpoints (`/api/auth`, `/api/checkout`, `/api/companion`, `/api/webhooks`).
-- **`components/`**: Modular React components.
-  - `verse/`: Core verse viewing and animation components (`VerseClientWrapper`, `QuantumCanvas`).
-  - `whop/`: Monetization-specific UI components (`MembershipTiers`, `PaywallGate`).
-  - `ui/`: Design system elements, buttons, and theme toggles.
-- **`contexts/`**: Global React Context providers (e.g., `UserContext.jsx` for auth state).
-- **`lib/`**: Utility functions, analytics emitters (`server-analytics.js`, `analytics.js`), and Whop SDK logic (`whop-auth.js`).
-- **`scripts/`**: DevOps scripts, CI validations (`validate-analytics-contract.js`), and soak test simulations.
-- **`docs/`**: Project documentation, execution plans, and architectural analysis.
+The project includes a complete dissemination toolkit for academic publication and faculty outreach:
+
+### Quick Start for Outreach
+- **Step-by-step plan:** `~/.windsurf/plans/academic-publication-outreach-plan-77ba5f.md`
+- **Quick checklist:** `docs/OUTREACH_QUICKSTART.md`
+- **Email templates:** `docs/faculty_outreach_templates.md`
+- **Institutional brief:** `docs/institutional_pilot_brief.md`
+
+### External Publication (User Action Required)
+1. **Zenodo DOI:** Create at https://zenodo.org/uploads/new → Save DOI to `docs/zenodo_doi.txt`
+2. **OSF Project:** Create at https://osf.io → Link Zenodo DOI
+3. **H-Buddhism:** Submit via https://networks.h-net.org/h-buddhism (template ready in `docs/h_buddhism_announcement.md`)
+4. **Faculty outreach:** 10 contacts → 30 contacts (templates ready)
+5. **Humanities Commons:** https://hcommons.org
+6. **PhilPeople:** https://philpeople.org
+
+All templates, metadata, and supporting documents are prepared. Execution requires manual user action on external platforms.
+
+---
+
+## �� Architecture & Directory Structure
+
+- **`app/`**: Main routes, including `/iks-conference`, `/research/data`, `/pricing`, and `/verse/[id]`, plus the AI companion API route.
+- **`components/verse/`**: Mobile and desktop verse layouts, showcase/research-mode handling, and the verse experience wrapper.
+- **`components/companion/`**: The AI companion interface used on verse pages.
+- **`components/whop/`**: Membership-tier and paywall-related access-control components.
+- **`data/chapters/`**: Canonical chapter files — the most important content layer in the project.
+- **`lib/`**: Verse retrieval, analytics helpers, access logic, and progress utilities.
+- **`docs/`**: Methodology, dissemination plans, conference materials, and architectural analysis.
 
 ---
 
@@ -74,10 +109,10 @@ The application operates on a 5-tier freemium model managed via [Whop](https://w
 
 2. **Environment Variables:**
    Copy `.env.local.example` to `.env.local` and fill in the required values. You will need:
-   - Whop Plan IDs from your seller dashboard.
-   - Whop Client ID, Secret, and Webhook Secret.
+   - Whop Plan IDs if you want to test gated flows.
+   - Whop Client ID, Secret, and Webhook Secret if validating the full membership flow.
    - AI API Keys (Google Generative AI, Fal.ai).
-   - Analytics Provider keys (e.g., PostHog).
+   - Analytics Provider keys if you want to connect telemetry beyond local/dev behavior.
 
 3. **Start the development server:**
    ```bash
@@ -90,6 +125,15 @@ To verify that all required analytics hooks and monetization events are intact:
 ```bash
 node scripts/validate-analytics-contract.js
 ```
+
+---
+
+## 🛡️ Academic Credibility Notes
+
+- **Use precise language:** describe quantum links as structural analogies and pedagogical bridges, not metaphysical proof.
+- **Do not overclaim telemetry:** the research dashboard route exists, but public-facing statements should distinguish live evidence from illustrative prototype data.
+- **Do not overclaim script normalization:** canonical verse files consistently include structured Sanskrit fields, but Devanagari coverage is not uniformly normalized across the full corpus.
+- **Keep UI telemetry labels synchronized with the backend:** research-mode model labels should always match the actual API route configuration.
 
 ---
 

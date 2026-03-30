@@ -3,6 +3,7 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import fs from 'fs';
 import path from 'path';
 import { Redis } from '@upstash/redis';
+import { COMPANION_MODEL_ID, SYSTEM_PROMPT_FILE } from '../../../../lib/research-metadata';
 
 const redis = new Redis({
     url: process.env.UPSTASH_REDIS_REST_URL || '',
@@ -40,7 +41,7 @@ export async function POST(req) {
         }
 
         // Context preparation
-        const systemPromptPath = path.join(process.cwd(), 'docs', 'system_prompt_gemini_v2_enhanced.md');
+        const systemPromptPath = path.join(process.cwd(), SYSTEM_PROMPT_FILE);
         let systemPromptBase = "You are MADHYAMAKA-GPT, a synthesis of a Tibetan Geshe, a Quantum Physicist, a Pedagogue, and a Technical Artist.";
         try {
             if (fs.existsSync(systemPromptPath)) {
@@ -68,7 +69,7 @@ export async function POST(req) {
         });
 
         const result = await streamText({
-            model: google('gemini-2.5-flash'),
+            model: google(COMPANION_MODEL_ID),
             system: systemMessage,
             messages,
         });

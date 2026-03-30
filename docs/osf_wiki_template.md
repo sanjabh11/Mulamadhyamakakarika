@@ -4,7 +4,7 @@
 Go to https://osf.io and create a new project named:
 **Nagarjuna Quantum Reflections: AI & WebGL in Digital Humanities**
 
-Once created, click the "Wiki" section and paste the following text. Be sure to replace `[INSERT ZENODO DOI HERE]` with your actual Zenodo DOI link.
+Once created, click the "Wiki" section and paste the following text.
 
 ---
 
@@ -20,13 +20,16 @@ The live platform and its underlying methodologies can be accessed directly at:
 The primary architectural and methodological paper outlining the ATOM Framework and RESONANCE metrics is hosted on Zenodo. 
 
 **Cite this project via:**
-[INSERT ZENODO DOI HERE]
+10.5281/zenodo.19282735
+
+**Current archived version:**
+10.5281/zenodo.19282736
 
 ### Research Goals
 1. **Translating Antiquity:** Creating digital-native interaction models for 400+ classical Sanskrit verses.
-2. **Epistemic Integrity:** Proving that prompt engineering and hardcoded constraints can prevent LLMs from generating "quantum mysticism" or pseudoscience.
+2. **Epistemic Integrity:** Testing whether prompt engineering and hardcoded constraints can reduce "quantum mysticism" and other misleading outputs in this learning context.
 3. **Spatial Learning:** Testing if procedural 3D environments (visualizing wave-function collapse, superposition) aid in the conceptual change required to understand *śūnyatā* (emptiness).
 
 ### Data & Telemetry
-Anonymized telemetry regarding user comprehension and component interaction is collected to further digital pedagogy research. The dashboard mapping this data is located here:
+The `/research/data` dashboard currently presents a prototype telemetry view for demonstration. Real research-grade anonymized aggregation remains a planned next phase:
 [https://mulamadhyamakarika-quanta.netlify.app/research/data](https://mulamadhyamakarika-quanta.netlify.app/research/data)

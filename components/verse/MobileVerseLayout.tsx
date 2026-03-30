@@ -11,6 +11,7 @@ import ProgressiveQuantumCanvas from '../ProgressiveQuantumCanvas';
 import EducationalRevealOverlay from '../ui/EducationalRevealOverlay';
 import { useHaptic } from '../../hooks/useHaptic';
 import AuroraBackground from '../ui/AuroraBackground';
+import { COMPANION_MODEL_LABEL, SYSTEM_PROMPT_LABEL } from '../../lib/research-metadata';
 import QuantumCompanion from '../companion/QuantumCompanion';
 
 export default function MobileVerseLayout({ verseData, chapterId, verseId, chapterTitle, totalVerses, isShowcase = false }: any) {
@@ -237,10 +238,10 @@ export default function MobileVerseLayout({ verseData, chapterId, verseId, chapt
                         >
                             <h4 className="text-[10px] text-quantum-neon font-mono uppercase font-bold tracking-widest mb-3 border-b border-quantum-neon/30 pb-1">AI Pipeline Telemetry</h4>
                             <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-[10px] font-mono text-slate-300">
-                                <div className="flex justify-between"><span>Model:</span><span className="text-white">Gemini 1.5 Pro</span></div>
+                                <div className="flex justify-between"><span>Model:</span><span className="text-white">{COMPANION_MODEL_LABEL}</span></div>
                                 <div className="flex justify-between"><span>Temp:</span><span className="text-white">0.30</span></div>
                                 <div className="flex justify-between"><span>Top_P:</span><span className="text-white">0.85</span></div>
-                                <div className="flex justify-between"><span>System Prompt:</span><span className="text-white">v3-madhyamaka</span></div>
+                                <div className="flex justify-between"><span>System Prompt:</span><span className="text-white">{SYSTEM_PROMPT_LABEL}</span></div>
                                 <div className="flex justify-between"><span>Epistemic Shield:</span><span className="text-green-400">ACTIVE</span></div>
                                 <div className="flex justify-between"><span>WebGL Shaders:</span><span className="text-quantum-plasma">{verseData?.animation?.type || 'nebula'}</span></div>
                             </div>

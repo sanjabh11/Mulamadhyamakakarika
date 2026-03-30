@@ -52,9 +52,12 @@ export default function ResearchDataPage() {
       <div className="relative z-10 max-w-5xl mx-auto px-6 py-10">
         {/* Header */}
         <header className="mb-10">
-          <div className="inline-flex items-center gap-2 bg-green-500/20 border border-green-500/30 rounded-full px-4 py-1.5 text-sm text-green-300 mb-4">
-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-            All data is aggregated & anonymized — no personal information stored
+          <div className="inline-flex items-center gap-2 bg-amber-500/20 border border-amber-500/30 rounded-full px-4 py-1.5 text-sm text-amber-300 mb-4">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+            PROTOTYPE DATA — Illustrative visualization for demonstration purposes
+          </div>
+          <div className="text-xs text-slate-500 mb-4">
+            Real telemetry aggregation pending IRB approval and data collection pipeline
           </div>
           <h1 className="text-3xl font-black text-white mb-2">Research Telemetry Dashboard</h1>
           <p className="text-slate-400 text-sm">
@@ -199,8 +202,9 @@ export default function ResearchDataPage() {
         )}
 
         <footer className="mt-10 text-center text-xs text-slate-600">
-          All data aggregated & anonymized. No PII stored. Telemetry powered by lib/analytics.js (Mixpanel/PostHog configurable). 
-          <br />Contact: spumandiconference@gmail.com
+          <p className="text-amber-500/80 mb-2">⚠️ This dashboard displays PROTOTYPE/MOCK data for demonstration purposes only.</p>
+          <p>All metrics shown are illustrative examples. Real aggregated telemetry will be available once data collection and IRB approval are complete.</p>
+          <p className="mt-2">Contact: spumandiconference@gmail.com</p>
         </footer>
       </div>
     </div>

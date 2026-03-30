@@ -1,136 +1,133 @@
 # 🌟 Nagarjuna Quantum Reflections: The Top 20 Features
 
-This document outlines the top 20 defining features of the *Nagarjuna Quantum Reflections* web app, tailored specifically to appeal to academic researchers, scientists, professors, and students. Following the feature list is a comprehensive **Outreach Strategy** and **Messaging Templates** to effectively advertise the platform to these communities.
+This version is evidence-aligned with the current repository state as reviewed on March 26, 2026. It is written for academic researchers, scientists, professors, students, and serious learners who need a clear picture of what the platform already does, what is still prototype infrastructure, and how to share it responsibly.
 
 ---
 
 ## 🏛️ Part 1: Top 20 Features of the Platform
 
-### Group 1: Philosophical Rigor & Authenticity (For Researchers & Philosophers)
-1. **Complete MMK Digitization:** Features all 27 chapters and over 400 verses of Nagarjuna’s *Mūlamadhyamakakārikā*, making it one of the largest interactive databases of Madhyamaka philosophy on the web.
-2. **Dual-Script Presentation:** Every verse is presented in original Devanagari script alongside IAST transliteration, catering to linguists and Sanskrit scholars.
-3. **Canonical Translations:** Utilizes authoritative translations (Garfield, 1995) with cross-references to Siderits & Katsura (2013), ensuring academic-grade accuracy rather than lay interpretations.
-4. **4-Tier Pedagogical Scaffolding:** Explanations dynamically adapt to the user's Zone of Proximal Development: 🌱 Seed (Beginner), 🌿 Sprout (Student), 🌳 Tree (Graduate), and 🌲 Forest (Post-Doc Scholar).
-5. **The *deeperDive* Matrix:** A unique 5-layer FAQ system embedded in each verse that maps abstract philosophical logic (like *catuṣkoṭi*) to concrete *realLifeExamples*.
+### Group 1: Canonical Text & Digital Humanities Foundation
+1. **Canonical MMK Data Layer:** The repository contains 27 canonical chapter files in `data/chapters/` with 448 configured verse slots across the work.
+2. **Repeatable Verse Schema:** Canonical verses are structured around title, Sanskrit fields, philosophy, `quantumResonance`, `animation`, `deeperDive`, and `quiz`, which is exactly what researchers need for reuse and audit.
+3. **Single Retrieval Path:** `lib/verse-data.ts` and `data/chapters/index.js` provide a central data-access path rather than scattered page-local content.
+4. **Verse-Level Interpretive Richness:** Each verse is designed to carry Madhyamaka explanation, quantum parallel, bridge text, accessible explanation, two-truths framing, and a misconception warning.
+5. **Six-Step Deeper Dive per Verse:** The current standard is six progressive Q&A pairs per verse, which gives depth without overcrowding the interface.
 
-### Group 2: Scientific Integrity & Quantum Pedagogy (For Physicists & Scientists)
-6. **The RESONANCE Algorithm:** A principled scoring system that evaluates the structural isomorphism between specific MMK verses and quantum mechanical concepts (e.g., Verse 1.13 Entanglement: Resonance 93/100).
-7. **Gate 2 Anti-Pseudoscience Guardrails:** The platform's AI explicitly separates pedagogical analogies from metaphysical claims, actively preventing "quantum mysticism" or "quantum woo."
-8. **ATOM 3D Visualization Framework:** Procedurally generated WebGL 3D animations (Anchor, Texture, Orchestration, Mood) that map philosophical arguments (like Bell's Theorem / Non-Locality) into visual network diagrams.
-9. **Interactive Thought Experiments:** Users can interact with 3D canvas models—such as the "Entangled Essence-Transfer Failure" in Verse 1.13—to intuitively grasp the mathematical impossibility of inherent existence.
-10. **Explicit Epistemic Labeling:** Every quantum analogy comes with an explicit `caveat` text (e.g., "Structural analogy only. Do not claim consciousness causes wave-function collapse"), earning trust from the physics community.
+### Group 2: Research-Facing Transparency
+6. **Dedicated Academic Showcase Route:** `/iks-conference` gives reviewers a focused evaluation surface instead of sending them through the consumer funnel first.
+7. **Reviewer Bypass via URL:** Showcase links open verse pages with `?showcase=true`, allowing targeted peer review without the ordinary chapter gate.
+8. **Research Mode HUD on Desktop and Mobile:** Verse pages expose model, prompt, and render metadata in a dedicated research overlay.
+9. **AI Companion Research Metadata:** The companion UI displays research metadata when research mode is enabled, making the pedagogical framing inspectable during evaluation.
+10. **Prompt Architecture as an Artifact:** The companion API loads `docs/system_prompt_gemini_v2_enhanced.md`, so there is an actual methodology file behind the experience.
 
-### Group 3: AI Innovation & Digital Humanities (For CS & EdTech)
-11. **Madhyamaka-GPT Instruction Architecture:** A highly sophisticated 10-phase instruction framework (powered by Gemini API) that mandates the AI to recognize the *Prāsaṅgika* method before generating any text.
-12. **Transparent "Research Mode":** An unparalleled feature allowing academic reviewers to toggle on transparency to see the exact AI prompt structures, RESONANCE scoring rubrics, and JSON data schemas.
-13. **Data-Driven Telemetry Dashboard:** A live, anonymized analytics dashboard (`/research/data`) demonstrating empirical improvements in engagement (e.g., 2.3x longer session duration on 3D-animated verses) for ongoing Design-Based Research (DBR).
-14. **Asynchronous State Persistence:** Robust telemetry tracking (Mixpanel/Amplitude) and context awareness across sessions (via Redis), ensuring that a student's philosophical journey is never lost.
-15. **Open-Access Reviewer Gate:** The dedicated `/iks-conference` landing page allows peer reviewers, professors, and researchers frictionless, paywall-free access to showcase verses.
+### Group 3: Pedagogy, Visualization, and Scientific Framing
+11. **Interactive 3D Verse Experiences:** Verse pages use React Three Fiber-based canvases to turn difficult philosophical arguments into visual, manipulable objects.
+12. **Per-Verse Visual Pedagogy Metadata:** Canonical verse data includes `animation.visualBridge` and `animation.educationalGoal`, which helps reviewers see that the visuals are teaching tools, not decoration.
+13. **Explicit Anti-Pseudoscience Guardrails:** Verse data includes `quantumResonance.caveat` fields and the research UI consistently frames quantum links as structural analogies rather than metaphysical proof.
+14. **Verse-Specific Quantum Alignment:** The repository stores Buddhist argument and quantum parallel side-by-side at the verse level instead of only at the chapter-summary level.
+15. **Whole-Text Scale:** This is not a one-chapter demo. The current structure covers the full 27-chapter MMK corpus in one reusable schema.
 
-### Group 4: Interactive Learning & Gamification (For Students & Learners)
-16. **3-Tier Adaptive Quizzes:** Every verse features an embedded quiz dropdown graded by difficulty (Beginner, Intermediate, Advanced) to test conceptual mastery of things like *śūnyatā* vs. nihilism.
-17. **XP and Streak Gamification:** A local-storage-backed `UserProgress` system that tracks daily streaks and awards XP for deep interactions (expanding FAQs, exploring 3D pathways), rewarding sustained engagement.
-18. **Printable Completion Certificates:** Verifiable, dynamically generated PDF certificates awarded to users who complete chapter quizzes with a 70%+ score, suitable for CVs or continuing education.
-19. **5-Tier Freemium Access Model:** Powered by Whop SDK, allowing a zero-barrier entry for curious students (Explorer Tier) up to institutional licenses (Enlightened Tier) for university departments.
-20. **Zero-Install Progressive App Design:** A stunning, modern UI built on Next.js 15 and Framer Motion that runs directly in the browser with mobile-responsive design—no app store required.
+### Group 4: Delivery, Access, and Reuse Potential
+16. **Browser-Native Access:** The experience is zero-install and already supports both desktop and mobile verse layouts.
+17. **Learner Persistence:** Local progress, streaks, and reading state are already tracked, which helps both pedagogy and future study design.
+18. **Current Access-Control Layer Exists:** The present Whop-based membership system means later institutional pilots or sponsored-access experiments can be layered on top of existing access logic.
+19. **Analytics Instrumentation Exists in Code:** `lib/analytics.js` and `lib/server-analytics.js` provide the basis for real research reporting once connected to exportable evidence.
+20. **Research Dashboard Surface Already Exists:** `/research/data` is already a useful academic-facing prototype, but it should be described as an illustrative dashboard until it is connected to live exported analytics.
 
 ---
 
 ## 📢 Part 2: Outreach Strategy
 
-To bring this web app to the attention of the global research and scientific community, you must position it not just as a "website," but as a **Digital Humanities Tool** and a **Research Platform**. 
+To bring this web app to the attention of the global research and scientific community, position it first as a **digital humanities research instrument** and a **teaching aid for difficult texts**, not as a consumer app and not as a broad "quantum spirituality" product.
 
-### 🎯 Who to Target
-1. **Buddhist Studies & South Asian Studies Departments:** They care about the translations, the Devanagari inclusion, and the pedagogical scaffolding.
-2. **Philosophy of Mind & Cognitive Science Researchers:** They care about the *catuṣkoṭi* logic mapping and conceptual change mechanisms.
-3. **Foundational Physics & Philosophy of Science Communities:** They will be fascinated by the structurally disciplined RESONANCE quantum mappings.
-4. **EdTech & AI Ethics Researchers:** They will want to study your "Gate 2" pseudoscience guardrails and transparent "Research Mode."
+### 🎯 Why Different Audiences Should Care
+1. **Researchers in Buddhist studies and digital humanities:** The structured verse schema, canonical chapter files, and inspectable methodology make the platform citable and auditable.
+2. **Scientists and physics-education researchers:** The strongest angle is not metaphysics. It is disciplined structural analogy, explicit caveats, and visual pedagogy for difficult abstract concepts.
+3. **Professors and instructors:** The showcase route allows classroom evaluation without forcing reviewers through normal paywalls or onboarding friction.
+4. **Students and learners:** Six-step Q&A scaffolding, verse-specific quizzes, and browser-native access reduce the barrier to entering a notoriously difficult text.
 
-### 🗺️ Where to Post
+### 🚫 Claims to Avoid Until Further Verification
+1. **Do not claim universal Devanagari coverage** across all canonical verses. The repository has structured Sanskrit fields everywhere, but dedicated Devanagari representation is not yet normalized across the whole corpus.
+2. **Do not describe `/research/data` as live outcome evidence** yet. In the current app it is an academic-facing prototype built from illustrative aggregated data.
+3. **Do not use public user counts as scholarly proof** unless they are backed by instrumented analytics and a documented reporting method.
+4. **Do not describe the deployed companion as a Gemini 1.5 workflow** unless the UI labels are synchronized with the current backend route. The app code presently mixes research-mode display labels with a different model call in the API route.
 
-**1. Academic Mailing Lists & Forums (High Impact, High Prestige)**
-- **H-Buddhism:** The premier academic mailing list for Buddhist scholars. (Positioning: *A new digital humanities tool for teaching the MMK.*)
-- **INDOLOGY Mailing List:** For scholars of classical Indian languages and literature.
-- **PhilPapers / PhilPeople:** Add the platform and the accompanying conference paper to your PhilPeople profile as a published digital tool.
+### 🗺️ Where to Post First on a Solo-Developer Budget
 
-**2. Specialized Subreddits (High Traffic, High Engagement)**
-- **r/AcademicPhilosophy** & **r/Buddhism:** Perfect for the philosophical rigor features (Group 1).
-- **r/QuantumPhysics** & **r/Physics:** Present this carefully—focus *strictly* on features #6 and #7 (the anti-pseudoscience guardrails). Assure them this is a structural analogy tool, not quantum mysticism.
-- **r/HigherEducation** & **r/EdTech:** Focus on features #16-#20, highlighting how 3D WebGL and AI LLMs can teach abstract concepts.
+**High Priority / Lowest-Cost Channels**
+- **H-Buddhism (H-Net):** Best first academic channel if the note is formal, non-commercial, and framed as a teaching/research resource.
+- **Humanities Commons:** Valuable because it combines profile, discussion space, WordPress publishing, and repository infrastructure in one open humanities network.
+- **OSF:** Make the project public, fill metadata carefully, generate a DOI, and use collections for discoverability.
+- **Zenodo:** Deposit the paper, screenshots, metadata, and versioned assets to create a citable scholarly record.
+- **PhilPeople / PhilArchive:** Good for discoverability among philosophers, especially once the project has a short methodological paper or white paper attached.
+- **Direct Faculty and Librarian Outreach:** Email 20-30 carefully chosen professors, DH centers, and subject librarians with the showcase link and a short academic note.
+- **Institutional Targets:** Reach out directly to ETSI, LTWA, Science & Wisdom LIVE, and aligned contemplative-science hubs once the citable record is public.
 
-**3. Tech & AI Communities (For the System Architecture)**
-- **Hacker News (Y Combinator):** Post as a "Show HN: I built an AI/WebGL platform to teach a 2nd-century philosophy text using Quantum Mechanics." 
-- **Product Hunt:** Launch it to get initial user traction from the broader tech community.
+**Medium Priority / Useful Once the Evidence Pack Is Live**
+- **PhysLrnR / PER-Central / H-PhysicalSciences-type communities:** Lead with pedagogy, conceptual change, and anti-pseudoscience framing, not with grand metaphysical claims.
+- **ResearchGate and LinkedIn:** Good for visibility among interdisciplinary researchers once you can link to OSF, Zenodo, and the showcase route together.
+- **Selective Reddit posts:** Use only after the academic framing is stable. Share in communities where moderators tolerate resource-sharing and where you can answer critique carefully.
 
-**4. Direct Cold Outreach (For University Adoption)**
-- Identify 15-20 professors currently teaching "Introduction to Buddhist Philosophy," "Indian Philosophy," or "Philosophy of Science" at major universities (e.g., Oxford, Harvard, UofT, various IITs). Send a personalized email inviting them to use the `/iks-conference` link as a supplemental tool for their syllabus.
+**Low Priority / Later-Stage Amplification**
+- **Hacker News, Indie Hackers, Product Hunt:** Useful for technical visibility, but they should come after the academic evidence pack is public. Otherwise, the project risks being framed as novelty tech before it is framed as a serious DH tool.
 
 ---
 
 ## 📝 Part 3: Messaging Templates
 
-Use these templates to quickly post across the targeted spaces. Always link to `https://mulamadhyamakarika-quanta.netlify.app/iks-conference` to ensure they bypass the paywall and see the "Research Mode."
+Use these templates only after the public academic assets are aligned. In almost every case, the safest link to share first is:
 
-### Template 1: For Academic/Philosophy Mailing Lists (H-Buddhism)
-> **Subject:** New Digital Humanities Tool for Teaching Nagarjuna’s MMK (with 3D WebGL & AI Scaffolding)
-> 
+`https://mulamadhyamakarika-quanta.netlify.app/iks-conference`
+
+Avoid linking broad audiences straight to pricing until the academic framing has landed.
+
+### Template 1: H-Buddhism / Formal Academic Listserv
+> **Subject:** New digital humanities resource for teaching Nāgārjuna’s *Mūlamadhyamakakārikā*
+>
 > Dear Colleagues,
-> 
-> I would like to share a new digital humanities platform I’ve developed for teaching Nagarjuna's *Mūlamadhyamakakārikā*: **Nagarjuna Quantum Reflections**. 
-> 
-> Teaching the MMK to digital-native students presents unique challenges. To address this, the platform digitizes all 27 chapters (Devanagari, IAST, and canonical translations) alongside a 4-tier pedagogical scaffolding system powered by a custom LLM architecture. 
-> 
-> Notably, the platform uses structural analogies from modern physics (e.g., non-locality, entanglement) as visual pedagogical tools, rendered in interactive 3D WebGL. To maintain academic rigor, the system uses strict epistemic guardrails to separate structural analogies from metaphysical claims.
-> 
-> I have created an open-access "Research Mode" portal for academics and educators here: `https://mulamadhyamakarika-quanta.netlify.app/iks-conference`
-> 
-> I welcome any feedback on its utility as a supplemental syllabus tool.
-> 
-> Best regards, 
-> [Your Name/Title]
-
-### Template 2: For Tech/AI Forums (Hacker News, Reddit EdTech)
-> **Show HN: I built a 3D WebGL + AI platform to teach 2nd-century philosophy via Quantum Physics**
-> 
-> Hey everyone, 
-> 
-> I built **Nagarjuna Quantum Reflections**—a platform that uses React Three Fiber and the Gemini API to teach one of the most difficult ancient Indian philosophical texts (*Mūlamadhyamakakārikā*).
-> 
-> **Why I built it:** Abstract concepts like *śūnyatā* (relational emptiness) are incredibly hard to teach via text.
-> **The Tech:** Next.js 15, R3F for procedural 3D visualizations (visualizing things like Bell's Theorem), and a 10-phase "Madhyamaka-GPT" instruction architecture.
-> **The Coolest Part:** I built an anti-pseudoscience guardrail into the AI prompt to prevent "quantum woo," and a transparency toggle so you can see exactly how the LLM maps ancient logic to modern physics.
-> 
-> Check out the open-access research demo page here: `https://mulamadhyamakarika-quanta.netlify.app/iks-conference`
-> 
-> Would love feedback on the UI/UX and the procedural 3D generation!
-
-### Template 3: Direct Email to University Professors (Cold Outreach)
-> **Subject:** Supplemental interactive tool for your [Course Name] syllabus
-> 
-> Dear Professor [Last Name],
-> 
-> I am writing to you because of your work on [mention their specific research or course, e.g., Indian Epistemology / Madhyamaka]. 
-> 
-> I have developed an interactive WebGL and AI-driven educational platform designed to help undergraduate students intuitively grasp Nagarjuna's *Mūlamadhyamakakārikā*. The platform uses structural analogies from physics and 3D visual thought-experiments to teach concepts like dependent origination and the *catuṣkoṭi*, while employing strict AI guardrails to ensure philosophical fidelity to canonical sources (Garfield, Siderits).
-> 
-> You can view a paywall-free academic demo here: `https://mulamadhyamakarika-quanta.netlify.app/iks-conference`
-> 
-> Several educators are exploring using this as a supplemental visual tool for their digital-native students. If you find it valuable, I would be honored if you consider sharing it with your class or providing critical feedback on its pedagogical design.
-> 
-> Thank you for your time and contribution to the field.
-> 
-> Warmly,
+>
+> I would like to share a digital humanities teaching resource I have been developing for Nāgārjuna’s *Mūlamadhyamakakārikā*: **Nagarjuna Quantum Reflections**.
+>
+> The project presents the text through a structured verse-level data model, interactive browser-based visualizations, and an AI-assisted explanatory layer designed for classroom and self-guided study. Its central aim is pedagogical: to help contemporary learners work through difficult Madhyamaka arguments while keeping explicit guardrails around cross-domain analogy.
+>
+> For academic evaluation, I have made a reviewer-facing showcase available here:
+> `https://mulamadhyamakarika-quanta.netlify.app/iks-conference`
+>
+> I would be grateful for feedback on its usefulness for teaching, syllabus integration, or digital humanities discussion.
+>
+> Best regards,
 > [Your Name]
 
-### Template 4: Short-Form (Twitter/X or LinkedIn)
-> How do we teach 2,000-year-old philosophy to digital natives? 🤔
-> 
-> I built Nagarjuna Quantum Reflections: a platform combining 3D WebGL visualizations, Quantum Physics analogies, and Ethical #AI to teach the Mūlamadhyamakakārikā. 
-> 
-> ✅ 27 Chapters fully digitized
-> ✅ Strict anti-pseudoscience AI guardrails
-> ✅ Interactive 3D thought experiments
-> 
-> Academic researchers and educators can explore the transparent "Research Mode" here: `https://mulamadhyamakarika-quanta.netlify.app/iks-conference`
-> 
-> #DigitalHumanities #EdTech #Buddhism #Philosophy #IKS #AIinEducation
+### Template 2: Direct Email to Professors, DH Centers, or Librarians
+> **Subject:** Supplemental digital tool for teaching *Mūlamadhyamakakārikā*
+>
+> Dear Professor [Last Name],
+>
+> I am reaching out because of your work in [Buddhist studies / Indian philosophy / digital humanities / philosophy of science]. I have developed an interactive web-based teaching tool, **Nagarjuna Quantum Reflections**, to support reading and discussion of Nāgārjuna’s *Mūlamadhyamakakārikā*.
+>
+> The platform combines structured verse data, verse-level philosophical commentary, interactive visual pedagogy, and a research-facing transparency mode intended to make the methodology inspectable rather than opaque.
+>
+> A reviewer-facing showcase is available here:
+> `https://mulamadhyamakarika-quanta.netlify.app/iks-conference`
+>
+> If this looks useful for teaching, course design, or critical feedback, I would be honored to hear your thoughts.
+>
+> Warm regards,
+> [Your Name]
+
+### Template 3: Physics Education / Interdisciplinary Science Audience
+> I’m developing **Nagarjuna Quantum Reflections**, a browser-based teaching tool that uses carefully caveated structural analogies between Madhyamaka arguments and quantum concepts as a way to teach difficult abstract reasoning.
+>
+> The emphasis is not on metaphysical claims, but on visual pedagogy, explicit anti-pseudoscience framing, and inspectable research surfaces.
+>
+> Academic showcase:
+> `https://mulamadhyamakarika-quanta.netlify.app/iks-conference`
+
+### Template 4: Short LinkedIn / Humanities Commons / OSF Post
+> New project update: **Nagarjuna Quantum Reflections** is an in-progress digital humanities platform for teaching Nāgārjuna’s *Mūlamadhyamakakārikā* through structured verse data, interactive visual pedagogy, and transparent AI-assisted explanation.
+>
+> Reviewer showcase:
+> `https://mulamadhyamakarika-quanta.netlify.app/iks-conference`
+>
+> Best hashtags/keywords for discovery:
+> `Digital Humanities`, `Buddhist Studies`, `Indian Philosophy`, `Pedagogy`, `Philosophy of Science`, `AI in Education`

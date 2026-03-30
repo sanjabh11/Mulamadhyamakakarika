@@ -1,0 +1,22 @@
+# Zenodo DOI Record
+
+This file stores the published Zenodo identifiers for Nagarjuna Quantum Reflections.
+
+## Preferred Public Citation
+
+Use this concept DOI in outreach materials, OSF, PhilPeople, and public-facing references:
+
+DOI: 10.5281/zenodo.19282735
+
+## Current Archived Version
+
+Use this version DOI when you need to point to the exact March 28, 2026 Zenodo snapshot:
+
+DOI: 10.5281/zenodo.19282736
+
+Record URL: https://zenodo.org/records/19282736
+
+## Usage Notes
+
+- Use `10.5281/zenodo.19282735` for stable citation across future updates.
+- Use `10.5281/zenodo.19282736` for version-specific archival reference.

@@ -547,8 +547,208 @@ Tasks:
 
 ## 7. Key Takeaways
 
-- The app already has the depth and rigor to be treated as a serious digital humanities and contemplative-science tool; the main gap is distribution and signaling into the right networks.[1][2]
-- Academic mailing lists, Zenodo/OSF repositories, Humanities Commons, and targeted conferences (SAND, Mind & Life–aligned events) are the highest-leverage entry points for researchers and instructors.[10][9][12][5]
-- Indie-maker and tech platforms (Show HN, OpenHunts, Indie Hackers, targeted subreddits) provide complementary exposure to technically savvy learners and collaborators.[1]
-- Monetization should be multi-layered: keep Whop for core SaaS subscriptions, add institutional licenses, Patreon-style patronage, structured courses, and grant-funded research collaborations.[18][17][3][2]
-- Executed over 3–6 months in phased, focused sprints, this strategy is realistic for a solo founder and aligns with best practices observed in digital humanities and indie SaaS communities.
+- The app already has the content depth and interface ambition to be treated as a serious digital humanities and contemplative-science tool, but the main gap is now **evidence alignment** as much as distribution. Public-facing claims must match what the repository and live routes actually prove.[1][2]
+- Academic mailing lists, Zenodo/OSF repositories, Humanities Commons, PhilPeople-style profiles, and direct faculty outreach are the highest-leverage low-cost entry points for researchers and instructors.[10][9][12][5]
+- Indie-maker and tech platforms are secondary amplification channels, not primary scholarly validation channels. They should be used only after the citable academic record and reviewer-facing evidence pack are live.[1]
+- Access strategy should be multi-layered: prioritize open reviewer access, a citable scholarly record, institutional pilots, and donation/fiscal-sponsorship readiness. If Whop remains in the product, it should function as an interim access layer rather than the public academic identity of the project.[18][17][3][2]
+- Executed over 3–6 months in phased, focused sprints, this strategy is realistic for a solo founder provided that claim hygiene, prototype labeling, and academic trust-building happen before broader promotion.
+
+## 8. Verification-Based Adversarial Review (March 26, 2026)
+
+This section stress-tests the current dissemination strategy against the codebase as it exists now, with the explicit goal of avoiding academic overclaiming.
+
+### 8.1 What is verified in the current repository
+
+- **Canonical content architecture exists.** The repository contains 27 canonical chapter files in `data/chapters/` with 448 configured verse slots across the MMK corpus.
+- **Reviewer route exists.** `/iks-conference` is implemented as a dedicated academic evaluation surface.
+- **Showcase bypass exists.** The `?showcase=true` flow is wired through `app/verse/[id]/page.tsx` and `components/verse/VersePageClient.tsx` to bypass ordinary chapter gating for reviewer access.
+- **Research Mode HUD exists in both layouts.** Desktop and mobile verse layouts expose AI/render metadata overlays.
+- **AI companion research metadata exists.** `components/companion/QuantumCompanion.jsx` includes research-mode metadata blocks for assistant messages.
+- **Prompt artifact exists.** The companion API route loads `docs/system_prompt_gemini_v2_enhanced.md`, which means there is a real repository artifact behind the claimed methodology.
+- **Structured pedagogy exists at scale.** Canonical verse files are built around philosophy fields, `quantumResonance`, `animation`, six-item `deeperDive`, and quiz objects.
+- **Telemetry plumbing exists in code.** `lib/analytics.js` and `lib/server-analytics.js` provide instrumentation scaffolding even if not yet surfaced as rigorous public evidence.
+
+### 8.2 Gaps and misalignments
+
+#### Gap 1: Academic-facing copy currently overclaims parts of the evidence base
+
+- The repository supports strong structured Sanskrit fields, but universal Devanagari coverage is **not** normalized across the full canonical dataset.
+- Public-facing materials should therefore avoid saying "every verse is presented in Devanagari" unless that is made literally true in the source data.
+
+#### Gap 2: Research dashboard is present, but not yet evidentiary
+
+- `/research/data` exists, but it is powered by `MOCK_TELEMETRY` in `app/research/data/page.tsx`.
+- This is acceptable as a prototype demonstration surface, but it should **not** be described externally as live pedagogical evidence until backed by real exports, methodology notes, and reproducible metrics.
+
+#### Gap 3: Research-mode model labels are not synchronized with the actual API route
+
+- The research HUD and companion metadata currently display Gemini 1.5-style labels.
+- The companion API route currently calls `gemini-2.5-flash`.
+- For academic audiences, this kind of mismatch is not a cosmetic bug. It is an epistemic-trust bug.
+
+#### Gap 4: Consumer product signaling still undercuts scholarly signaling
+
+- The main homepage and pricing surfaces still foreground consumer growth signals, premium tiers, and hardcoded scale numbers.
+- This creates a framing conflict: the academic story says "transparent DH tool," while the product story still says "creator-economy subscription app."
+
+#### Gap 5: Public claims about adoption and learning outcomes need auditable backing
+
+- Hardcoded public figures such as large user counts or high-volume verse-read metrics should not be used in academic or donor-facing materials unless they can be audited.
+- The same applies to claims about session-duration lifts, quiz gains, or engagement improvements.
+
+#### Gap 6: The citable record is still the missing hinge for scholarly legitimacy
+
+- The project already has paper and metadata materials in the repo, but credibility rises sharply once a public Zenodo/OSF record exists with DOI, metadata, versioning, and stable files.
+- Without this, the project remains easier to dismiss as an interesting website than to cite as a research instrument.
+
+#### Gap 7: The strongest academic differentiator is still under-packaged
+
+- The anti-pseudoscience framing is one of the project’s most valuable assets.
+- Right now it exists across code, prompts, verse data, and UI overlays, but not yet as a concise public methods/evidence pack that a reviewer can cite in one sitting.
+
+### 8.3 What I would do differently
+
+1. **Lead with MMK pedagogy and DH method, not with quantum novelty.**
+   - The project is strongest when framed as a rigorously structured teaching and interpretation environment for a difficult classical text.
+   - Quantum parallels should be presented as a carefully caveated secondary pedagogical layer.
+
+2. **Separate prototype infrastructure from verified evidence.**
+   - Keep prototype dashboards and research overlays, but label them clearly.
+   - Scholars are generally tolerant of prototypes if they are described honestly.
+
+3. **Make transparency legible in one bundle.**
+   - A reviewer should be able to see: what the project is, what data it uses, what the prompt logic is, what the caveats are, what is prototype vs production, and how to cite it.
+
+4. **Treat claim hygiene as a feature.**
+   - Synchronizing model names, telemetry labels, user counts, and copy is not polishing. It is academic trust work.
+
+5. **Use low-cost scholarly infrastructure before public growth channels.**
+   - Humanities Commons, OSF, Zenodo, H-Buddhism, PhilPeople, and direct faculty outreach offer better credibility-per-hour than broad social launches.
+
+### 8.4 Suggested detailed implementation plan
+
+#### High Priority (Immediate: Week 0-2)
+
+**A. Claim Hygiene and Evidence Alignment**
+
+Step 1:
+- Audit all public academic-facing copy.
+- Remove or qualify claims about universal Devanagari coverage, live telemetry, and adoption metrics unless fully evidenced.
+
+Step 2:
+- Synchronize research-mode UI model labels with the actual companion API route.
+- Ensure the same model/version wording appears in the API, HUD, companion metadata, and documentation.
+
+Step 3:
+- Label `/research/data` as prototype or illustrative until it is driven by exportable analytics.
+
+Step 4:
+- Remove or quarantine hardcoded popularity numbers from public academic-facing surfaces.
+
+**B. Citable Scholarly Record**
+
+Step 1:
+- Publish the Zenodo package with the paper, metadata, screenshots, and version information.
+
+Step 2:
+- Create the OSF project, make it public, fill metadata completely, and generate a DOI.
+
+Step 3:
+- Link the Zenodo and OSF records to each other and to the reviewer route.
+
+Step 4:
+- Add keywords, tags, subject areas, license details, and affiliated institution information wherever accurate.
+
+**C. Reviewer Evidence Pack**
+
+Step 1:
+- Create one short public methods summary covering data model, prompt artifact, caveat policy, and current limitations.
+
+Step 2:
+- Add a one-page "How to evaluate this platform" note for reviewers, professors, and librarians.
+
+Step 3:
+- Include stable links to `/iks-conference`, Zenodo, OSF, and the repository docs.
+
+#### Medium Priority (Week 2-6)
+
+**D. Low-Cost Dissemination Sequence**
+
+Step 1:
+- Post to H-Buddhism with a non-commercial, syllabus-oriented note.
+
+Step 2:
+- Set up a Humanities Commons profile/post and a PhilPeople profile entry or linked project description.
+
+Step 3:
+- Send personalized outreach to 20-30 professors, DH centers, and subject librarians.
+
+Step 4:
+- Contact ETSI, LTWA, Science & Wisdom LIVE, and aligned contemplative-science or Buddhist studies hubs with a short, customized note.
+
+**E. Instrumentation for Real Research Claims**
+
+Step 1:
+- Define a minimal analytics schema for research use: views, time-on-verse, quiz attempts, quiz success, animation interaction, and showcase visits.
+
+Step 2:
+- Export these metrics into a documented aggregated format.
+
+Step 3:
+- Replace or supplement `MOCK_TELEMETRY` with real, clearly described aggregated data.
+
+Step 4:
+- Publish metric definitions so outside readers know what each number means.
+
+**F. Institutional Readiness Materials**
+
+Step 1:
+- Prepare a one-page pilot brief for faculty and librarians.
+
+Step 2:
+- Draft a light institutional pilot offer: limited reviewer access, feedback form, and optional classroom trial.
+
+Step 3:
+- Prepare a short fiscal-sponsorship brief explaining charitable purpose, educational value, and why the project aligns with a sponsor’s mission.
+
+#### Low Priority (Week 6-12)
+
+**G. Broader Public Amplification**
+
+Step 1:
+- Launch on broader platforms only after scholarly materials are live and the trust surface is clean.
+
+Step 2:
+- Use public channels mainly to attract collaborators, sympathetic educators, and technical contributors rather than to chase vanity traffic.
+
+**H. Grant and Sponsorship Readiness**
+
+Step 1:
+- Approach potential fiscal sponsors with a clear description of mission fit, governance expectations, and fund-use transparency.
+
+Step 2:
+- Prepare a small-grant narrative around pedagogical effectiveness, epistemic transparency, and non-Western philosophy pedagogy.
+
+Step 3:
+- Only after the evidence pack and pilot conversations are in place, begin Templeton/NEH-aligned framing work.
+
+### 8.5 Immediate action list for review
+
+#### High Priority
+
+- Update academic-facing docs so they match the actual repository.
+- Synchronize model labels and prototype labels.
+- Publish Zenodo and OSF records.
+- Use H-Buddhism plus direct faculty outreach as the first dissemination wave.
+
+#### Medium Priority
+
+- Build a concise evaluator methods page or reviewer packet.
+- Replace illustrative dashboard claims with documented real aggregates.
+- Create faculty/librarian outreach templates and a target list.
+
+#### Low Priority
+
+- Broader social/tech launches.
+- Course/cohort experiments.
+- Larger grant and fiscal-sponsorship pipelines after the scholarly record is public.

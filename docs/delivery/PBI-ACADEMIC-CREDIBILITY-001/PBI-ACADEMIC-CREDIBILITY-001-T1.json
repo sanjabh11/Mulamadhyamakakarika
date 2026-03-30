@@ -1,0 +1,45 @@
+{
+  "task_id": "PBI-ACADEMIC-CREDIBILITY-001-T1",
+  "title": "Align public messaging, research metadata, and reviewer trust surfaces",
+  "type": "refactor",
+  "status": "InProgress",
+  "files": [
+    "app/layout.tsx",
+    "app/page.tsx",
+    "app/iks-conference/page.tsx",
+    "app/research/data/page.tsx",
+    "app/api/companion/chat/route.js",
+    "components/verse/DesktopVerseLayout.tsx",
+    "components/verse/MobileVerseLayout.tsx",
+    "components/companion/QuantumCompanion.jsx",
+    "lib/research-metadata.ts"
+  ],
+  "test_plan": {
+    "manual": [
+      "Open / and confirm academic / educator / learner pathways are visible.",
+      "Open /iks-conference and confirm evaluator-facing framing remains intact.",
+      "Open /research/data and confirm prototype labeling is explicit.",
+      "Open a showcase verse and confirm research-mode labels are internally consistent."
+    ],
+    "commands": [
+      "npm run build"
+    ]
+  },
+  "status_history": [
+    {
+      "status": "Proposed",
+      "date": "2026-03-27",
+      "note": "Task created from adversarial audit of academic dissemination and credibility surfaces."
+    },
+    {
+      "status": "Agreed",
+      "date": "2026-03-27",
+      "note": "User requested deep revalidation, architecture plan, and immediate implementation of high/medium items."
+    },
+    {
+      "status": "InProgress",
+      "date": "2026-03-27",
+      "note": "Implementation started with trust-surface, metadata, and reviewer-surface alignment."
+    }
+  ]
+}

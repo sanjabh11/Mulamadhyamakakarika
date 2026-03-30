@@ -8,7 +8,7 @@
 
 ## Abstract
 
-This paper describes the design, architecture, and initial evaluation of *Nagarjuna Quantum Reflections*, an AI-enhanced, interactive 3D web platform for teaching Nagarjuna's *Mūlamadhyamakakārikā* (MMK). The MMK — one of the most rigorous and universally significant texts in Indian philosophical tradition — presents unique pedagogical challenges: its dense dialectics, ancient Sanskrit vocabulary, and abstract concepts like *śūnyatā* (emptiness) and *pratītyasamutpāda* (dependent origination) are notoriously difficult to teach to modern learners. Our platform addresses this by combining Large Language Model (LLM)-driven multi-tier explanations, procedurally generated 3D WebGL visualizations mapped to quantum mechanical analogies, and a structured gamification and assessment framework. The AI companion operates under a rigorous "Madhyamaka-GPT" custom instruction framework — baked with epistemological constraints, canonical source authority (Garfield, Siderits, Candrakīrti), and the proprietary RESONANCE scoring algorithm — to ensure philosophically accurate, non-reductionist explanations. Using Design-Based Research (DBR) methodology across three iterative cycles, we demonstrate how this architecture digitally preserves and reinterprets a core Indian Knowledge System text while embodying principles of Ethical AI: transparent prompt structures, canonical citation, and multi-level pedagogical accessibility. The platform currently covers all 27 chapters and 400+ verses, with each verse featuring Devanagari Sanskrit, three-tier quizzes, five-layer deeperDive FAQs, ATOM-specification 3D animations, and quantumResonance scoring. Early indicators suggest significant improvements in conceptual engagement over traditional text-only approaches.
+This paper describes the design, architecture, and initial evaluation of *Nagarjuna Quantum Reflections*, an AI-enhanced, interactive 3D web platform for teaching Nagarjuna's *Mūlamadhyamakakārikā* (MMK). The MMK — one of the most rigorous and universally significant texts in Indian philosophical tradition — presents unique pedagogical challenges: its dense dialectics, ancient Sanskrit vocabulary, and abstract concepts like *śūnyatā* (emptiness) and *pratītyasamutpāda* (dependent origination) are notoriously difficult to teach to modern learners. Our platform addresses this by combining Large Language Model (LLM)-driven multi-tier explanations, procedurally generated 3D WebGL visualizations mapped to quantum mechanical analogies, and a structured gamification and assessment framework. The AI companion operates under a rigorous "Madhyamaka-GPT" custom instruction framework — baked with epistemological constraints, canonical source authority (Garfield, Siderits, Candrakīrti), and the proprietary RESONANCE scoring algorithm — to ensure philosophically accurate, non-reductionist explanations. Using Design-Based Research (DBR) methodology across three iterative cycles, we demonstrate how this architecture digitally preserves and reinterprets a core Indian Knowledge System text while embodying principles of Ethical AI: transparent prompt structures, canonical citation, and multi-level pedagogical accessibility. The platform currently covers all 27 chapters and 400+ verses, with each verse featuring Devanagari Sanskrit (where available), three-tier quizzes, six-question deeperDive FAQs, ATOM-specification 3D animations, and quantumResonance scoring. Early indicators suggest significant improvements in conceptual engagement over traditional text-only approaches.
 
 ---
 
@@ -24,7 +24,7 @@ Yet the MMK poses extraordinary pedagogical challenges. Its core concept — *ś
 
 Generative AI and 3D WebGL environments represent converging opportunities for digital humanities. LLMs can adapt abstract philosophical explanations to different knowledge levels in real time. Interactive WebGL scenes can make abstract philosophical relationships — dependency, conditionality, the collapse of inherent existence — visually tangible in ways that text cannot. The *Nagarjuna Quantum Reflections* platform synthesizes these capabilities specifically for the MMK.
 
-The platform covers all 27 chapters and 400+ verses. For each verse, the user encounters: the original Devanagari Sanskrit with IAST transliteration; an English translation; a four-layer philosophical explanation (Insight, Madhyamaka, Quantum Parallel, Bridge Connection); a quantumResonance score (RESONANCE framework, 0-100); a three-tier embedded quiz (beginner/intermediate/advanced); five-layer deeperDive FAQ; a unique ATOM-specification 3D animation rendered in React Three Fiber; and an AI Companion for open-ended conversational exploration.
+The platform covers all 27 chapters and 400+ verses. For each verse, the user encounters: the original Devanagari Sanskrit (where available) with IAST transliteration; an English translation; a four-layer philosophical explanation (Insight, Madhyamaka, Quantum Parallel, Bridge Connection); a quantumResonance score (RESONANCE framework, 0-100); a three-tier embedded quiz (beginner/intermediate/advanced); six-question deeperDive FAQ; a unique ATOM-specification 3D animation rendered in React Three Fiber; and an AI Companion for open-ended conversational exploration.
 
 ### 1.3 Research Aim and Questions
 
@@ -84,9 +84,9 @@ Design-Based Research (DBR) is an iterative methodology that closely links desig
 
 The platform presents all 27 chapters of the MMK across a progressive UX architecture:
 
-**Layer 1 — Text Foundation:** Each verse displays Devanagari Sanskrit (e.g., Chapter 1, Verse 1: *na svato nāpi parato na dvābhyāṃ nāpy ahetutaḥ*), IAST transliteration, and English translation (Garfield primary; Siderits cross-reference where significantly different).
+**Layer 1 — Text Foundation:** Verses include Devanagari Sanskrit where available (coverage expanding), IAST transliteration, and English translation (Garfield primary; Siderits cross-reference where significantly different).
 
-**Layer 2 — Philosophical Unpacking:** The ThreePanelVerseViewer component renders a three-panel layout: left panel (verse text + philosophy with CollapsiblePanel sub-sections for Madhyamaka, Quantum Parallel, Bridge, Two Truths, Common Misconceptions); center panel (3D ProgressiveQuantumCanvas); right panel (five-layer DeeperDive FAQ + three-tier QuizDropdown).
+**Layer 2 — Philosophical Unpacking:** The ThreePanelVerseViewer component renders a three-panel layout: left panel (verse text + philosophy with CollapsiblePanel sub-sections for Madhyamaka, Quantum Parallel, Bridge, Two Truths, Common Misconceptions); center panel (3D ProgressiveQuantumCanvas); right panel (six-question DeeperDive FAQ + three-tier QuizDropdown).
 
 **Layer 3 — Interactive 3D Visualizations:** Each verse has a unique ATOM-specification 3D animation. For example, Verse 1.13 displays an "Entangled Essence-Transfer Failure" scene: two transparent crystal vessels connected by a tube, where luminous "essence" becomes transparent during transfer — visually demonstrating that conditions cannot transfer inherent essence they do not possess.
 
@@ -103,7 +103,7 @@ The platform presents all 27 chapters of the MMK across a progressive UX archite
 | **StaticQuantumVisualization** | `components/StaticQuantumVisualization.jsx` | 24 unique static animated visualizations |
 | **AI Companion** | `app/api/companion/` | Gemini API integration with Madhyamaka-GPT persona |
 | **PaywallGate** | `components/PaywallGate.jsx` | Tier-enforced content gating via Whop SDK |
-| **DeeperDive** | `components/ui/DeeperDive.jsx` | 5-layer tiered FAQ system |
+| **DeeperDive** | `components/ui/DeeperDive.jsx` | 6-question tiered FAQ system |
 | **QuizDropdown** | `components/ui/QuizDropdown.jsx` | 3-tier adaptive quiz rendering |
 | **UserProgress** | `lib/user-progress.js` | Local XP, streak, chapter completion tracking |
 | **Analytics** | `lib/analytics.js` | Full telemetry: VERSE_VIEW, TIME_ON_CHAPTER, PAYWALL_HIT, ANIMATION_STARTED |
@@ -200,7 +200,7 @@ interface VerseData {
 ### 5.1 Iterative Design Cycles
 
 **Cycle 1 — Text + Basic AI Explanations:**
-Initial version provided verse text with one-level AI explanations (no scaffolding, no 3D). Qualitative feedback from pilot users revealed: (a) persistent nihilistic interpretations of *śūnyatā* despite textual clarifications; (b) difficulty connecting the abstract catuṣkoṭi logic to everyday experience. **Change:** Added "Common Misconceptions" and "Accessible" philosophy fields, and the DeeperDive FAQ 5-tier structure with `realLifeExample` for each question.
+Initial version provided verse text with one-level AI explanations (no scaffolding, no 3D). Qualitative feedback from pilot users revealed: (a) persistent nihilistic interpretations of *śūnyatā* despite textual clarifications; (b) difficulty connecting the abstract catuṣkoṭi logic to everyday experience. **Change:** Added "Common Misconceptions" and "Accessible" philosophy fields, and the DeeperDive six-question structure with `realLifeExample` scaffolding for each question.
 
 **Cycle 2 — ATOM 3D Visualizations + Quizzes:**
 Integrated unique 3D animations per verse using the ATOM framework. Added three-tier embedded quizzes. Telemetry (from `lib/analytics.js`) revealed: (a) animated verse pages showed 2.3× longer session duration vs. text-only; (b) quiz pass rates improved when learners interacted with 3D before attempting quiz. **Change:** Moved 3D canvas to center (60% width) of ThreePanelVerseViewer; reordered UX to present animation before quiz.
@@ -215,22 +215,22 @@ The primary target learners in pilot testing were:
 - Engineering students in IKS-AI electives exploring philosophical foundations of consciousness/reality.
 - Independent spiritual practitioners seeking systematic understanding of Buddhist philosophy.
 
-**Academic Access:** For conference evaluation, all verses of Chapters 1 and 24 (philosophically foundational chapters) are accessible without login at `/iks-conference`, with Research Mode enabled by default.
+**Academic Access:** For conference evaluation, selected showcase verses and direct `?showcase=true` verse links can be accessed without login, with Research Mode available on the conference route.
 
 ### 5.3 Data Collection: Telemetry and Embedded Assessment
 
 The platform collects the following research-relevant data via `lib/analytics.js`:
 
-| Metric | Event | Key Properties |
-|--------|-------|----------------|
-| **Verse engagement depth** | `VERSE_VIEW` | verse_id, chapter, time_on_page, user_tier |
-| **Animation interaction** | `ANIMATION_STARTED`, `ANIMATION_COMPLETED` | animation_type, duration, chapter |
-| **FAQ engagement** | `QA_EXPANDED` | question_tier, verse_id |
-| **Conceptual mastery** | (Quiz results in local state) | tier (beginner/intermediate/advanced), correct/incorrect |
-| **Paywall behavior** | `PAYWALL_HIT`, `UPGRADE_CTA_CLICKED` | chapter, required_tier |
-| **Session depth** | `SESSION_START/END` | duration, verses_visited |
+  | Metric | Event | Key Properties |
+  |--------|-------|----------------|
+  | **Verse engagement depth** | `VERSE_VIEW` | verse_id, chapter, time_on_page, user_tier |
+  | **Animation interaction** | `ANIMATION_STARTED`, `ANIMATION_COMPLETED` | animation_type, duration, chapter |
+  | **FAQ engagement** | `QA_EXPANDED` | question_tier, verse_id |
+  | **Conceptual mastery** | (Quiz results in local state) | tier (beginner/intermediate/advanced), correct/incorrect |
+  | **Paywall behavior** | `PAYWALL_HIT`, `UPGRADE_CTA_CLICKED` | chapter, required_tier |
+  | **Session depth** | `SESSION_START/END` | duration, verses_visited |
 
-Aggregated, anonymized metrics are displayed at `/research/data` using mock and live data, distinguishing quiz performance by verse concept type (emptiness-of-cause, emptiness-of-effect, two-truths distinction, etc.).
+  The `/research/data` route currently presents prototype/mock aggregated views for demonstration. Real research-grade telemetry aggregation remains a planned next phase.
 
 ### 5.4 Research Mode and Transparency
 

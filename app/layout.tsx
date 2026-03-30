@@ -30,8 +30,37 @@ const notoSans = Noto_Sans({
 });
 
 export const metadata = {
-    title: 'Nagarjuna Quantum Reflections',
-    description: 'Explore the intersection of Madhyamaka philosophy and quantum physics.',
+    metadataBase: new URL('https://nagarjunaquantum.com'),
+    title: {
+        default: 'Nagarjuna Quantum Reflections',
+        template: '%s | Nagarjuna Quantum Reflections',
+    },
+    description: 'A digital humanities learning and research platform for studying Nagarjuna’s Mūlamadhyamakakārikā with interactive verse exploration, transparent AI assistance, and carefully caveated quantum analogies.',
+    keywords: [
+        'Madhyamaka',
+        'Nagarjuna',
+        'Mūlamadhyamakakārikā',
+        'digital humanities',
+        'Buddhist philosophy',
+        'quantum analogies',
+        'research transparency',
+        'interactive pedagogy'
+    ],
+    openGraph: {
+        title: 'Nagarjuna Quantum Reflections',
+        description: 'A digital humanities platform for studying the MMK through interactive pedagogy, transparent AI assistance, and structural quantum analogies.',
+        type: 'website',
+        siteName: 'Nagarjuna Quantum Reflections',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'Nagarjuna Quantum Reflections',
+        description: 'Study the MMK with interactive verse exploration, research-mode transparency, and carefully caveated quantum analogies.',
+    },
+    robots: {
+        index: true,
+        follow: true,
+    },
     manifest: '/manifest.json',
 };
 

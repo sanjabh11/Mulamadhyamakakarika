@@ -119,7 +119,7 @@ export default function QuantumCompanion({ verseData, chapterId, verseId, resear
                         {/* Research Mode: Message Metadata */}
                         {researchMode && m.role === 'assistant' && (
                             <div className="mt-3 pt-2 border-t border-quantum-neon/20 text-[9px] font-mono text-quantum-cool flex flex-col gap-1">
-                                <span className="flex justify-between"><span>Model:</span> <span>gemini-1.5-flash-research</span></span>
+                                <span className="flex justify-between"><span>Model:</span> <span>gemini-2.5-flash</span></span>
                                 <span className="flex justify-between"><span>Context:</span> <span>Verse ${verseId} + Foundation Prompt v2.1</span></span>
                                 <span className="flex justify-between"><span>Safety Check:</span> <span className="text-green-400">PASSED</span></span>
                             </div>

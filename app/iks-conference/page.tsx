@@ -85,7 +85,7 @@ const RESONANCE_DATA = [
 ];
 
 export default function IKSConferencePage() {
-  const [researchMode, setResearchMode] = useState(false);
+  const [researchMode, setResearchMode] = useState(true);
   const [activeVerse, setActiveVerse] = useState<string | null>(null);
 
   return (
@@ -294,7 +294,7 @@ export default function IKSConferencePage() {
             {[
               {
                 theme: '1. Role of AI in Reviving IKS',
-                description: '27 chapters of MMK digitized with AI-scaffolded explanations, interactive 3D, gamification, and verified certifications. Preserves philosophical depth while radically increasing accessibility.',
+                description: '27 chapters of MMK are presented with AI-scaffolded explanations, interactive 3D, gamification, and printable completion certificates. The project aims to preserve philosophical depth while increasing accessibility.',
                 icon: '🇮🇳',
                 strength: 'Primary',
               },
@@ -306,15 +306,9 @@ export default function IKSConferencePage() {
               },
               {
                 theme: '3. Rescuing Ancient Texts with AI',
-                description: 'Devanagari Sanskrit, IAST transliteration, Garfield & Siderits translations, and Candrakīrti-grounded commentary — all preserved and made interactive for digital learners.',
+                description: 'Devanagari Sanskrit where available, IAST transliteration, Garfield & Siderits translations, and Candrakīrti-grounded commentary are being organized into an interactive learning environment for digital learners.',
                 icon: '📜',
                 strength: 'Primary',
-              },
-              {
-                theme: '5. Sanskrit in Computational AI/Linguistics',
-                description: 'The RESONANCE scoring algorithm adapts formal Sanskrit philosophical structures (prasaṅga, catuṣkoṭi, svabhāva) into AI evaluation criteria — demonstrating Sanskrit\'s computational tractability.',
-                icon: '🔤',
-                strength: 'Secondary',
               },
             ].map((item, i) => (
               <div

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Sparkles, Check, ArrowLeft, Flame, Star, Zap, Crown } from 'lucide-react';
+import { Sparkles, Check, ArrowLeft, Zap, Crown, Shield } from 'lucide-react';
 
 const TIERS = [
     {
@@ -256,9 +256,8 @@ export default function PricingPage() {
                 {/* Trust signals */}
                 <div className="flex flex-wrap justify-center items-center gap-8 mt-16 text-sm text-slate-400">
                     <div className="flex items-center gap-2"><Zap size={14} className="text-yellow-400" /><span>Cancel anytime</span></div>
-                    <div className="flex items-center gap-2"><Star size={14} className="text-purple-400" /><span>12,000+ practitioners</span></div>
+                    <div className="flex items-center gap-2"><Shield size={14} className="text-emerald-400" /><span>Secure checkout</span></div>
                     <div className="flex items-center gap-2"><Crown size={14} className="text-cyan-400" /><span>Powered by Whop</span></div>
-                    <div className="flex items-center gap-2"><Flame size={14} className="text-orange-400" /><span>2.1M verses explored</span></div>
                 </div>
 
                 {/* FAQ */}

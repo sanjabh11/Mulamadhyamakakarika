@@ -117,7 +117,7 @@ export default function Dashboard() {
                     </div>
                 </header>
 
-                {/* Hero CTA & Social Proof for Free Users */}
+                {/* Academic-facing trust surface for free users */}
                 {tier === 'free' && (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -126,52 +126,59 @@ export default function Dashboard() {
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/10 via-amber-500/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                         <h2 className="text-2xl font-bold bg-gradient-to-r from-yellow-300 to-amber-500 text-transparent bg-clip-text mb-2">
-                            Start Your Quantum Enlightenment Journey
+                            A Digital Humanities Platform for Reading the MMK
                         </h2>
                         <p className="text-slate-300 text-sm mb-6">
-                            Unlock AI-guided contemplation, animated verses, and deep philosophical insights.
+                            Explore Nāgārjuna through interactive verse study, transparent AI assistance, and carefully caveated quantum analogies designed for researchers, educators, students, and serious public learners.
                         </p>
 
-                        {/* Social Proof */}
-                        <div className="flex items-center justify-center gap-6 mb-6 text-xs text-slate-400">
-                            <div className="flex items-center gap-1.5">
-                                <Users size={14} className="text-blue-400" />
-                                <span>12,045+ Seekers</span>
+                        <div className="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 rounded-full px-4 py-1.5 text-[11px] uppercase tracking-[0.2em] text-cyan-200 mb-6">
+                            <CheckCircle size={14} className="text-cyan-300" />
+                            <span>Structural analogy only — not metaphysical identity</span>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 my-6 text-left">
+                            <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                                <div className="flex items-center gap-2 mb-2 text-white">
+                                    <Users size={16} className="text-quantum-neon" />
+                                    <span className="text-sm font-semibold">Researchers</span>
+                                </div>
+                                <p className="text-[11px] text-slate-400">Use open showcase verses, research-mode transparency, and prototype evaluation surfaces to assess the platform critically.</p>
                             </div>
-                            <div className="flex items-center gap-1.5">
-                                <BookOpen size={14} className="text-purple-400" />
-                                <span>2.1M Verses Read</span>
+                            <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                                <div className="flex items-center gap-2 mb-2 text-white">
+                                    <BookOpen size={16} className="text-purple-400" />
+                                    <span className="text-sm font-semibold">Educators</span>
+                                </div>
+                                <p className="text-[11px] text-slate-400">Pair canonical verses, explanatory scaffolds, and interactive media for classroom or seminar use.</p>
+                            </div>
+                            <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                                <div className="flex items-center gap-2 mb-2 text-white">
+                                    <Sparkles size={16} className="text-amber-300" />
+                                    <span className="text-sm font-semibold">Learners</span>
+                                </div>
+                                <p className="text-[11px] text-slate-400">Read, listen, and compare philosophical explanation with explicit caveats around every quantum bridge.</p>
                             </div>
                         </div>
 
-                        {/* Mini Feature Carousel */}
-                        <div className="flex overflow-x-auto gap-3 my-6 pb-2 snap-x hide-scrollbar justify-start md:pr-10 w-full" style={{ scrollSnapType: 'x mandatory' }}>
-                            <div className="snap-center shrink-0 w-36 bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col items-center justify-center text-center">
-                                <Sparkles className="text-quantum-neon mb-2" size={20} />
-                                <span className="text-xs font-bold text-white mb-1">AI Guide</span>
-                                <span className="text-[10px] text-slate-400">Contextual wisdom</span>
-                            </div>
-                            <div className="snap-center shrink-0 bg-white/5 border border-white/10 rounded-xl p-3 w-36 flex flex-col items-center text-center">
-                                <PlayCircle className="text-purple-400 mb-2" size={20} />
-                                <span className="text-xs font-bold text-white mb-1">3D Animations</span>
-                                <span className="text-[10px] text-slate-400">Visual philosophy</span>
-                            </div>
-                            <div className="snap-center shrink-0 w-36 bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col items-center justify-center text-center">
-                                <Lock className="text-amber-400 mb-2" size={20} />
-                                <span className="text-xs font-bold text-white mb-1">27 Chapters</span>
-                                <span className="text-[10px] text-slate-400">Complete path</span>
-                            </div>
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                            <Link href="/iks-conference" className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-3 rounded-full font-bold shadow-[0_0_20px_rgba(34,211,238,0.2)] transition-all hover:scale-105 active:scale-95">
+                                <PlayCircle size={18} />
+                                Reviewer Showcase
+                            </Link>
+                            <Link href="/research/data" className="inline-flex items-center justify-center gap-2 bg-white/10 border border-white/15 text-white px-6 py-3 rounded-full font-bold transition-all hover:bg-white/15">
+                                <BookOpen size={18} />
+                                Prototype Telemetry
+                            </Link>
+                            <button
+                                onClick={(e) => { e.stopPropagation(); router.push('/pricing'); }}
+                                className="inline-flex items-center justify-center gap-2 bg-transparent border border-amber-500/40 text-amber-200 px-6 py-3 rounded-full font-bold transition-all hover:bg-amber-500/10 active:scale-95 relative z-50 pointer-events-auto focus:outline-none touch-manipulation"
+                                style={{ WebkitTapHighlightColor: 'transparent' }}
+                            >
+                                <Sparkles size={18} />
+                                Support / Access Options
+                            </button>
                         </div>
-
-                        {/* CTA — use explicit button with router.push, stopPropagation, z-50 to escape overlays */}
-                        <button
-                            onClick={(e) => { e.stopPropagation(); router.push('/pricing'); }}
-                            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-3 rounded-full font-bold shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_30px_rgba(245,158,11,0.5)] transition-all hover:scale-105 active:scale-95 relative z-50 pointer-events-auto focus:outline-none touch-manipulation"
-                            style={{ WebkitTapHighlightColor: 'transparent' }}
-                        >
-                            <Sparkles size={18} />
-                            View Premium Tiers
-                        </button>
                     </motion.div>
                 )}
 

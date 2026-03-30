@@ -11,6 +11,7 @@ import AnimationControls from '../ui/AnimationControls';
 // @ts-ignore
 import EducationalRevealOverlay from '../ui/EducationalRevealOverlay';
 import AuroraBackground from '../ui/AuroraBackground';
+import { COMPANION_MODEL_LABEL, SYSTEM_PROMPT_LABEL } from '../../lib/research-metadata';
 // @ts-ignore
 import { useMembership } from '../whop/MembershipTiers';
 // @ts-ignore
@@ -446,11 +447,11 @@ export default function DesktopVerseLayout({ verseData, chapterId, verseId, chap
                                 <h4 className="text-xs text-quantum-neon font-mono uppercase font-bold tracking-widest mb-3 border-b border-quantum-neon/30 pb-1">AI Pipeline Telemetry</h4>
                                 <div className="grid grid-cols-3 gap-6 text-xs font-mono text-slate-300">
                                     <div className="space-y-1">
-                                        <div className="flex justify-between"><span>Model:</span><span className="text-white">Gemini 1.5 Pro</span></div>
+                                        <div className="flex justify-between"><span>Model:</span><span className="text-white">{COMPANION_MODEL_LABEL}</span></div>
                                         <div className="flex justify-between"><span>Temp:</span><span className="text-white">0.30</span></div>
                                     </div>
                                     <div className="space-y-1">
-                                        <div className="flex justify-between"><span>System Prompt:</span><span className="text-white">v3-madhyamaka</span></div>
+                                        <div className="flex justify-between"><span>System Prompt:</span><span className="text-white">{SYSTEM_PROMPT_LABEL}</span></div>
                                         <div className="flex justify-between"><span>Epistemic Shield:</span><span className="text-green-400">ACTIVE</span></div>
                                     </div>
                                     <div className="space-y-1">
