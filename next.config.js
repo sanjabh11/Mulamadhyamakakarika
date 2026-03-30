@@ -4,6 +4,8 @@ const path = require('path');
 const nextConfig = {
   reactStrictMode: false,
   outputFileTracingRoot: __dirname,
+  output: 'export',
+  distDir: 'dist',
 
   // Required headers for Whop iframe embedding
   async headers() {
