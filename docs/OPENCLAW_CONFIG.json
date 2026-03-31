@@ -1,0 +1,151 @@
+{
+  "project": {
+    "name": "Nagarjuna Quantum Reflections",
+    "doi": "10.5281/zenodo.19282735",
+    "doi_version": "10.5281/zenodo.19282736",
+    "zenodo_url": "https://zenodo.org/records/19282736",
+    "demo_url": "https://mulamadhyamakarika-quanta.netlify.app/iks-conference",
+    "github_repo": "https://github.com/sanjabh11/Mulamadhyamakakarika"
+  },
+  "sender": {
+    "name": "Sanjay Bhargava",
+    "affiliation": "[To be filled by user]",
+    "email": "[To be filled by user]"
+  },
+  "tasks": [
+    {
+      "id": "TASK-001",
+      "name": "Dhamma Wheel Forum Post",
+      "platform": "web_forum",
+      "url": "https://www.dhammawheel.com/",
+      "tradition": "Theravada",
+      "priority": "P0",
+      "estimated_time": "30-45 min",
+      "connector": "web_browser",
+      "sections": ["Academic/Philosophy", "Links", "General Theravada Discussion"],
+      "message": {
+        "subject": "Digital Study Resource: Mūlamadhyamakakārikā with 3D Visualizations",
+        "body": "Dear Dhamma friends,\n\nI am sharing a guided study resource I have developed for approaching Nāgārjuna's Mūlamadhyamakakārikā through contemplative-science pedagogy.\n\nNagarjuna Quantum Reflections (https://mulamadhyamakarika-quanta.netlify.app/iks-conference) offers:\n\n• Interactive 3D visualizations of dependent origination concepts\n• ATOM Framework: Procedural animations for abstract verses\n• Research Mode with epistemic transparency (guardrails against quantum mysticism)\n• Multi-tiered scaffolding from introductory to advanced levels\n\nThis is intended as guided study support—not Dharma instruction—for those exploring Madhyamaka through a contemplative-science lens. The methodology emphasizes transparent framing and welcomes feedback on philosophical accuracy.\n\nThe project has a citable Zenodo DOI: 10.5281/zenodo.19282735\n\nI welcome any reflections from this community on its approach, particularly regarding respectful engagement with the text.\n\nWith mettā,\nSanjay Bhargava"
+      },
+      "success_criteria": "Post live with URL captured",
+      "error_handling": {
+        "registration_required": "Use Gmail to verify account",
+        "section_not_found": "Use alternative section priority list",
+        "post_blocked": "Report as 'Blocked - manual intervention needed'"
+      }
+    },
+    {
+      "id": "TASK-002",
+      "name": "Dharma Wheel Forum Post",
+      "platform": "web_forum",
+      "url": "https://www.dharmawheel.net/",
+      "tradition": "Mahayana/Vajrayana",
+      "priority": "P0",
+      "estimated_time": "30-45 min",
+      "connector": "web_browser",
+      "sections": ["Academic Discussion", "News", "Mahayana Discussion", "Tibetan Buddhism"],
+      "message": {
+        "subject": "[Resource] Madhyamaka Pedagogy Tool with Quantum Physics Parallels",
+        "body": "Hello Dharma friends,\n\nI would like to share a digital humanities project developed for Madhyamaka study contexts.\n\nNagarjuna Quantum Reflections explores the Mūlamadhyamakakārikā through:\n\n• 3D WebGL visualizations of śūnyatā and pratītyasamutpāda\n• Structural parallels with quantum mechanics (superposition, relationality)\n• Epistemic guardrails: \"Research Mode\" prevents quantum mysticism overreach\n• Madhyamaka-first methodology: physics analogies serve philosophical clarity\n\nThe platform is designed for:\n- Academic Madhyamaka courses\n- Contemplative education programs\n- Guided study groups (not replacement for lineage instruction)\n\nZenodo DOI for citation: 10.5281/zenodo.19282735\nAcademic showcase: https://mulamadhyamakarika-quanta.netlify.app/iks-conference\n\nI particularly welcome feedback from this community on:\n- Philosophical framing accuracy\n- Suitability for Tibetan shedra contexts\n- Potential for monastic science education\n\nWith gratitude,\nSanjay Bhargava"
+      },
+      "success_criteria": "Post live with URL captured",
+      "error_handling": {
+        "registration_required": "Use Gmail to verify account",
+        "section_not_found": "Use alternative section priority list",
+        "post_blocked": "Report as 'Blocked - manual intervention needed'"
+      }
+    },
+    {
+      "id": "TASK-003",
+      "name": "ETSI Email Outreach",
+      "platform": "email",
+      "priority": "P0",
+      "estimated_time": "15-20 min",
+      "connector": "gmail",
+      "recipient": {
+        "name": "Karma Tenzin Khangsar",
+        "email": "karmatenzin@emory.edu",
+        "organization": "Emory-Tibet Science Initiative",
+        "url": "https://tibet.emory.edu/contact-us.html"
+      },
+      "message": {
+        "subject": "Digital Quantum Physics Teaching Aid for Monastic Students",
+        "body": "Dear Karma Tenzin Khangsar,\n\nI hope this email finds you well. I am writing to introduce a digital teaching resource that may complement the Emory-Tibet Science Initiative's quantum physics curriculum for monastic students.\n\nNagarjuna Quantum Reflections is an interactive web platform that uses 3D WebGL visualizations to teach quantum concepts through the lens of classical Indian epistemology—specifically Nāgārjuna's Mūlamadhyamakakārikā.\n\nWhy this might fit ETSI:\n• Visualizes quantum superposition, entanglement, and complementarity through 3D animations\n• Epistemic transparency: built-in guardrails against \"quantum mysticism\"\n• Respects traditional contemplative frameworks while teaching modern physics\n• Free white-label access available for monastic education contexts\n\nI noticed ETSI's curriculum covers quantum mechanics, and thought this might provide an alternative pedagogical angle—particularly for students with strong background in Buddhist philosophy.\n\nThe project has a Zenodo DOI (10.5281/zenodo.19282735) for academic reference.\n\nAcademic showcase: https://mulamadhyamakarika-quanta.netlify.app/iks-conference\nGitHub: https://github.com/sanjabh11/Mulamadhyamakakarika\n\nWould you be open to a brief conversation about whether this might fit ETSI's pedagogical goals? I am happy to provide free institutional access for evaluation.\n\nWith warm regards,\n\nSanjay Bhargava",
+        "attachments": ["bells_theorem_screenshot.png"]
+      },
+      "success_criteria": "Email delivered with confirmation",
+      "error_handling": {
+        "bounce": "Check for alternative contacts on ETSI website",
+        "no_screenshot": "Navigate to demo, capture Bell's Theorem viz",
+        "send_failed": "Retry 3 times, then report failure"
+      }
+    },
+    {
+      "id": "TASK-004",
+      "name": "Science & Wisdom LIVE Outreach",
+      "platform": "web_form_or_email",
+      "url": "https://sciwizlive.com/about-science-wisdom-live/",
+      "priority": "P0",
+      "estimated_time": "15-20 min",
+      "connectors": ["web_browser", "gmail_fallback"],
+      "recipient": {
+        "name": "Science & Wisdom LIVE",
+        "email": "info@sciwizlive.com",
+        "url": "https://sciwizlive.com/about-science-wisdom-live/"
+      },
+      "message": {
+        "subject": "Collaboration Offer: 3D Quantum-Buddhism Visualizations",
+        "body": "Dear Science & Wisdom LIVE team,\n\nI have been following your excellent \"Buddhism & Quantum Physics\" courses and wanted to reach out about a potential collaboration.\n\nI am the creator of Nagarjuna Quantum Reflections—a digital humanities platform featuring:\n• 3D WebGL visualizations of quantum concepts through Madhyamaka philosophy\n• Interactive Bell's Theorem demonstrations\n• Superposition and entanglement animations\n• Research Mode with epistemic transparency\n\nGiven your focus on bridging Buddhism and quantum physics, I wondered if you might be interested in:\n\n1. Embedding our 3D models in your online courses\n2. White-label licensing for your educational platform\n3. Revenue-sharing arrangement for co-branded content\n\nThe project is academically grounded (Zenodo DOI: 10.5281/zenodo.19282735) and designed specifically to avoid \"quantum mysticism\" pitfalls through rigorous epistemic guardrails.\n\nAcademic showcase: https://mulamadhyamakarika-quanta.netlify.app/iks-conference\nGitHub: https://github.com/sanjabh11/Mulamadhyamakakarika\n\nWould you be open to exploring how this might enhance your course offerings?\n\nBest regards,\n\nSanjay Bhargava"
+      },
+      "success_criteria": "Contact form submitted OR email sent with confirmation",
+      "error_handling": {
+        "form_not_found": "Use email fallback to info@sciwizlive.com",
+        "form_failed": "Switch to email fallback",
+        "both_failed": "Report as 'Failed - manual follow-up required'"
+      }
+    }
+  ],
+  "execution_order": ["TASK-001", "TASK-002", "TASK-003", "TASK-004"],
+  "reporting": {
+    "progress_channel": "telegram",
+    "documentation_target": "github_issue",
+    "github_repo": "sanjabh11/Mulamadhyamakakarika",
+    "success_template": "✅ {task_id}: {task_name} completed - {details}",
+    "failure_template": "❌ {task_id}: {task_name} failed - {error}"
+  },
+  "tone_guidelines": {
+    "must_include": [
+      "Guided study support—not Dharma instruction",
+      "Epistemic transparency and guardrails",
+      "Zenodo DOI: 10.5281/zenodo.19282735"
+    ],
+    "must_avoid": [
+      "Commercial marketing language",
+      "Quantum mysticism or spiritual hype",
+      "Claims of replacing traditional instruction",
+      "Aggressive promotional tone"
+    ],
+    "style": "humble, academic, contemplative, invitational"
+  },
+  "verification_checklist": {
+    "pre_execution": [
+      "Verify Gmail connector authenticated",
+      "Verify GitHub connector authenticated",
+      "Verify Telegram connector authenticated",
+      "Test access to all URLs",
+      "Confirm templates loaded"
+    ],
+    "per_task": [
+      "Verify correct DOI included",
+      "Verify correct demo URL included",
+      "Check tone is non-commercial",
+      "Confirm submission successful",
+      "Capture confirmation/URL"
+    ],
+    "post_execution": [
+      "Create GitHub documentation",
+      "Send Telegram summary",
+      "Verify all 4 tasks complete"
+    ]
+  }
+}
