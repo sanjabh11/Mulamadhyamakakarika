@@ -30,40 +30,39 @@
 - [ ] Customize signature with your affiliation and email
 - [ ] Submit (avoid commercial language; frame as free DH resource)
 
-### ☐ Step 4: Buddhist Community Forums (1-2 hours) — Week 1
+### 🤖 Step 4: Buddhist Community Forums (OPENCLAW Automated) — Week 1
+**Status:** Delegated to OPENCLAW agent via Runnable.com  
+**Files:** `docs/OPENCLAW_BUDDHIST_OUTREACH.md`, `docs/OPENCLAW_CONFIG.json`
+
 **Goal:** Reach practitioners, monastic educators, and Dharma study groups
 
-**Primary Targets:**
+**OPENCLAW Will Execute:**
 - [ ] **Dhamma Wheel** (Theravada-focused): https://www.dhammawheel.com/
   - Post in "Academic/Philosophy" or "Links" sections
-  - Emphasize: transparent methodology, respectful framing, not a replacement for teacher guidance
+  - Template: TEMPLATE-001 in OPENCLAW_CONFIG.json
 - [ ] **Dharma Wheel** (Mahayana/Vajrayana): https://www.dharmawheel.net/
   - Post in "Academic Discussion" or "News" sections
-  - Emphasize: Madhyamaka rigor, epistemic guardrails, contemplative-science bridge
+  - Template: TEMPLATE-002 in OPENCLAW_CONFIG.json
 
-**Secondary (verify current activity before posting):**
-- [ ] BUDDHA-L listserv (if still active — check https://www.lsoft.com/scripts/wl.exe?SL1=BUDDHA-L&H=LISTSERV.LOUISVILLE.EDU)
+**Expected Output:** Forum post URLs reported via Telegram
 
-**Key framing for Buddhist communities:**
-- Position as "guided study support" not "Dharma instruction"
-- Emphasize epistemic transparency and caveats against overclaiming
-- Invite feedback on philosophical accuracy
-
-### ☐ Step 5: Direct Institutional & Monastic Outreach (2-3 hours) — Week 1-2
+### 🤖 Step 5: Direct Institutional & Monastic Outreach (OPENCLAW Automated) — Week 1-2
+**Status:** Delegated to OPENCLAW agent via Runnable.com  
+**Files:** `docs/OPENCLAW_CONFIG.json`
 
 **Priority A: Science-Religion Bridge Programs**
 
-- [ ] **Emory-Tibet Science Initiative (ETSI)**
-  - URL: https://tibet.emory.edu/contact-us.html
-  - Contact: Karma Tenzin Khangsar, Program Coordinator — karmatenzin@emory.edu
-  - Offer: Free white-labeled access for monastic science students
-  - Include: DOI `10.5281/zenodo.19282735`, `/iks-conference` demo, screenshot of Bell's Theorem visualization
-
-- [ ] **Science & Wisdom LIVE**
+- [ ] **Emory-Tibet Science Initiative (ETSI)** — OPENCLAW EMAIL TASK-003
+  - Contact: karmatenzin@emory.edu
+  - Subject: "Digital Quantum Physics Teaching Aid for Monastic Students"
+  - Template: TEMPLATE-003 in OPENCLAW_CONFIG.json
+  
+- [ ] **Science & Wisdom LIVE** — OPENCLAW CONTACT TASK-004
   - URL: https://sciwizlive.com/about-science-wisdom-live/
-  - Contact: Use website contact form or info@sciwizlive.com
-  - Offer: Embed 3D models in their "Buddhism & Quantum Physics" courses
-  - Model: White-label license or revenue share
+  - Template: TEMPLATE-004 in OPENCLAW_CONFIG.json
+  - Fallback: info@sciwizlive.com
+
+**Expected Output:** Email delivery confirmations reported via Telegram
 
 **Priority B: Academic Faculty (First 10)**
 
