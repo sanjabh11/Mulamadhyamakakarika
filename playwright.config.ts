@@ -4,9 +4,9 @@ export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  timeout: 60000,
+  timeout: process.env.CI ? 90000 : 60000,
   expect: {
-    timeout: 10000,
+    timeout: process.env.CI ? 15000 : 10000,
   },
   retries: process.env.CI ? 2 : 0,
   workers: 1,
@@ -17,9 +17,9 @@ export default defineConfig({
   ],
   use: {
     baseURL: 'http://127.0.0.1:3104',
-    trace: 'off',
+    trace: process.env.CI ? 'on-first-retry' : 'off',
     screenshot: 'only-on-failure',
-    video: 'off',
+    video: process.env.CI ? 'retain-on-failure' : 'off',
   },
   webServer: {
     command: 'npx next dev -p 3104 --hostname 127.0.0.1',

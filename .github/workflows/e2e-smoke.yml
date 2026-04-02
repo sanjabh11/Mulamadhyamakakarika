@@ -21,6 +21,10 @@ jobs:
     name: Run public academic smoke suite
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      CI: true
+      NEXT_TELEMETRY_DISABLED: '1'
+      NODE_OPTIONS: --max_old_space_size=4096
 
     steps:
       - name: Checkout code
@@ -48,6 +52,7 @@ jobs:
           name: playwright-report
           path: playwright-report/
           if-no-files-found: ignore
+          retention-days: 7
 
       - name: Upload Playwright test results
         if: always()
@@ -58,3 +63,4 @@ jobs:
             test-results/
             test-results/e2e-junit.xml
           if-no-files-found: ignore
+          retention-days: 7
