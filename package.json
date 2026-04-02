@@ -6,7 +6,10 @@
     "dev": "next dev -p 3004",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.43",
@@ -35,6 +38,7 @@
     "three": "^0.171.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "@netlify/plugin-nextjs": "^5.15.8",
     "@types/node": "^25.2.3",
     "@types/react": "^19.2.14",

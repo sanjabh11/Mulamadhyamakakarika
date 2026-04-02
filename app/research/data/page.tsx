@@ -41,6 +41,18 @@ function MetricCard({ label, value, sub, color = '#8B5CF6' }: { label: string; v
 
 export default function ResearchDataPage() {
   const [activeTab, setActiveTab] = useState<'overview' | 'verses' | 'quizzes' | 'animation'>('overview');
+  const telemetryTabIds = {
+    overview: 'telemetry-tab-overview',
+    verses: 'telemetry-tab-verses',
+    quizzes: 'telemetry-tab-quizzes',
+    animation: 'telemetry-tab-animation',
+  } as const;
+  const telemetryPanelIds = {
+    overview: 'telemetry-panel-overview',
+    verses: 'telemetry-panel-verses',
+    quizzes: 'telemetry-panel-quizzes',
+    animation: 'telemetry-panel-animation',
+  } as const;
 
   return (
     <div className="min-h-screen bg-[#050520] text-slate-200 font-sans">
@@ -66,11 +78,17 @@ export default function ResearchDataPage() {
         </header>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-8 flex-wrap">
+        <div className="flex gap-2 mb-8 flex-wrap" data-testid="research-telemetry-tabs" role="tablist" aria-label="Research telemetry sections">
           {(['overview', 'verses', 'quizzes', 'animation'] as const).map(tab => (
             <button
               key={tab}
+              id={telemetryTabIds[tab]}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab}
+              aria-controls={telemetryPanelIds[tab]}
               onClick={() => setActiveTab(tab)}
+              data-testid={`telemetry-tab-${tab}`}
               className={`px-4 py-2 rounded-full text-sm font-semibold capitalize transition-all ${
                 activeTab === tab
                   ? 'bg-purple-600 text-white'
@@ -83,8 +101,14 @@ export default function ResearchDataPage() {
         </div>
 
         {/* Overview Tab */}
-        {activeTab === 'overview' && (
-          <div className="space-y-6">
+        <div
+          id={telemetryPanelIds.overview}
+          role="tabpanel"
+          aria-labelledby={telemetryTabIds.overview}
+          hidden={activeTab !== 'overview'}
+          data-testid="telemetry-overview-panel"
+          className="space-y-6"
+        >
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <MetricCard label="Total Sessions" value={MOCK_TELEMETRY.totalSessions.toString()} color="#8B5CF6" />
               <MetricCard label="Avg Session" value={`${MOCK_TELEMETRY.avgSessionMinutes}m`} sub="per user" color="#06B6D4" />
@@ -113,11 +137,16 @@ export default function ResearchDataPage() {
               </p>
             </div>
           </div>
-        )}
 
         {/* Verses Tab */}
-        {activeTab === 'verses' && (
-          <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+        <div
+          id={telemetryPanelIds.verses}
+          role="tabpanel"
+          aria-labelledby={telemetryTabIds.verses}
+          hidden={activeTab !== 'verses'}
+          className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden"
+          data-testid="telemetry-verses-panel"
+        >
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-white/10 text-xs text-slate-500 uppercase tracking-wider">
@@ -146,11 +175,15 @@ export default function ResearchDataPage() {
               </tbody>
             </table>
           </div>
-        )}
 
         {/* Quizzes Tab */}
-        {activeTab === 'quizzes' && (
-          <div className="grid md:grid-cols-3 gap-4">
+        <div
+          id={telemetryPanelIds.quizzes}
+          role="tabpanel"
+          aria-labelledby={telemetryTabIds.quizzes}
+          hidden={activeTab !== 'quizzes'}
+          className="grid md:grid-cols-3 gap-4"
+        >
             {Object.entries(MOCK_TELEMETRY.quizResults).map(([tier, data]) => (
               <div key={tier} className="bg-white/5 border border-white/10 rounded-2xl p-5">
                 <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">
@@ -164,11 +197,16 @@ export default function ResearchDataPage() {
               </div>
             ))}
           </div>
-        )}
 
         {/* Animation Tab */}
-        {activeTab === 'animation' && (
-          <div className="space-y-4">
+        <div
+          id={telemetryPanelIds.animation}
+          role="tabpanel"
+          aria-labelledby={telemetryTabIds.animation}
+          hidden={activeTab !== 'animation'}
+          className="space-y-4"
+          data-testid="telemetry-animation-panel"
+        >
             <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
               <h2 className="text-sm font-bold text-white mb-6">Animated vs Text-Only Verse Engagement Comparison</h2>
               {[
@@ -199,7 +237,6 @@ export default function ResearchDataPage() {
               *Animated verses = Chapters 1–7 (with full ATOM 3D animation). Text-only = Chapters 8–14 (Cycle 1). Controlled comparison is a planned future study.
             </p>
           </div>
-        )}
 
         <footer className="mt-10 text-center text-xs text-slate-600">
           <p className="text-amber-500/80 mb-2">⚠️ This dashboard displays PROTOTYPE/MOCK data for demonstration purposes only.</p>

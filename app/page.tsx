@@ -162,16 +162,17 @@ export default function Dashboard() {
                         </div>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                            <Link href="/iks-conference" className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-3 rounded-full font-bold shadow-[0_0_20px_rgba(34,211,238,0.2)] transition-all hover:scale-105 active:scale-95">
+                            <Link href="/iks-conference" data-testid="reviewer-showcase-link" className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-3 rounded-full font-bold shadow-[0_0_20px_rgba(34,211,238,0.2)] transition-all hover:scale-105 active:scale-95">
                                 <PlayCircle size={18} />
                                 Reviewer Showcase
                             </Link>
-                            <Link href="/research/data" className="inline-flex items-center justify-center gap-2 bg-white/10 border border-white/15 text-white px-6 py-3 rounded-full font-bold transition-all hover:bg-white/15">
+                            <Link href="/research/data" data-testid="prototype-telemetry-link" className="inline-flex items-center justify-center gap-2 bg-white/10 border border-white/15 text-white px-6 py-3 rounded-full font-bold transition-all hover:bg-white/15">
                                 <BookOpen size={18} />
                                 Prototype Telemetry
                             </Link>
                             <button
                                 onClick={(e) => { e.stopPropagation(); router.push('/pricing'); }}
+                                data-testid="support-access-options-button"
                                 className="inline-flex items-center justify-center gap-2 bg-transparent border border-amber-500/40 text-amber-200 px-6 py-3 rounded-full font-bold transition-all hover:bg-amber-500/10 active:scale-95 relative z-50 pointer-events-auto focus:outline-none touch-manipulation"
                                 style={{ WebkitTapHighlightColor: 'transparent' }}
                             >
