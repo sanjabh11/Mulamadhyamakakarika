@@ -22,7 +22,7 @@ export default defineConfig({
     video: 'off',
   },
   webServer: {
-    command: '/bin/zsh -lc "PATH=/opt/homebrew/bin:/usr/local/bin:$PATH npx next dev -p 3104 --hostname 127.0.0.1"',
+    command: 'npx next dev -p 3104 --hostname 127.0.0.1',
     url: 'http://127.0.0.1:3104',
     reuseExistingServer: !process.env.CI,
     timeout: 180000,
