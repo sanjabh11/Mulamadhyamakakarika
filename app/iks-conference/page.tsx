@@ -87,6 +87,7 @@ const RESONANCE_DATA = [
 export default function IKSConferencePage() {
   const [researchMode, setResearchMode] = useState(true);
   const [activeVerse, setActiveVerse] = useState<string | null>(null);
+  const researchPanelId = 'research-mode-panel';
 
   return (
     <div className="min-h-screen bg-[#050520] text-slate-200 font-sans">
@@ -118,24 +119,36 @@ export default function IKSConferencePage() {
 
           {/* Research Mode Toggle */}
           <div className="mt-8 flex items-center justify-center gap-4">
-            <label className="flex items-center gap-3 cursor-pointer bg-white/5 border border-white/10 rounded-xl px-5 py-3 hover:border-purple-500/40 transition-all">
-              <div
-                onClick={() => setResearchMode(!researchMode)}
+            <button
+              type="button"
+              data-testid="research-mode-toggle"
+              aria-pressed={researchMode}
+              aria-controls={researchPanelId}
+              className="flex items-center gap-3 cursor-pointer bg-white/5 border border-white/10 rounded-xl px-5 py-3 hover:border-purple-500/40 transition-all"
+              onClick={() => setResearchMode((value) => !value)}
+            >
+              <span
+                aria-hidden="true"
                 className={`relative w-12 h-6 rounded-full transition-all ${researchMode ? 'bg-purple-500' : 'bg-slate-700'}`}
               >
-                <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${researchMode ? 'left-7' : 'left-1'}`} />
-              </div>
+                <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${researchMode ? 'left-7' : 'left-1'}`} />
+              </span>
               <div>
                 <p className="text-sm font-semibold text-white">🔬 Research Mode</p>
                 <p className="text-xs text-slate-400">Reveal AI prompts, RESONANCE scores & ATOM specs</p>
               </div>
-            </label>
+            </button>
           </div>
         </header>
 
         {/* ── Research Mode Panel ── */}
-        {researchMode && (
-          <div className="mb-12 bg-slate-900/80 border border-purple-500/40 rounded-2xl p-6 backdrop-blur-sm">
+        <div
+          id={researchPanelId}
+          data-testid="research-mode-panel"
+          hidden={!researchMode}
+          aria-hidden={!researchMode}
+          className="mb-12 bg-slate-900/80 border border-purple-500/40 rounded-2xl p-6 backdrop-blur-sm"
+        >
             <h2 className="text-lg font-bold text-purple-300 mb-4 flex items-center gap-2">
               🔬 Research Mode — Under-the-Hood Transparency
             </h2>
@@ -193,7 +206,6 @@ export default function IKSConferencePage() {
               </div>
             </div>
           </div>
-        )}
 
         {/* ── Paper Summary ── */}
         <section className="mb-14">
@@ -220,11 +232,14 @@ export default function IKSConferencePage() {
             <span className="text-xs text-green-400 bg-green-500/10 border border-green-500/20 rounded-full px-3 py-1">No Login Required</span>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-4" data-testid="showcase-verses-list">
             {SHOWCASE_VERSES.map(v => (
-              <div key={v.id} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all">
+              <div key={v.id} data-testid={`showcase-verse-${v.id}`} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all">
                 <button
                   onClick={() => setActiveVerse(activeVerse === v.id ? null : v.id)}
+                  data-testid={`showcase-verse-toggle-${v.id}`}
+                  aria-expanded={activeVerse === v.id}
+                  aria-controls={`showcase-verse-panel-${v.id}`}
                   className="w-full text-left p-5 flex items-start gap-4"
                 >
                   <div
@@ -247,7 +262,11 @@ export default function IKSConferencePage() {
                 </button>
 
                 {activeVerse === v.id && (
-                  <div className="px-5 pb-5 border-t border-white/5 pt-4 space-y-3">
+                  <div
+                    id={`showcase-verse-panel-${v.id}`}
+                    data-testid={`showcase-verse-panel-${v.id}`}
+                    className="px-5 pb-5 border-t border-white/5 pt-4 space-y-3"
+                  >
                     <div>
                       <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">IAST Transliteration</p>
                       <p className="text-sm italic text-slate-300 font-mono">{v.sanskrit}</p>
