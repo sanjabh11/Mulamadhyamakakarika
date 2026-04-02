@@ -92,3 +92,17 @@ Rationale: the same command that passed before should still pass after operation
 - [x] **Result:** Split the smoke suite into 6 shorter tests, added `aria-pressed` on the research toggle, added semantic tabs/panels on `/research/data`, and centralized seeded local storage in `tests/e2e/fixtures.ts`.
 - [x] **Verification:** `PATH=/opt/homebrew/bin:/usr/local/bin:$PATH npm run test:e2e` passed 4 times after the stabilization work, including 3 consecutive passes (`6 passed (52.0s)`, `6 passed (36.2s)`, `6 passed (36.9s)`) and a final post-fix pass after correcting `mmk_progress_guest.versesRead` to the proper object shape (`6 passed (58.9s)`).
 - [x] **Constraint:** Hosted GitHub validation is still blocked by invalid local `gh` authentication, but the workflow file is already in place for the first authenticated run.
+
+---
+
+# Execution Checklist: Publish Remaining E2E Rollout Work (2026-04-02)
+
+## Plan
+- [x] **Agent:** Publish only the stabilized E2E rollout changes without including unrelated local commits on `main`.
+- [x] **Agent:** Validate whether local GitHub CLI auth is usable for the first hosted `E2E Smoke` run.
+- [ ] **Agent:** Trigger one hosted `E2E Smoke` workflow run after GitHub auth is restored.
+
+## Review
+- [x] **Result:** Published the isolated rollout branch `codex/e2e-smoke-rollout` to GitHub with a single commit on top of `origin/main`: `755f682 test: stabilize public e2e smoke suite`.
+- [x] **Verification:** Confirmed the published branch contains exactly one commit ahead of `origin/main` by checking `git log --oneline origin/main..FETCH_HEAD`.
+- [x] **Constraint:** Hosted workflow validation is still blocked locally because `PATH=/opt/homebrew/bin:/usr/local/bin:$PATH gh auth status` reports the active `github.com` token for `sanjabh11` is invalid and requires `gh auth login -h github.com`.
