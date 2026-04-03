@@ -4,23 +4,23 @@
  */
 
 import { getSession, deleteSession, getUser } from '../../../lib/redis-store';
+import { parseCookie } from '../../../lib/server-session';
 
 export default async function handler(req, res) {
-  if (req.method !== 'GET' && req.method !== 'POST') {
+  if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    // Get session token from header or cookie
+    // Prefer the HttpOnly cookie. Keep Bearer-token fallback only for legacy clients.
     const authHeader = req.headers.authorization;
     const cookieToken = parseCookie(req.headers.cookie, 'whop_session');
-
     const token = authHeader?.replace('Bearer ', '') || cookieToken;
 
     if (!token) {
       return res.status(401).json({
         valid: false,
-        error: 'No session token provided'
+        error: 'Unauthorized'
       });
     }
 
@@ -30,7 +30,7 @@ export default async function handler(req, res) {
     if (!session) {
       return res.status(401).json({
         valid: false,
-        error: 'Invalid or expired session'
+        error: 'Unauthorized'
       });
     }
 
@@ -39,7 +39,7 @@ export default async function handler(req, res) {
       await deleteSession(token);
       return res.status(401).json({
         valid: false,
-        error: 'Session expired'
+        error: 'Unauthorized'
       });
     }
 
@@ -67,19 +67,4 @@ export default async function handler(req, res) {
       error: 'Validation failed'
     });
   }
-}
-
-/**
- * Parse cookie value from cookie header
- */
-function parseCookie(cookieHeader, name) {
-  if (!cookieHeader) return null;
-
-  const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
-    const [key, value] = cookie.trim().split('=');
-    acc[key] = value;
-    return acc;
-  }, {});
-
-  return cookies[name] || null;
 }

@@ -116,23 +116,7 @@ export function UserProvider({ children }) {
    * Redirects to Whop login page
    */
   const login = useCallback(() => {
-    const whopClientId = process.env.NEXT_PUBLIC_WHOP_CLIENT_ID;
-    if (!whopClientId) {
-      setError('Missing NEXT_PUBLIC_WHOP_CLIENT_ID');
-      return;
-    }
-    const redirectUri = typeof window !== 'undefined'
-      ? `${window.location.origin}/api/auth/callback`
-      : '';
-
-    // Construct Whop OAuth URL
-    const authUrl = new URL('https://whop.com/oauth');
-    authUrl.searchParams.set('client_id', whopClientId);
-    authUrl.searchParams.set('redirect_uri', redirectUri);
-    authUrl.searchParams.set('response_type', 'code');
-    authUrl.searchParams.set('scope', 'openid profile email');
-
-    window.location.href = authUrl.toString();
+    window.location.href = '/api/auth/login';
   }, []);
 
   /**

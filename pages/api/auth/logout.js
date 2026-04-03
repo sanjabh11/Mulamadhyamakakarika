@@ -4,6 +4,7 @@
  */
 
 import { deleteSession } from '../../../lib/redis-store';
+import { parseCookie } from '../../../lib/server-session';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -23,8 +24,8 @@ export default async function handler(req, res) {
     const isProduction = process.env.NODE_ENV === 'production';
     const secureFlag = isProduction ? '; Secure' : '';
     res.setHeader('Set-Cookie', [
-      `whop_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secureFlag}`,
-      `whop_user_id=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secureFlag}`
+      `whop_session=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${secureFlag}`,
+      `whop_user_id=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${secureFlag}`
     ]);
 
     return res.status(200).json({ success: true });
@@ -33,14 +34,4 @@ export default async function handler(req, res) {
     console.error('[LOGOUT] Error:', error);
     return res.status(500).json({ error: 'Logout failed' });
   }
-}
-
-function parseCookie(cookieHeader, name) {
-  if (!cookieHeader) return null;
-  const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
-    const [key, value] = cookie.trim().split('=');
-    acc[key] = value;
-    return acc;
-  }, {});
-  return cookies[name] || null;
 }

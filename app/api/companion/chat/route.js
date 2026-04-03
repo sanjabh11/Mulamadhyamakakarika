@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { Redis } from '@upstash/redis';
 import { COMPANION_MODEL_ID, SYSTEM_PROMPT_FILE } from '../../../../lib/research-metadata';
+import { getEffectiveTier, getRequestSession } from '../../../../lib/server-session';
 
 const redis = new Redis({
     url: process.env.UPSTASH_REDIS_REST_URL || '',
@@ -14,7 +15,13 @@ export const maxDuration = 30;
 
 export async function POST(req) {
     try {
-        const { messages, chapterId, verseId, verseData, tier = 'free' } = await req.json();
+        const { messages, chapterId, verseId, verseData } = await req.json();
+        const session = await getRequestSession(req);
+        const tier = await getEffectiveTier(req, 'free');
+
+        if (!Array.isArray(messages) || messages.length === 0) {
+            return new Response(JSON.stringify({ error: 'Messages are required' }), { status: 400 });
+        }
 
         // Tier Quota Check
         const quotaMap = { free: 0, seeker: 5, practitioner: 50, teacher: Infinity };
@@ -25,9 +32,10 @@ export async function POST(req) {
         }
 
         if (maxMessages !== Infinity) {
-            const ip = req.headers.get('x-forwarded-for') || 'anonymous';
+            const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'anonymous';
+            const identityKey = session?.userId ? `user:${session.userId}` : `ip:${ip}`;
             const today = new Date().toISOString().split('T')[0];
-            const key = `companion_quota:${ip}:${today}`;
+            const key = `companion_quota:${identityKey}:${today}`;
 
             // Only use Redis if configured, otherwise bypass for local dev
             if (process.env.UPSTASH_REDIS_REST_URL) {

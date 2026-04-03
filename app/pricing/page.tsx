@@ -98,10 +98,6 @@ const WHOP_PLAN_IDS: Record<string, string> = {
     NEXT_PUBLIC_WHOP_PLAN_TEACHER: process.env.NEXT_PUBLIC_WHOP_PLAN_TEACHER || '',
 };
 
-function generateIntentId(): string {
-    return `intent_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-}
-
 function TierCard({ tier }: { tier: typeof TIERS[0] }) {
     const [subscribing, setSubscribing] = React.useState(false);
 
@@ -123,15 +119,14 @@ function TierCard({ tier }: { tier: typeof TIERS[0] }) {
         }
 
         setSubscribing(true);
-        const checkoutIntentId = generateIntentId();
+        let checkoutIntentId: string | null = null;
 
         try {
             // Step 1: Capture intent server-side (analytics + persistent-map write)
-            await fetch('/api/checkout/intent', {
+            const response = await fetch('/api/checkout/intent', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    checkoutIntentId,
                     selectedTier: tier.id,
                     sessionId: sessionStorage.getItem('mmk_session_id') || null,
                     anonymousId: localStorage.getItem('mmk_anonymous_id') || null,
@@ -140,13 +135,21 @@ function TierCard({ tier }: { tier: typeof TIERS[0] }) {
                     utmCampaign: new URLSearchParams(window.location.search).get('utm_campaign') || null,
                 })
             });
+
+            if (response.ok) {
+                const payload = await response.json();
+                checkoutIntentId = payload.checkoutIntentId || null;
+            }
         } catch (err) {
             // Non-blocking: intent capture failure must not block checkout
             console.warn('[pricing] Intent capture failed (non-blocking):', err);
         }
 
         // Step 2: Redirect to Whop checkout with intent ID as URL param for attribution
-        window.location.href = `https://whop.com/checkout/${planId}/?checkout_intent=${checkoutIntentId}`;
+        const checkoutIntentQuery = checkoutIntentId
+            ? `?checkout_intent=${encodeURIComponent(checkoutIntentId)}`
+            : '';
+        window.location.href = `https://whop.com/checkout/${planId}/${checkoutIntentQuery}`;
     };
 
     return (

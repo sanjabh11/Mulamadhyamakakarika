@@ -3,25 +3,32 @@
  * CRITICAL: Handles the OAuth redirect from Whop after user login
  */
 
-import { whopSdk, getUserMembership, planIdToTier } from '../../../lib/whop-sdk';
+import { getUserMembership, planIdToTier } from '../../../lib/whop-sdk';
 import { setSession, setUser } from '../../../lib/redis-store';
 import { emitServerAnalyticsEvent } from '../../../lib/server-analytics';
+import { parseCookie } from '../../../lib/server-session';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { code, error, error_description } = req.query;
+  const { code, error, error_description, state } = req.query;
+  const cookieState = parseCookie(req.headers.cookie, 'whop_oauth_state');
 
   // Handle OAuth errors
   if (error) {
     console.error('[AUTH CALLBACK] OAuth error:', error, error_description);
-    return res.redirect(`/?auth_error=${encodeURIComponent(error_description || error)}`);
+    return res.redirect(`/?auth_error=${encodeURIComponent('oauth_failed')}`);
   }
 
   if (!code) {
     return res.redirect('/?auth_error=no_code');
+  }
+
+  if (!state || !cookieState || state !== cookieState) {
+    console.error('[AUTH CALLBACK] OAuth state mismatch');
+    return res.redirect('/?auth_error=invalid_oauth_state');
   }
 
   try {
@@ -47,8 +54,6 @@ export default async function handler(req, res) {
       name: userInfo.name,
       tier,
       membershipId: membership?.id || null,
-      accessToken: tokenResponse.access_token,
-      refreshToken: tokenResponse.refresh_token,
       expiresAt: Date.now() + (tokenResponse.expires_in * 1000),
       createdAt: new Date().toISOString()
     };
@@ -84,8 +89,9 @@ export default async function handler(req, res) {
     const secureFlag = isProduction ? '; Secure' : '';
     const maxAge = 60 * 60 * 24 * 7; // 7 days
     res.setHeader('Set-Cookie', [
-      `whop_session=${sessionToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secureFlag}`,
-      `whop_user_id=${userInfo.id}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secureFlag}`
+      `whop_session=${sessionToken}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}${secureFlag}`,
+      `whop_user_id=${userInfo.id}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}${secureFlag}`,
+      `whop_oauth_state=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secureFlag}`
     ]);
 
     // Redirect to dashboard or home
@@ -93,7 +99,7 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('[AUTH CALLBACK] Error:', error);
-    return res.redirect(`/?auth_error=${encodeURIComponent(error.message)}`);
+    return res.redirect(`/?auth_error=${encodeURIComponent('auth_callback_failed')}`);
   }
 }
 
