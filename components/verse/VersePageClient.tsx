@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 // @ts-ignore
@@ -26,13 +26,22 @@ const VerseClientWrapper = dynamic(
 
 interface VersePageClientProps {
     data: any;
-    isShowcase?: boolean;
     chapterId: number;
 }
 
-export default function VersePageClient({ data, isShowcase, chapterId }: VersePageClientProps) {
+export default function VersePageClient({ data, chapterId }: VersePageClientProps) {
     const router = useRouter();
     const { canAccessChapter, loading } = useMembership();
+    const [isShowcase, setIsShowcase] = useState(false);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') {
+            return;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        setIsShowcase(params.get('showcase') === 'true');
+    }, []);
 
     useEffect(() => {
         if (!loading && chapterId > 3 && !isShowcase && !canAccessChapter(chapterId)) {

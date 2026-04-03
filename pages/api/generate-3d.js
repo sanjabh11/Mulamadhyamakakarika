@@ -10,6 +10,7 @@
 
 import { fal } from '@fal-ai/client';
 import { rateLimitMiddleware } from '../../lib/rate-limiter';
+import { getEffectiveTier, getRequestSession } from '../../lib/server-session';
 
 // Configure fal.ai
 const FAL_API_KEY = process.env.FAL_API_KEY || process.env.FAL_KEY;
@@ -73,7 +74,11 @@ export default async function handler(req, res) {
   }
 
   // Rate limiting
-  const userTier = req.headers['x-user-tier'] || 'anonymous';
+  const session = await getRequestSession(req);
+  if (session?.userId) {
+    req.headers['x-user-id'] = session.userId;
+  }
+  const userTier = await getEffectiveTier(req, 'anonymous');
   if (!rateLimitMiddleware(req, res, userTier)) {
     return;
   }

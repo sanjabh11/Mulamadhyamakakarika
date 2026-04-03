@@ -1,5 +1,6 @@
 import { fal } from '@fal-ai/client';
 import { rateLimitMiddleware } from '../../lib/rate-limiter';
+import { getEffectiveTier, getRequestSession } from '../../lib/server-session';
 
 /**
  * @fix H6 - API Rate Limiting
@@ -95,8 +96,12 @@ export default async function handler(req, res) {
   }
 
   // @fix H6 - Apply rate limiting
-  // Get user tier from auth header (set by auth middleware)
-  const userTier = req.headers['x-user-tier'] || 'anonymous';
+  // Derive the tier from the server-side session, not client-controlled headers.
+  const session = await getRequestSession(req);
+  if (session?.userId) {
+    req.headers['x-user-id'] = session.userId;
+  }
+  const userTier = await getEffectiveTier(req, 'anonymous');
   
   // Check rate limit - returns false if limited
   if (!rateLimitMiddleware(req, res, userTier)) {

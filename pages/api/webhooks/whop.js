@@ -30,6 +30,15 @@ async function getRawBody(req) {
   return Buffer.concat(chunks).toString('utf8');
 }
 
+function summarizeEventData(data) {
+  return {
+    id: data?.id || null,
+    userId: data?.user_id || null,
+    planId: data?.plan_id || null,
+    productId: data?.product_id || null,
+  };
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -55,7 +64,7 @@ export default async function handler(req, res) {
     }
 
     const { type, data } = webhookData;
-    console.log(`[WHOP WEBHOOK] Received: ${type}`, data);
+    console.log(`[WHOP WEBHOOK] Received: ${type}`, summarizeEventData(data));
 
     // Handle different event types
     switch (type) {
@@ -81,7 +90,7 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error('[WHOP WEBHOOK] Error:', error);
     // Still return 200 to prevent infinite retries
-    return res.status(200).json({ received: true, error: error.message });
+    return res.status(200).json({ received: true });
   }
 }
 

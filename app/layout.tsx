@@ -1,33 +1,8 @@
+import type { CSSProperties } from 'react';
 import '../styles/globals.css';
-import { Inter, Space_Grotesk, JetBrains_Mono, Noto_Sans } from 'next/font/google';
 import DynamicUIWrapper from '../components/ui/DynamicUIWrapper';
 import ServiceWorkerRegister from '../components/pwa/ServiceWorkerRegister';
 import InstallPrompt from '../components/pwa/InstallPrompt';
-
-const inter = Inter({
-    subsets: ['latin'],
-    variable: '--font-inter',
-    display: 'swap',
-});
-
-const spaceGrotesk = Space_Grotesk({
-    subsets: ['latin'],
-    variable: '--font-space',
-    display: 'swap',
-});
-
-const jetbrainsMono = JetBrains_Mono({
-    subsets: ['latin'],
-    variable: '--font-mono',
-    display: 'optional',
-});
-
-const notoSans = Noto_Sans({
-    subsets: ['devanagari', 'latin'],
-    weight: ['400', '500', '600', '700'],
-    variable: '--font-devanagari',
-    display: 'optional',
-});
 
 export const metadata = {
     metadataBase: new URL('https://nagarjunaquantum.com'),
@@ -70,9 +45,16 @@ export const viewport = {
 
 import RootProviders from '../components/providers/RootProviders';
 
+const fontVariables: CSSProperties = {
+    '--font-inter': '"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    '--font-space': '"Space Grotesk", "Avenir Next", "Segoe UI", sans-serif',
+    '--font-mono': '"JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace',
+    '--font-devanagari': '"Noto Sans Devanagari", "Nirmala UI", "Kohinoor Devanagari", sans-serif',
+} as CSSProperties;
+
 export default function RootLayout({ children }) {
     return (
-        <html lang="en" suppressHydrationWarning className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${notoSans.variable}`}>
+        <html lang="en" suppressHydrationWarning style={fontVariables}>
             <head>
                 {/*
                  * BLOCKING THEME SCRIPT — Must run before any CSS or React code.
