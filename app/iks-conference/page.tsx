@@ -359,10 +359,10 @@ export default function IKSConferencePage() {
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <a
-              href="mailto:spumandiconference@gmail.com"
+              href="mailto:sanjabh11@gmail.com"
               className="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white text-sm px-6 py-3 rounded-full font-semibold transition-all"
             >
-              ✉️ Contact: spumandiconference@gmail.com
+              ✉️ Contact: sanjabh11@gmail.com
             </a>
             <Link
               href="/verse/1-1"

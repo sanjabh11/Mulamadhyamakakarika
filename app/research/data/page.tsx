@@ -241,7 +241,7 @@ export default function ResearchDataPage() {
         <footer className="mt-10 text-center text-xs text-slate-600">
           <p className="text-amber-500/80 mb-2">⚠️ This dashboard displays PROTOTYPE/MOCK data for demonstration purposes only.</p>
           <p>All metrics shown are illustrative examples. Real aggregated telemetry will be available once data collection and IRB approval are complete.</p>
-          <p className="mt-2">Contact: spumandiconference@gmail.com</p>
+          <p className="mt-2">Contact: sanjabh11@gmail.com</p>
         </footer>
       </div>
     </div>
